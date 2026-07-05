@@ -321,15 +321,53 @@ class AirbnbScraper:
         )
         return DEFAULT_BBOXES["austin"]
 
+    def _extract_nightly_price(self, price_data: dict) -> float:
+        """
+        Extract the per-night price from pyairbnb price data.
+
+        pyairbnb returns price in three places (in priority order):
+          1. price.unit.amount with qualifier 'for 1 night' — clean per-night
+          2. price.break_down[0] — '1 night x $X.XX' — always per-night
+          3. price.total.amount — total stay (NOT per-night, avoid)
+
+        Some listings (e.g. hotel rooms) omit unit.amount entirely but
+        still include the break_down line. We parse the break_down as a
+        fallback to avoid missing those listings.
+
+        Returns 0.0 if no per-night price can be determined.
+        """
+        # 1. Try price.unit.amount (most listings)
+        unit = price_data.get("unit", {})
+        unit_amount = unit.get("amount")
+        qualifier = unit.get("qualifier", "")
+
+        if unit_amount is not None and unit_amount > 0:
+            # If qualifier says 'for 1 night' or is empty, this is per-night
+            return float(unit_amount)
+
+        # 2. Fallback: parse break_down '1 night x $X.XX'
+        break_down = price_data.get("break_down", [])
+        if break_down:
+            for item in break_down:
+                desc = item.get("description", "")
+                # Match patterns like '1 night x $179.00' or '2 nights x $100.00'
+                m = re.match(r'(\d+)\s+night[s]?\s*x\s*\$?([\d,]+\.\d+)', desc)
+                if m:
+                    nights = int(m.group(1))
+                    total = float(m.group(2).replace(",", ""))
+                    if nights > 0:
+                        return round(total / nights, 2)
+
+        # No per-night price found
+        return 0.0
+
     def _parse_result(self, raw: dict) -> Optional[Listing]:
         """Map a raw pyairbnb result dict to a Listing object."""
         try:
             room_id = str(raw.get("room_id", ""))
 
-            # Price: nested in price.unit.amount
-            price_data = raw.get("price", {})
-            unit_price = price_data.get("unit", {})
-            price = float(unit_price.get("amount", 0))
+            # Price: extract per-night rate
+            price = self._extract_nightly_price(raw.get("price", {}))
 
             # Rating
             rating_data = raw.get("rating", {})

@@ -4,14 +4,27 @@ import pytest
 from market_agent.scraper import Listing, AirbnbScraper
 
 
+from datetime import date, timedelta
+
+
+def _next_weekend():
+    """Get next Friday/Saturday for test dates."""
+    today = date.today()
+    days_to_friday = (4 - today.weekday()) % 7 or 7
+    fri = today + timedelta(days=days_to_friday)
+    sat = fri + timedelta(days=1)
+    return fri.isoformat(), sat.isoformat()
+
+
 @pytest.mark.asyncio
 async def test_search_competitors_returns_list():
     """search_competitors should return a list of Listings."""
     scraper = AirbnbScraper()
+    checkin, checkout = _next_weekend()
     results = await scraper.search_competitors(
         location="Austin, TX",
-        checkin="2026-07-04",
-        checkout="2026-07-05",
+        checkin=checkin,
+        checkout=checkout,
     )
     assert isinstance(results, list)
     assert len(results) > 0
@@ -22,13 +35,29 @@ async def test_search_competitors_returns_list():
 async def test_search_results_have_prices():
     """Most search results should have a non-zero price."""
     scraper = AirbnbScraper()
+    checkin, checkout = _next_weekend()
     results = await scraper.search_competitors(
         location="Austin, TX",
-        checkin="2026-07-04",
-        checkout="2026-07-05",
+        checkin=checkin,
+        checkout=checkout,
     )
     priced = [l for l in results if l.price > 0]
     assert len(priced) > 0
+
+
+@pytest.mark.asyncio
+async def test_all_prices_are_per_night():
+    """Every listing should have a per-night price > 0."""
+    scraper = AirbnbScraper()
+    checkin, checkout = _next_weekend()
+    results = await scraper.search_competitors(
+        location="Austin, TX",
+        checkin=checkin,
+        checkout=checkout,
+    )
+    assert len(results) > 0
+    for l in results:
+        assert l.price > 0, f"Listing {l.listing_id} ({l.title}) has no price"
 
 
 @pytest.mark.asyncio
