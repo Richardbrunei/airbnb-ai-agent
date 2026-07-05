@@ -1,0 +1,36 @@
+{
+  "search_areas": [
+    {
+      "name": "Template Area",
+      "location": "City, State",
+      "radius_km": 5,
+      "property_types": ["Entire home/apt", "Private room"],
+      "target_price_min": 50,
+      "target_price_max": 300,
+      "competitor_filters": {
+        "min_bedrooms": 1,
+        "max_bedrooms": 3,
+        "property_types": ["Entire home", "Apartment", "Condo", "House", "Home", "Townhouse"],
+        "neighborhoods": [],
+        "target_price_min": 80,
+        "target_price_max": 350
+      },
+      "property_profile": {
+        "lat": 30.2672,
+        "lng": -97.7431,
+        "bedrooms": 2,
+        "price": 180,
+        "property_type": "Home"
+      },
+      "max_competitor_distance_km": 15
+    }
+  ],
+  "schedule": {
+    "run_time": "08:00",
+    "timezone": "America/Chicago"
+  },
+  "notification": {
+    "email": "",
+    "telegram_chat_id": ""
+  }
+}

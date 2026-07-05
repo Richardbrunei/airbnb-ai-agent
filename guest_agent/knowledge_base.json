@@ -1,0 +1,49 @@
+{
+  "properties": [
+    {
+      "id": "TEMPLATE_001",
+      "name": "Sample Property",
+      "address": "",
+      "check_in_time": "15:00",
+      "check_out_time": "11:00",
+      "amenities": {
+        "wifi": true,
+        "wifi_network": "",
+        "wifi_password": "",
+        "parking": true,
+        "parking_instructions": "",
+        "pool": false,
+        "gym": false,
+        "kitchen": true,
+        "laundry": true,
+        "ac": true,
+        "heating": true
+      },
+      "house_rules": [
+        "No smoking inside",
+        "No parties or events",
+        "Pets considered on request"
+      ],
+      "local_tips": {
+        "grocery": "",
+        "restaurants": [],
+        "transport": ""
+      },
+      "faq": [
+        {
+          "q": "What time is check-in?",
+          "a": "Check-in is from 3:00 PM onwards. Self check-in via smart lock."
+        },
+        {
+          "q": "Is parking available?",
+          "a": "Yes, free parking is available on the premises."
+        }
+      ]
+    }
+  ],
+  "policies": {
+    "cancellation": "Flexible - full refund 24 hours before check-in",
+    "pets": "Case by case",
+    "smoking": "Not allowed inside"
+  }
+}
