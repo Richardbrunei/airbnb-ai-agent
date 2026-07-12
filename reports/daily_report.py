@@ -51,6 +51,17 @@ class DailyReportGenerator:
         if stats.avg_rating:
             lines.append(f"  Avg Rating:   {stats.avg_rating:.1f} ⭐")
 
+        if stats.discounted_count > 0:
+            lines.append("")
+            lines.append("💰 Discount Insights")
+            lines.append(f"  Discounted Listings: {stats.discounted_count}/{stats.count}")
+            lines.append(f"  Avg Discount:        {stats.avg_discount_pct:.1f}%")
+            lines.append(f"  Avg Discount Amt:    ${stats.avg_discount_amount:.0f}")
+            lines.append(
+                f"  Median (Original):   ${stats.median_original_price:.0f} "
+                f"→ ${stats.median_effective_price:.0f} (effective)"
+            )
+
         if stats.by_bedrooms:
             lines.append("")
             lines.append("🏠 Price by Bedroom Count")

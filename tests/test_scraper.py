@@ -72,6 +72,129 @@ async def test_get_listing_details():
     assert listing.reviews > 0
 
 
+def test_extract_nightly_price_unit_amount():
+    """_extract_nightly_price should parse unit.amount for 1-night stays."""
+    scraper = AirbnbScraper()
+    price_data = {"unit": {"amount": 150.0, "qualifier": "for 1 night"}}
+    price, nights = scraper._extract_nightly_price(price_data)
+    assert price == 150.0
+    assert nights == 1
+
+
+def test_extract_nightly_price_multi_night():
+    """_extract_nightly_price should derive nightly from break_down for multi-night."""
+    scraper = AirbnbScraper()
+    price_data = {
+        "unit": {"amount": 3046.0, "qualifier": "for 6 nights"},
+        "break_down": [{"description": "6 nights x $507.60", "amount": 3045.0}],
+    }
+    price, nights = scraper._extract_nightly_price(price_data)
+    assert price == 507.6
+    assert nights == 6
+
+
+def test_extract_nightly_price_breakdown_only():
+    """Should extract per-night rate from break_down when unit.amount is missing.
+    
+    Format 'N nights x $X.XX' means $X.XX is the per-night price.
+    """
+    scraper = AirbnbScraper()
+    price_data = {
+        "break_down": [{"description": "2 nights x $100.00", "amount": 200.0}],
+    }
+    price, nights = scraper._extract_nightly_price(price_data)
+    assert price == 100.0
+    assert nights == 2
+
+
+def test_extract_nightly_price_no_data():
+    """Should return (0.0, 1) when no price data exists."""
+    scraper = AirbnbScraper()
+    price, nights = scraper._extract_nightly_price({})
+    assert price == 0.0
+    assert nights == 1
+
+
+def test_parse_discount_empty():
+    """No long_stay_discount should yield zero discount."""
+    scraper = AirbnbScraper()
+    original, amount, pct = scraper._parse_discount({}, 100.0, 3)
+    assert original == 100.0
+    assert amount == 0.0
+    assert pct == 0.0
+
+
+def test_parse_discount_zero_amount():
+    """A zero discount amount should be treated as no discount."""
+    scraper = AirbnbScraper()
+    raw = {"long_stay_discount": {"amount": 0}}
+    original, amount, pct = scraper._parse_discount(raw, 100.0, 3)
+    assert original == 100.0
+    assert amount == 0.0
+    assert pct == 0.0
+
+
+def test_parse_discount_negative_amount():
+    """A negative discount amount (pyairbnb convention) should be parsed."""
+    scraper = AirbnbScraper()
+    raw = {"long_stay_discount": {"amount": -272.0, "currency_symbol": "$.80"}}
+    # effective price $507.60/night, 6 nights, $272 total discount
+    # per-night discount = 272/6 = 45.33
+    # original = 507.60 + 45.33 = 552.93
+    original, amount, pct = scraper._parse_discount(raw, 507.60, 6)
+    assert amount == 272.0
+    assert original > 507.60
+    assert pct > 0
+    # ~8.2% discount
+    assert 7.0 < pct < 10.0
+
+
+def test_parse_result_with_discount():
+    """_parse_result should populate discount fields from raw data."""
+    scraper = AirbnbScraper()
+    raw = {
+        "room_id": 999,
+        "name": "Discounted Loft",
+        "title": "Apartment in Austin",
+        "price": {
+            "unit": {"amount": 800.0, "qualifier": "for 2 nights"},
+            "break_down": [{"description": "2 nights x $400.00", "amount": 800.0}],
+        },
+        "long_stay_discount": {"amount": -100.0, "currency_symbol": "$.00"},
+        "rating": {"value": 4.9, "reviewCount": "15"},
+        "coordinates": {"latitude": 30.27, "longitude": -97.74},
+        "structuredContent": {"primaryLine": [
+            {"body": "1 bedroom", "type": "BEDINFO"},
+            {"body": "1 bath", "type": "BATHROOMINFO"},
+        ]},
+    }
+    listing = scraper._parse_result(raw)
+    assert listing is not None
+    assert listing.price == 400.0          # effective nightly from break_down
+    assert listing.nights == 2
+    assert listing.discount_amount == 100.0
+    assert listing.original_price > 400.0  # 400 + (100/2) = 450
+    assert listing.discount_pct > 0        # ~11.1%
+
+
+def test_parse_result_no_discount():
+    """Listing without discount should have original_price == price."""
+    scraper = AirbnbScraper()
+    raw = {
+        "room_id": 123,
+        "name": "Regular Spot",
+        "title": "Home in Austin",
+        "price": {"unit": {"amount": 150.0, "qualifier": "for 1 night"}},
+        "rating": {"value": 4.5, "reviewCount": "10"},
+    }
+    listing = scraper._parse_result(raw)
+    assert listing is not None
+    assert listing.price == 150.0
+    assert listing.original_price == 150.0
+    assert listing.discount_amount == 0.0
+    assert listing.discount_pct == 0.0
+
+
 def test_listing_dataclass():
     listing = Listing(
         listing_id="123",

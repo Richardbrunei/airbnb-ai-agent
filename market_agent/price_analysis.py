@@ -28,6 +28,12 @@ class MarketStats:
     avg_reviews: float = 0.0
     by_bedrooms: dict[int, float] = field(default_factory=dict)
     by_neighborhood: dict[str, float] = field(default_factory=dict)
+    # Discount stats
+    discounted_count: int = 0
+    avg_discount_pct: float = 0.0
+    avg_discount_amount: float = 0.0
+    median_original_price: float = 0.0
+    median_effective_price: float = 0.0
 
 
 @dataclass
@@ -102,12 +108,31 @@ class PriceAnalyzer:
                 by_hood.setdefault(l.neighborhood, []).append(l.price)
         stats.by_neighborhood = {k: statistics.median(v) for k, v in by_hood.items()}
 
+        # Discount statistics
+        discounted = [l for l in listings if l.discount_amount > 0]
+        if discounted:
+            stats.discounted_count = len(discounted)
+            stats.avg_discount_pct = statistics.mean(l.discount_pct for l in discounted)
+            stats.avg_discount_amount = statistics.mean(l.discount_amount for l in discounted)
+            stats.median_original_price = statistics.median(
+                l.original_price for l in discounted
+            )
+            stats.median_effective_price = statistics.median(
+                l.price for l in discounted
+            )
+
         return stats
 
     def _identify_trends(self, listings: list[Listing]) -> dict:
         """Identify market trends from listing data."""
+        discounted = [l for l in listings if l.discount_amount > 0]
         return {
             "total_listings": len(listings),
             "available_count": sum(1 for l in listings if l.available),
             "highly_rated": sum(1 for l in listings if l.rating and l.rating >= 4.5),
+            "discounted_listings": len(discounted),
+            "avg_discount_pct": (
+                round(statistics.mean(l.discount_pct for l in discounted), 1)
+                if discounted else 0.0
+            ),
         }
