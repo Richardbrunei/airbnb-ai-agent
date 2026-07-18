@@ -5,13 +5,13 @@ Formats analysis results into readable reports and delivers via
 configured channels (email, Telegram, Slack).
 """
 
-import csv
 import logging
 from datetime import datetime
 from pathlib import Path
 from typing import Optional
 
 from market_agent.price_analysis import MarketStats
+from data import storage
 
 logger = logging.getLogger(__name__)
 
@@ -93,29 +93,12 @@ class DailyReportGenerator:
         filepath.write_text(report)
         logger.info(f"Report saved to {filepath}")
 
-        # Also append to CSV history
-        self._append_csv(stats, date_str)
+        # Store snapshot in SQLite
+        storage.store_snapshot(stats, trends, date_str)
 
         return report
 
-    def _append_csv(self, stats: MarketStats, date_str: str) -> None:
-        """Append daily stats to CSV history."""
-        csv_path = Path("data/market_history.csv")
-        write_header = not csv_path.exists()
 
-        with open(csv_path, "a", newline="") as f:
-            writer = csv.writer(f)
-            if write_header:
-                writer.writerow([
-                    "date", "count", "median_price", "mean_price",
-                    "min_price", "max_price", "avg_rating",
-                ])
-            writer.writerow([
-                date_str, stats.count,
-                stats.median_price, stats.mean_price,
-                stats.min_price, stats.max_price,
-                stats.avg_rating or "",
-            ])
 
     async def send_email(self, report: str, recipient: str = "") -> bool:
         """Send report via email."""
