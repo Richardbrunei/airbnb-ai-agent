@@ -1,0 +1,21 @@
+=== 2026-07-18 14:26:31 Starting Airbnb market monitoring ===
+2026-07-18 14:26:31,876 [INFO] __main__: === Airbnb AI Agent Starting ===
+2026-07-18 14:26:31,876 [INFO] __main__: Starting market monitoring...
+2026-07-18 14:26:31,877 [INFO] data.storage: Database initialized at /home/liang/.openclaw/workspace/coding/airbnb-ai-agent/data/market.db
+2026-07-18 14:26:31,878 [INFO] market_agent.scraper: Loaded 1 search area(s) from config
+2026-07-18 14:26:31,878 [INFO] market_agent.scraper: Searching: checkin=2026-07-24, checkout=2026-07-25, adults=2
+2026-07-18 14:26:31,878 [WARNING] market_agent.scraper: No bbox found for 'City, State', using Austin defaults. Add a 'bbox' field to areas.json to configure.
+2026-07-18 14:26:31,878 [INFO] market_agent.scraper:   Searching bbox (30.18, -97.9, 30.52, -97.65) for 'City, State' (place_type='', price=50-300)
+2026-07-18 14:26:39,189 [INFO] market_agent.scraper:   [Template Area] 280 → 143 listings after competitor filters
+2026-07-18 14:26:39,189 [INFO] market_agent.scraper: Total competitor listings across all areas: 143
+2026-07-18 14:26:39,189 [INFO] __main__: Found 143 competitor listings
+2026-07-18 14:26:39,220 [INFO] data.storage: Stored 143 listings for 2026-07-18
+2026-07-18 14:26:39,229 [INFO] __main__: Stored 143 listings in database
+2026-07-18 14:26:39,230 [INFO] market_agent.price_analysis: Analyzed 143 listings | median: $218 | range: $103-$350
+2026-07-18 14:26:39,230 [INFO] __main__: Price analysis complete
+2026-07-18 14:26:39,246 [INFO] data.storage: Stored 143 competitor scores for 2026-07-18
+2026-07-18 14:26:39,251 [INFO] __main__: Stored 143 competitor scores
+2026-07-18 14:26:39,252 [INFO] reports.daily_report: Report saved to reports/market_report_2026-07-18.txt
+2026-07-18 14:26:39,265 [INFO] data.storage: Snapshot stored for 2026-07-18
+2026-07-18 14:26:39,267 [INFO] __main__: Daily report generated
+=== 2026-07-18 14:26:39 Completed successfully ===
