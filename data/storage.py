@@ -33,6 +33,8 @@ CREATE TABLE IF NOT EXISTS listings (
     original_price  REAL,
     discount_amount REAL,
     discount_pct    REAL,
+    discount_types  TEXT,   -- JSON array of discount type labels
+    discounts       TEXT,   -- JSON array of {type, amount, per_night}
     nights          INTEGER,
     currency        TEXT    DEFAULT 'USD',
     rating          REAL,
@@ -147,10 +149,11 @@ def store_listings(
                 """
                 INSERT INTO listings (
                     scrape_date, listing_id, title, price, original_price,
-                    discount_amount, discount_pct, nights, currency, rating,
+                    discount_amount, discount_pct, discount_types, discounts,
+                    nights, currency, rating,
                     reviews, property_type, bedrooms, bathrooms, guests,
                     neighborhood, url, available, lat, lng, badges, raw
-                ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+                ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
                 """,
                 (
                     date_str,
@@ -160,6 +163,11 @@ def store_listings(
                     l.original_price,
                     l.discount_amount,
                     l.discount_pct,
+                    json.dumps(l.discount_types),
+                    json.dumps([
+                        {"type": d.type, "amount": d.amount, "per_night": d.per_night}
+                        for d in l.discounts
+                    ]),
                     l.nights,
                     l.currency,
                     l.rating,

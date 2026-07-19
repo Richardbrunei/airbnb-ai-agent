@@ -18,6 +18,14 @@ logger = logging.getLogger(__name__)
 
 
 @dataclass
+class DiscountItem:
+    """A single discount applied to a listing."""
+    type: str = ""             # e.g. "Last-minute discount", "Special offer", "Long stay discount"
+    amount: float = 0.0        # Total $ amount for the stay (positive)
+    per_night: float = 0.0     # Per-night $ amount
+
+
+@dataclass
 class Listing:
     """Represents a single Airbnb listing."""
     listing_id: str = ""
@@ -26,6 +34,8 @@ class Listing:
     original_price: float = 0.0  # Pre-discount nightly price (== price when no discount)
     discount_amount: float = 0.0 # Total discount for the stay ($)
     discount_pct: float = 0.0    # Discount as % of original (0.0 if none)
+    discount_types: list[str] = field(default_factory=list)  # e.g. ["Last-minute discount", "Special offer"]
+    discounts: list[DiscountItem] = field(default_factory=list)  # Detailed breakdown
     nights: int = 1             # Number of nights in the search query
     currency: str = "USD"
     rating: Optional[float] = None
@@ -325,107 +335,242 @@ class AirbnbScraper:
         )
         return DEFAULT_BBOXES["austin"]
 
-    def _extract_nightly_price(self, price_data: dict) -> tuple[float, int]:
+    def _extract_nightly_price(self, price_data: dict) -> tuple[float, float, int]:
         """
-        Extract the per-night price and nights count from pyairbnb price data.
+        Extract the per-night price, original price, and nights count.
 
         pyairbnb returns price in these places:
-          1. price.unit.amount with qualifier 'for 1 night' — clean per-night
-          2. price.unit.amount with qualifier 'for N nights' — TOTAL for N nights
+          1. price.unit.amount — the listed (original) nightly price
+          2. price.unit.discount — the discounted nightly price (when a discount exists)
           3. price.break_down[0] — 'N nights x $X.XX' where $X.XX is per-night
 
-        Some listings (e.g. hotel rooms) omit unit.amount entirely but
-        still include the break_down line.
-
-        Returns (nightly_price, nights). Price is 0.0 if undeterminable.
+        Returns (effective_price, original_price, nights).
+        effective_price is post-discount; original_price is pre-discount.
+        Both are 0.0 if undeterminable.
         """
-        # 1. Try price.unit.amount (most listings)
         unit = price_data.get("unit", {})
         unit_amount = unit.get("amount")
+        unit_discount = unit.get("discount")
         qualifier = unit.get("qualifier", "")
 
-        nights_from_qualifier = 1
+        nights = 1
         if qualifier:
             m = re.search(r'(\d+)\s+night', qualifier)
             if m:
-                nights_from_qualifier = int(m.group(1))
+                nights = int(m.group(1))
+
+        original_price = 0.0
+        effective_price = 0.0
 
         if unit_amount is not None and unit_amount > 0:
-            if nights_from_qualifier <= 1:
-                # Per-night price directly
-                return float(unit_amount), 1
-            # Multi-night: unit.amount is the total — need break_down or derive
-            # Fall through to break_down first
+            # If unit.discount exists, that's the effective price
+            if unit_discount is not None and unit_discount > 0:
+                effective_price = float(unit_discount)
+                # unit.amount for multi-night is sometimes the total,
+                # so we'll let break_down override if it has a per-night rate
+                if nights <= 1:
+                    original_price = float(unit_amount)
+                else:
+                    # Multi-night: unit.amount might be total, defer to break_down
+                    original_price = round(float(unit_amount) / nights, 2)
+            else:
+                if nights <= 1:
+                    original_price = float(unit_amount)
+                else:
+                    # Multi-night: derive per-night from total
+                    original_price = round(float(unit_amount) / nights, 2)
+                effective_price = original_price
 
-        # 2. Parse break_down 'N nights x $X.XX' — $X.XX is the per-night rate
+        # Try break_down for per-night rate (more precise for multi-night)
         break_down = price_data.get("break_down", [])
         if break_down:
             for item in break_down:
                 desc = item.get("description", "")
                 m = re.match(r'(\d+)\s+night[s]?\s*x\s*\$?([\d,]+\.\d+)', desc)
                 if m:
-                    nights = int(m.group(1))
+                    nights_bd = int(m.group(1))
                     per_night = float(m.group(2).replace(",", ""))
-                    if nights > 0 and per_night > 0:
-                        return round(per_night, 2), nights
+                    if nights_bd > 0 and per_night > 0:
+                        # break_down per-night rate is the pre-discount rate
+                        original_price = per_night
+                        nights = nights_bd
+                        if effective_price == 0.0 or effective_price >= original_price:
+                            if unit_discount is None:
+                                effective_price = per_night
+                    break
 
-        # 3. Fallback: derive per-night from unit total / nights
-        if unit_amount is not None and unit_amount > 0 and nights_from_qualifier > 1:
-            return round(float(unit_amount) / nights_from_qualifier, 2), nights_from_qualifier
+        # Fallback: if we still don't have a price, try unit total / nights
+        if original_price == 0.0 and unit_amount is not None and unit_amount > 0 and nights > 1:
+            original_price = round(float(unit_amount) / nights, 2)
+            effective_price = original_price
 
-        # No per-night price found
-        return 0.0, 1
+        if effective_price == 0.0 and original_price > 0:
+            effective_price = original_price
 
-    def _parse_discount(
-        self, raw: dict, effective_price: float, nights: int
-    ) -> tuple[float, float, float]:
+        return round(effective_price, 2), round(original_price, 2), nights
+
+    def _parse_discounts(
+        self, raw: dict, effective_price: float, original_price: float, nights: int
+    ) -> tuple[list[DiscountItem], float, float, float]:
         """
-        Parse discount data from a raw pyairbnb listing.
+        Parse all discount data from a raw pyairbnb listing.
 
-        pyairbnb returns long_stay_discount as:
-            {"amount": -272.0, "currency_symbol": "$.80"}
-        where amount is the total discount over the entire stay (negative).
+        Discounts come from three sources:
+          1. price.break_down[] — line items with negative amounts and descriptions
+             like "Last-minute discount", "Special offer", "Long stay discount"
+          2. price.unit.discount — the effective price when a discount is applied
+          3. long_stay_discount — top-level field for multi-night stays
+             {"amount": -272.0, "currency_symbol": "$.80"}
 
-        Returns (original_price, discount_amount, discount_pct):
-            original_price  — pre-discount nightly rate
-            discount_amount — total $ discount for the stay (positive)
-            discount_pct    — discount as % of original (e.g. 10.0 = 10% off)
+        Returns (discounts, combined_discount_amount, combined_discount_pct, combined_original).
+        - discounts: list of DiscountItem with type, amount, per_night
+        - combined_discount_amount: total $ discount for the stay
+        - combined_discount_pct: total discount as % of original
+        - combined_original: pre-discount nightly price
         """
-        discount_data = raw.get("long_stay_discount", {})
-        if not discount_data or not isinstance(discount_data, dict):
-            return effective_price, 0.0, 0.0
+        discounts: list[DiscountItem] = []
+        seen_types: set[str] = set()
 
-        raw_amount = discount_data.get("amount", 0)
-        if raw_amount is None or raw_amount == 0:
-            return effective_price, 0.0, 0.0
+        # ── Source 1: break_down line items ──
+        break_down = raw.get("price", {}).get("break_down", [])
+        for item in break_down:
+            desc = item.get("description", "")
+            amount = item.get("amount", 0)
 
-        # pyairbnb uses negative amounts for discounts
-        discount_amount = abs(float(raw_amount))
-        if discount_amount <= 0 or nights <= 0:
-            return effective_price, 0.0, 0.0
+            if amount is None or amount >= 0:
+                continue
 
-        per_night_discount = discount_amount / nights
-        original_price = effective_price + per_night_discount
+            # Normalize the discount type label
+            dtype = self._normalize_discount_type(desc)
+            if not dtype or dtype in seen_types:
+                continue
 
-        if original_price > 0:
-            discount_pct = round((per_night_discount / original_price) * 100, 1)
-        else:
-            discount_pct = 0.0
+            discount_amt = abs(float(amount))
+            per_night = round(discount_amt / nights, 2) if nights > 0 else discount_amt
 
-        return round(original_price, 2), round(discount_amount, 2), discount_pct
+            discounts.append(DiscountItem(
+                type=dtype,
+                amount=round(discount_amt, 2),
+                per_night=per_night,
+            ))
+            seen_types.add(dtype)
+
+        # ── Source 2: unit.discount (price difference between amount and discount) ──
+        unit = raw.get("price", {}).get("unit", {})
+        unit_amount = unit.get("amount")
+        unit_discount = unit.get("discount")
+
+        if (
+            unit_amount is not None
+            and unit_discount is not None
+            and float(unit_amount) > float(unit_discount) > 0
+        ):
+            # If we already captured this via break_down, the amounts should match
+            per_night_diff = float(unit_amount) - float(unit_discount)
+            total_diff = round(per_night_diff * nights, 2)
+
+            # Check if a break_down discount already accounts for this
+            already_captured = any(
+                abs(d.per_night - per_night_diff) < 0.50 for d in discounts
+            )
+
+            if not already_captured:
+                dtype = "Price discount"
+                if dtype not in seen_types:
+                    discounts.append(DiscountItem(
+                        type=dtype,
+                        amount=total_diff,
+                        per_night=round(per_night_diff, 2),
+                    ))
+                    seen_types.add(dtype)
+
+        # ── Source 3: long_stay_discount (top-level) ──
+        lsd = raw.get("long_stay_discount", {})
+        if lsd and isinstance(lsd, dict):
+            raw_amount = lsd.get("amount", 0)
+            if raw_amount and float(raw_amount) < 0:
+                dtype = "Long stay discount"
+                if dtype not in seen_types:
+                    discount_amt = abs(float(raw_amount))
+                    per_night = round(discount_amt / nights, 2) if nights > 0 else discount_amt
+                    discounts.append(DiscountItem(
+                        type=dtype,
+                        amount=round(discount_amt, 2),
+                        per_night=per_night,
+                    ))
+                    seen_types.add(dtype)
+
+        # ── Compute combined stats ──
+        if discounts:
+            total_discount = sum(d.amount for d in discounts)
+            total_per_night = sum(d.per_night for d in discounts)
+
+            # Determine the effective original price
+            if original_price > effective_price:
+                combined_original = original_price
+            else:
+                combined_original = effective_price + total_per_night
+
+            if combined_original > 0:
+                combined_pct = round((total_per_night / combined_original) * 100, 1)
+            else:
+                combined_pct = 0.0
+
+            return (
+                discounts,
+                round(total_discount, 2),
+                combined_pct,
+                round(combined_original, 2),
+            )
+
+        # No discounts found
+        return [], 0.0, 0.0, effective_price
+
+    # Discount type labels that appear in Airbnb break_down descriptions
+    DISCOUNT_LABELS = {
+        "last-minute": "Last-minute discount",
+        "last minute": "Last-minute discount",
+        "special offer": "Special offer",
+        "special": "Special offer",
+        "long stay": "Long stay discount",
+        "long-stay": "Long stay discount",
+        "early bird": "Early booking discount",
+        "early booking": "Early booking discount",
+        "weekly": "Weekly discount",
+        "monthly": "Monthly discount",
+        "new listing": "New listing discount",
+        "flash": "Flash sale",
+    }
+
+    def _normalize_discount_type(self, desc: str) -> str:
+        """Normalize a break_down description into a standard discount type label."""
+        desc_lower = desc.lower().strip()
+        for key, label in self.DISCOUNT_LABELS.items():
+            if key in desc_lower:
+                return label
+        # If it contains 'discount' or 'off' but isn't recognized, use as-is
+        if "discount" in desc_lower or "off" in desc_lower:
+            return desc.strip()
+        return ""
 
     def _parse_result(self, raw: dict) -> Optional[Listing]:
         """Map a raw pyairbnb result dict to a Listing object."""
         try:
             room_id = str(raw.get("room_id", ""))
 
-            # Price: extract per-night rate and nights
-            price, nights = self._extract_nightly_price(raw.get("price", {}))
-
-            # Discount: compute original price and discount info
-            original_price, discount_amount, discount_pct = self._parse_discount(
-                raw, price, nights
+            # Price: extract per-night effective + original price and nights
+            effective_price, original_price, nights = self._extract_nightly_price(
+                raw.get("price", {})
             )
+
+            # Discounts: capture all types (break_down, unit.discount, long_stay)
+            discounts, discount_amount, discount_pct, combined_original = (
+                self._parse_discounts(raw, effective_price, original_price, nights)
+            )
+
+            # Use combined original if we found discounts
+            if discounts:
+                original_price = combined_original
 
             # Rating
             rating_data = raw.get("rating", {})
@@ -456,10 +601,12 @@ class AirbnbScraper:
             return Listing(
                 listing_id=room_id,
                 title=raw.get("name", ""),
-                price=price,
+                price=effective_price,
                 original_price=original_price,
                 discount_amount=discount_amount,
                 discount_pct=discount_pct,
+                discount_types=[d.type for d in discounts],
+                discounts=discounts,
                 nights=nights,
                 currency="USD",
                 rating=rating,

@@ -76,8 +76,9 @@ def test_extract_nightly_price_unit_amount():
     """_extract_nightly_price should parse unit.amount for 1-night stays."""
     scraper = AirbnbScraper()
     price_data = {"unit": {"amount": 150.0, "qualifier": "for 1 night"}}
-    price, nights = scraper._extract_nightly_price(price_data)
-    assert price == 150.0
+    effective, original, nights = scraper._extract_nightly_price(price_data)
+    assert effective == 150.0
+    assert original == 150.0
     assert nights == 1
 
 
@@ -88,8 +89,8 @@ def test_extract_nightly_price_multi_night():
         "unit": {"amount": 3046.0, "qualifier": "for 6 nights"},
         "break_down": [{"description": "6 nights x $507.60", "amount": 3045.0}],
     }
-    price, nights = scraper._extract_nightly_price(price_data)
-    assert price == 507.6
+    effective, original, nights = scraper._extract_nightly_price(price_data)
+    assert effective == 507.6
     assert nights == 6
 
 
@@ -102,55 +103,35 @@ def test_extract_nightly_price_breakdown_only():
     price_data = {
         "break_down": [{"description": "2 nights x $100.00", "amount": 200.0}],
     }
-    price, nights = scraper._extract_nightly_price(price_data)
-    assert price == 100.0
+    effective, original, nights = scraper._extract_nightly_price(price_data)
+    assert effective == 100.0
     assert nights == 2
 
 
 def test_extract_nightly_price_no_data():
-    """Should return (0.0, 1) when no price data exists."""
+    """Should return (0.0, 0.0, 1) when no price data exists."""
     scraper = AirbnbScraper()
-    price, nights = scraper._extract_nightly_price({})
-    assert price == 0.0
+    effective, original, nights = scraper._extract_nightly_price({})
+    assert effective == 0.0
+    assert original == 0.0
     assert nights == 1
 
 
-def test_parse_discount_empty():
-    """No long_stay_discount should yield zero discount."""
+def test_extract_nightly_price_with_unit_discount():
+    """When unit.discount exists, effective price should be the discount price."""
     scraper = AirbnbScraper()
-    original, amount, pct = scraper._parse_discount({}, 100.0, 3)
-    assert original == 100.0
-    assert amount == 0.0
-    assert pct == 0.0
-
-
-def test_parse_discount_zero_amount():
-    """A zero discount amount should be treated as no discount."""
-    scraper = AirbnbScraper()
-    raw = {"long_stay_discount": {"amount": 0}}
-    original, amount, pct = scraper._parse_discount(raw, 100.0, 3)
-    assert original == 100.0
-    assert amount == 0.0
-    assert pct == 0.0
-
-
-def test_parse_discount_negative_amount():
-    """A negative discount amount (pyairbnb convention) should be parsed."""
-    scraper = AirbnbScraper()
-    raw = {"long_stay_discount": {"amount": -272.0, "currency_symbol": "$.80"}}
-    # effective price $507.60/night, 6 nights, $272 total discount
-    # per-night discount = 272/6 = 45.33
-    # original = 507.60 + 45.33 = 552.93
-    original, amount, pct = scraper._parse_discount(raw, 507.60, 6)
-    assert amount == 272.0
-    assert original > 507.60
-    assert pct > 0
-    # ~8.2% discount
-    assert 7.0 < pct < 10.0
+    price_data = {
+        "unit": {"amount": 202.0, "discount": 174.0, "qualifier": "for 1 night"},
+        "break_down": [{"description": "1 night x $202.00", "amount": 202.0}],
+    }
+    effective, original, nights = scraper._extract_nightly_price(price_data)
+    assert effective == 174.0   # discounted price
+    assert original == 202.0    # listed price
+    assert nights == 1
 
 
 def test_parse_result_with_discount():
-    """_parse_result should populate discount fields from raw data."""
+    """_parse_result should populate discount fields from long_stay_discount."""
     scraper = AirbnbScraper()
     raw = {
         "room_id": 999,
@@ -174,7 +155,8 @@ def test_parse_result_with_discount():
     assert listing.nights == 2
     assert listing.discount_amount == 100.0
     assert listing.original_price > 400.0  # 400 + (100/2) = 450
-    assert listing.discount_pct > 0        # ~11.1%
+    assert listing.discount_pct > 0
+    assert "Long stay discount" in listing.discount_types
 
 
 def test_parse_result_no_discount():
@@ -441,3 +423,148 @@ def test_filter_combined():
     result = scraper._filter_competitors(listings, cf)
     assert len(result) == 1
     assert result[0].listing_id == "1"
+
+
+# --- Discount parsing tests ---
+
+
+def test_parse_discounts_empty():
+    """No discount data should yield empty list."""
+    scraper = AirbnbScraper()
+    discounts, amount, pct, original = scraper._parse_discounts({}, 100.0, 100.0, 1)
+    assert discounts == []
+    assert amount == 0.0
+    assert pct == 0.0
+    assert original == 100.0
+
+
+def test_parse_discounts_last_minute():
+    """Last-minute discount from break_down should be captured."""
+    scraper = AirbnbScraper()
+    raw = {
+        "price": {
+            "break_down": [
+                {"description": "1 night x $202.00", "amount": 202.0},
+                {"description": "Last-minute discount", "amount": -28.0},
+                {"description": "Price after discount", "amount": 174.0},
+            ]
+        }
+    }
+    discounts, amount, pct, original = scraper._parse_discounts(raw, 174.0, 202.0, 1)
+    assert len(discounts) == 1
+    assert discounts[0].type == "Last-minute discount"
+    assert discounts[0].amount == 28.0
+    assert amount == 28.0
+    assert pct > 0
+
+
+def test_parse_discounts_special_offer():
+    """Special offer from break_down should be captured."""
+    scraper = AirbnbScraper()
+    raw = {
+        "price": {
+            "break_down": [
+                {"description": "1 night x $230.00", "amount": 230.0},
+                {"description": "Special offer", "amount": -46.0},
+                {"description": "Price after discount", "amount": 219.0},
+            ]
+        }
+    }
+    discounts, amount, pct, original = scraper._parse_discounts(raw, 219.0, 230.0, 1)
+    assert len(discounts) == 1
+    assert discounts[0].type == "Special offer"
+    assert discounts[0].amount == 46.0
+
+
+def test_parse_discounts_unit_discount():
+    """Unit.discount field should be detected as a price discount."""
+    scraper = AirbnbScraper()
+    raw = {
+        "price": {
+            "unit": {"amount": 200.0, "discount": 150.0, "qualifier": "for 1 night"},
+        }
+    }
+    discounts, amount, pct, original = scraper._parse_discounts(raw, 150.0, 200.0, 1)
+    assert len(discounts) == 1
+    assert discounts[0].type == "Price discount"
+    assert discounts[0].per_night == 50.0
+
+
+def test_parse_discounts_long_stay():
+    """Long stay discount from top-level field should be captured."""
+    scraper = AirbnbScraper()
+    raw = {
+        "long_stay_discount": {"amount": -300.0, "currency_symbol": "$.00"},
+    }
+    discounts, amount, pct, original = scraper._parse_discounts(raw, 400.0, 400.0, 3)
+    assert len(discounts) == 1
+    assert discounts[0].type == "Long stay discount"
+    assert discounts[0].amount == 300.0
+    assert discounts[0].per_night == 100.0
+
+
+def test_parse_discounts_multiple_types():
+    """Multiple discount types should all be captured."""
+    scraper = AirbnbScraper()
+    raw = {
+        "price": {
+            "unit": {"amount": 300.0, "discount": 220.0, "qualifier": "for 2 nights"},
+            "break_down": [
+                {"description": "2 nights x $150.00", "amount": 300.0},
+                {"description": "Last-minute discount", "amount": -50.0},
+                {"description": "Special offer", "amount": -30.0},
+            ],
+        },
+        "long_stay_discount": {"amount": -100.0, "currency_symbol": "$.00"},
+    }
+    discounts, amount, pct, original = scraper._parse_discounts(raw, 220.0, 300.0, 2)
+    types = [d.type for d in discounts]
+    assert "Last-minute discount" in types
+    assert "Special offer" in types
+    assert "Long stay discount" in types
+    assert amount > 0
+
+
+def test_parse_discounts_no_duplicates():
+    """Same discount from break_down and unit.discount should not duplicate."""
+    scraper = AirbnbScraper()
+    raw = {
+        "price": {
+            "unit": {"amount": 200.0, "discount": 172.0, "qualifier": "for 1 night"},
+            "break_down": [
+                {"description": "1 night x $200.00", "amount": 200.0},
+                {"description": "Last-minute discount", "amount": -28.0},
+                {"description": "Price after discount", "amount": 172.0},
+            ],
+        }
+    }
+    discounts, amount, pct, original = scraper._parse_discounts(raw, 172.0, 200.0, 1)
+    # Should only have one entry (Last-minute discount), not a duplicate "Price discount"
+    assert len(discounts) == 1
+    assert discounts[0].type == "Last-minute discount"
+
+
+def test_parse_result_captures_discount_types():
+    """_parse_result should populate discount_types list on Listing."""
+    scraper = AirbnbScraper()
+    raw = {
+        "room_id": 123,
+        "name": "Deal Listing",
+        "title": "Home in Austin",
+        "price": {
+            "unit": {"amount": 200.0, "discount": 150.0, "qualifier": "for 1 night"},
+            "break_down": [
+                {"description": "1 night x $200.00", "amount": 200.0},
+                {"description": "Last-minute discount", "amount": -50.0},
+                {"description": "Price after discount", "amount": 150.0},
+            ],
+        },
+        "rating": {"value": 4.8, "reviewCount": "20"},
+    }
+    listing = scraper._parse_result(raw)
+    assert listing is not None
+    assert listing.price == 150.0          # effective (discounted)
+    assert listing.original_price == 200.0 # listed
+    assert listing.discount_amount > 0
+    assert "Last-minute discount" in listing.discount_types
+    assert len(listing.discounts) >= 1
