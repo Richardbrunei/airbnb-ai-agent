@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Top 20 Competitors — 4BR House · Richardson TX</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0f1729; color: #e0e0e0; }
+  #map { width: 100%; height: 100vh; }
+  .leaflet-popup-content-wrapper { background: #16213e; color: #e0e0e0; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.5); }
+  .leaflet-popup-tip { background: #16213e; }
+  .leaflet-popup-content { margin: 12px 16px; line-height: 1.5; }
+  .popup-title { font-size: 14px; font-weight: 700; margin-bottom: 6px; }
+  .popup-row { font-size: 12px; display: flex; justify-content: space-between; gap: 12px; }
+  .popup-label { color: #888; }
+  .popup-value { font-weight: 600; }
+  .popup-link { color: #74b9ff; text-decoration: none; font-size: 11px; }
+  .popup-link:hover { text-decoration: underline; }
+  .popup-bd { margin-top: 8px; padding-top: 8px; border-top: 1px solid #2a3a5c; }
+  .popup-bd-title { font-size: 10px; color: #7788aa; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 5px; }
+  .bd-row { display: flex; align-items: center; gap: 6px; margin: 3px 0; font-size: 11px; }
+  .bd-label { width: 54px; color: #aabbcc; }
+  .bd-track { flex: 1; height: 8px; background: #0d1526; border-radius: 4px; overflow: hidden; }
+  .bd-fill { display: block; height: 100%; border-radius: 4px; }
+  .bd-val { width: 46px; text-align: right; color: #8899aa; font-size: 10px; white-space: nowrap; }
+  .legend { position: absolute; bottom: 20px; left: 20px; z-index: 1000; background: rgba(15,23,41,0.95); padding: 14px 18px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.4); font-size: 12px; }
+  .legend h3 { font-size: 13px; margin-bottom: 8px; color: #fff; }
+  .legend-row { display: flex; align-items: center; gap: 8px; margin: 3px 0; }
+  .legend-dot { width: 12px; height: 12px; border-radius: 50%; border: 2px solid #fff; }
+  .title-card { position: absolute; top: 20px; left: 20px; z-index: 1000; background: rgba(15,23,41,0.95); padding: 16px 22px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.4); max-width: 380px; }
+  .title-card h1 { font-size: 15px; color: #fff; margin-bottom: 4px; }
+  .title-card p { font-size: 11px; color: #888; }
+  .title-card .our-info { margin-top: 8px; padding-top: 8px; border-top: 1px solid #333; font-size: 12px; }
+  .title-card .our-info strong { color: #e74c3c; }
+  .weights { margin-top: 6px; font-size: 11px; color: #aaa; }
+</style>
+</head>
+<body>
+<div id="map"></div>
+<div class="title-card">
+  <h1>🏠 Top 20 Competitors — 4BR House</h1>
+  <p>280 listings scraped · 10km radius · Richardson TX</p>
+  <div class="our-info">
+    <strong>● Our Property:</strong> 4BR Home · $250/night (imaginary)<br>
+    <span style="color:#888">32.9949, -96.7474 · Richardson, TX 75080</span>
+    <div class="weights">Weights: Location 35% · Type 30% · Bedrooms 30% · Price 5%</div>
+  </div>
+</div>
+<div class="legend">
+  <h3>Competitor Score</h3>
+  <div class="legend-row"><div class="legend-dot" style="background:#e74c3c"></div> Our Property ($250)</div>
+  <div class="legend-row"><div class="legend-dot" style="background:#2ecc71"></div> Top tier (80+)</div>
+  <div class="legend-row"><div class="legend-dot" style="background:#f1c40f"></div> Strong (73–79)</div>
+  <div class="legend-row"><div class="legend-dot" style="background:#e67e22"></div> Moderate (&lt;73)</div>
+</div>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+const OUR = { lat: 32.9949, lng: -96.7474 };
+const COMPETITORS = [
+  {rank:1,score:91.3,bd:{loc:29.5,beds:30.0,price:1.8,ptype:30.0},title:"The Longhorn House, King bed FREE Wi-Fi",price:470,beds:4,type:"Home",rating:4.75,reviews:194,lat:32.96692,lng:-96.75281,dist:"3.2km",url:"https://www.airbnb.com/rooms/53181926"},
+  {rank:2,score:85.0,bd:{loc:25.0,beds:30.0,price:0.0,ptype:30.0},title:"Lovely house in Plano",price:1141,beds:4,type:"Home",rating:null,reviews:0,lat:33.04607,lng:-96.75050,dist:"5.7km",url:"https://www.airbnb.com/rooms/1316887791800340928"},
+  {rank:3,score:84.9,bd:{loc:24.9,beds:30.0,price:0.0,ptype:30.0},title:"Modern Plano oasis with private pool & spa",price:3024,beds:4,type:"Home",rating:null,reviews:0,lat:33.0469,lng:-96.7516,dist:"5.8km",url:"https://www.airbnb.com/rooms/1615295720606535147"},
+  {rank:4,score:81.9,bd:{loc:21.3,beds:30.0,price:0.7,ptype:30.0},title:"Plano Retreat | Pool | Games | Sleeps 10",price:595,beds:4,type:"Home",rating:4.83,reviews:6,lat:33.0653,lng:-96.7545,dist:"7.9km",url:"https://www.airbnb.com/rooms/1669880625982921809"},
+  {rank:5,score:81.5,bd:{loc:19.8,beds:30.0,price:1.7,ptype:30.0},title:"4BR 3.5 bath in heart of city",price:484,beds:4,type:"Home",rating:null,reviews:0,lat:32.92662,lng:-96.79277,dist:"8.7km",url:"https://www.airbnb.com/rooms/1451815615411133323"},
+  {rank:6,score:81.3,bd:{loc:21.3,beds:30.0,price:0.0,ptype:30.0},title:"Backyard Oasis | Pool + Game Room",price:757,beds:4,type:"Home",rating:4.81,reviews:16,lat:33.0653,lng:-96.7545,dist:"7.9km",url:"https://www.airbnb.com/rooms/1660026327237693824"},
+  {rank:7,score:81.2,bd:{loc:21.2,beds:30.0,price:0.0,ptype:30.0},title:"Ultimate 4BR Escape | Pool • Games • Ping Pong",price:1245,beds:4,type:"Home",rating:4.93,reviews:148,lat:32.93156,lng:-96.7092,dist:"7.9km",url:"https://www.airbnb.com/rooms/888670806094501558"},
+  {rank:8,score:80.9,bd:{loc:18.9,beds:30.0,price:2.0,ptype:30.0},title:"Executive Plano home central location",price:456,beds:4,type:"Home",rating:4.73,reviews:173,lat:33.0751,lng:-96.7705,dist:"9.2km",url:"https://www.airbnb.com/rooms/727884275512352014"},
+  {rank:9,score:79.8,bd:{loc:23.1,beds:22.5,price:4.2,ptype:30.0},title:"Private home in Plano",price:296,beds:3,type:"Home",rating:null,reviews:0,lat:33.05171,lng:-96.72103,dist:"6.8km",url:"https://www.airbnb.com/rooms/1557528558921467533"},
+  {rank:10,score:78.7,bd:{loc:15.3,beds:30.0,price:3.4,ptype:30.0},title:"Nice and beautiful house wonderful area",price:345,beds:4,type:"Home",rating:null,reviews:0,lat:33.0949,lng:-96.7285,dist:"11.3km",url:"https://www.airbnb.com/rooms/1745783417608410515"},
+  {rank:11,score:75.5,bd:{loc:19.4,beds:22.5,price:3.6,ptype:30.0},title:"Cozy & Peaceful - Close to CITY, FOOD",price:332,beds:3,type:"Home",rating:4.82,reviews:56,lat:32.91568,lng:-96.76016,dist:"8.9km",url:"https://www.airbnb.com/rooms/581499965370300726"},
+  {rank:12,score:75.4,bd:{loc:13.9,beds:30.0,price:1.5,ptype:30.0},title:"Regent Villa | Theatre | Hot Tub | Games",price:503,beds:4,type:"Home",rating:5.0,reviews:7,lat:33.0849,lng:-96.8197,dist:"12.1km",url:"https://www.airbnb.com/rooms/1711340298974810369"},
+  {rank:13,score:75.1,bd:{loc:21.7,beds:22.5,price:0.9,ptype:30.0},title:"Pool Retreat | Near Legacy West",price:567,beds:3,type:"Home",rating:5.0,reviews:15,lat:33.0577,lng:-96.7153,dist:"7.6km",url:"https://www.airbnb.com/rooms/1685966025628884260"},
+  {rank:14,score:75.1,bd:{loc:21.8,beds:22.5,price:0.8,ptype:30.0},title:"Luxury Pool Oasis | Game Room | Sleeps 15",price:582,beds:3,type:"Home",rating:4.88,reviews:8,lat:33.05680,lng:-96.71425,dist:"7.5km",url:"https://www.airbnb.com/rooms/1682192856937177304"},
+  {rank:15,score:74.9,bd:{loc:18.7,beds:22.5,price:3.7,ptype:30.0},title:"North Dallas Oasis",price:325,beds:3,type:"Home",rating:4.75,reviews:53,lat:32.91758,lng:-96.70966,dist:"9.3km",url:"https://www.airbnb.com/rooms/1270223025719485444"},
+  {rank:16,score:74.5,bd:{loc:18.9,beds:22.5,price:3.1,ptype:30.0},title:"Quiet, cozy, safe, corner lot, prime",price:363,beds:3,type:"Home",rating:null,reviews:0,lat:32.91319,lng:-96.76255,dist:"9.2km",url:"https://www.airbnb.com/rooms/1666203885931968521"},
+  {rank:17,score:74.2,bd:{loc:14.2,beds:30.0,price:0.0,ptype:30.0},title:"Luxury 2-Acre Estate | Private Events",price:1226,beds:4,type:"Home",rating:null,reviews:0,lat:33.05523,lng:-96.64238,dist:"11.9km",url:"https://www.airbnb.com/rooms/1690657623830988807"},
+  {rank:18,score:73.8,bd:{loc:13.5,beds:30.0,price:0.3,ptype:30.0},title:"2 Mi to Galleria Dallas: Group Retreat",price:643,beds:4,type:"Home",rating:4.54,reviews:13,lat:32.9153,lng:-96.8386,dist:"12.3km",url:"https://www.airbnb.com/rooms/1579872366461570375"},
+  {rank:19,score:72.9,bd:{loc:12.5,beds:30.0,price:0.4,ptype:30.0},title:"World Cup Home in Lake Highlands",price:630,beds:4,type:"Home",rating:null,reviews:0,lat:32.88191,lng:-96.71874,dist:"12.8km",url:"https://www.airbnb.com/rooms/1708863342455031346"},
+  {rank:20,score:69.8,bd:{loc:16.3,beds:22.5,price:1.0,ptype:30.0},title:"Hot Tub 🏝 Large Groups 🍿 Centralized",price:557,beds:3,type:"Home",rating:4.78,reviews:442,lat:32.9951,lng:-96.8618,dist:"10.7km",url:"https://www.airbnb.com/rooms/49694843"},
+];
+const map = L.map('map').setView([OUR.lat, OUR.lng], 12);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap', maxZoom: 19 }).addTo(map);
+function markerColor(score) { if (score >= 80) return '#2ecc71'; if (score >= 73) return '#f1c40f'; return '#e67e22'; }
+const BD_PARTS = [
+  { key: 'loc',   label: 'Location', max: 35, color: '#3498db' },
+  { key: 'ptype', label: 'Type',     max: 30, color: '#9b59b6' },
+  { key: 'beds',  label: 'Bedrooms', max: 30, color: '#1abc9c' },
+  { key: 'price', label: 'Price',    max: 5,  color: '#f39c12' },
+];
+function buildBreakdown(bd) {
+  if (!bd) return '';
+  return BD_PARTS.map(p => {
+    const v = bd[p.key] ?? 0;
+    const pct = Math.max(0, Math.min(100, (v / p.max) * 100));
+    return `<div class="bd-row"><span class="bd-label">${p.label}</span><span class="bd-track"><span class="bd-fill" style="width:${pct}%;background:${p.color}"></span></span><span class="bd-val">${v.toFixed(1)}/${p.max}</span></div>`;
+  }).join('');
+}
+function buildPopup(c, isOurs) {
+  if (isOurs) { return `<div class="popup-title">🏠 OUR PROPERTY (Imaginary)</div><div class="popup-row"><span class="popup-label">Type</span><span class="popup-value">4BR Home</span></div><div class="popup-row"><span class="popup-label">Price</span><span class="popup-value">$250/night</span></div><div class="popup-row"><span class="popup-label">Location</span><span class="popup-value">Richardson, TX 75080</span></div>`; }
+  const ratingStr = c.rating ? `⭐${c.rating} (${c.reviews} reviews)` : 'No reviews yet';
+  const color = markerColor(c.score);
+  return `<div class="popup-title"><span style="display:inline-block;width:20px;height:20px;border-radius:50%;background:${color};border:2px solid #fff;text-align:center;line-height:16px;font-size:10px;font-weight:700;color:#000;margin-right:4px;">${c.rank}</span> ${c.title}</div>
+    <div class="popup-row"><span class="popup-label">Price</span><span class="popup-value">$${c.price}/night</span></div>
+    <div class="popup-row"><span class="popup-label">Bedrooms</span><span class="popup-value">${c.beds}</span></div>
+    <div class="popup-row"><span class="popup-label">Type</span><span class="popup-value">${c.type}</span></div>
+    <div class="popup-row"><span class="popup-label">Distance</span><span class="popup-value">${c.dist}</span></div>
+    <div class="popup-row"><span class="popup-label">Rating</span><span class="popup-value">${ratingStr}</span></div>
+    <div class="popup-row"><span class="popup-label">Score</span><span class="popup-value" style="color:${color}">${c.score}/100</span></div>
+    <div class="popup-bd"><div class="popup-bd-title">Score breakdown</div>${buildBreakdown(c.bd)}</div>
+    <div style="margin-top:8px"><a class="popup-link" href="${c.url}" target="_blank">View on Airbnb ↗</a></div>`;
+}
+L.marker([OUR.lat, OUR.lng], { icon: L.divIcon({ className: '', html: `<div style="width:26px;height:26px;border-radius:50%;background:#e74c3c;border:3px solid #fff;box-shadow:0 0 0 4px rgba(231,76,60,0.3),0 2px 8px rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;font-size:12px">🏠</div>`, iconSize: [26,26], iconAnchor: [13,13], popupAnchor: [0,-16] }), zIndexOffset: 1000 }).bindPopup(buildPopup(OUR, true)).addTo(map);
+const offsets = {};
+COMPETITORS.forEach(c => { const key = `${c.lat.toFixed(4)},${c.lng.toFixed(4)}`; if (!offsets[key]) offsets[key] = []; offsets[key].push(c); });
+COMPETITORS.forEach(c => {
+  const key = `${c.lat.toFixed(4)},${c.lng.toFixed(4)}`;
+  const cluster = offsets[key]; let lat = c.lat, lng = c.lng;
+  if (cluster.length > 1) { const idx = cluster.indexOf(c); const angle = (idx / cluster.length) * 2 * Math.PI; lat += Math.cos(angle) * 0.0012; lng += Math.sin(angle) * 0.0012; }
+  const color = markerColor(c.score);
+  L.marker([lat, lng], { icon: L.divIcon({ className: '', html: `<div style="width:22px;height:22px;border-radius:50%;background:${color};border:2px solid #fff;box-shadow:0 1px 6px rgba(0,0,0,0.4);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#000">${c.rank}</div>`, iconSize: [22,22], iconAnchor: [11,11], popupAnchor: [0,-12] }) }).bindPopup(buildPopup(c, false)).addTo(map);
+});
+[1,3,5,10].forEach(r => { L.circle([OUR.lat, OUR.lng], { radius: r*1000, color: '#e74c3c', weight: 1, opacity: 0.3, fillColor: '#e74c3c', fillOpacity: 0.02, dashArray: '5, 8' }).addTo(map); });
+const allCoords = [OUR, ...COMPETITORS].map(l => [l.lat, l.lng]);
+map.fitBounds(L.latLngBounds(allCoords).pad(0.15));
+</script>
+</body>
+</html>

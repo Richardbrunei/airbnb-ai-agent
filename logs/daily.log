@@ -19,3 +19,52 @@
 2026-07-18 14:26:39,265 [INFO] data.storage: Snapshot stored for 2026-07-18
 2026-07-18 14:26:39,267 [INFO] __main__: Daily report generated
 === 2026-07-18 14:26:39 Completed successfully ===
+[2026-07-19 12:00] Missed run detected, executing pipeline...
+Traceback (most recent call last):
+  File "/home/liang/.openclaw/workspace/coding/airbnb-ai-agent/main.py", line 11, in <module>
+    from market_agent.scraper import AirbnbScraper
+  File "/home/liang/.openclaw/workspace/coding/airbnb-ai-agent/market_agent/scraper.py", line 15, in <module>
+    import pyairbnb
+ModuleNotFoundError: No module named 'pyairbnb'
+[2026-08-02 13:51] Missed run detected, executing pipeline...
+Traceback (most recent call last):
+  File "/home/liang/.openclaw/workspace/coding/airbnb-ai-agent/main.py", line 11, in <module>
+    from market_agent.scraper import AirbnbScraper
+  File "/home/liang/.openclaw/workspace/coding/airbnb-ai-agent/market_agent/scraper.py", line 15, in <module>
+    import pyairbnb
+ModuleNotFoundError: No module named 'pyairbnb'
+[2026-08-03 12:58] Missed run detected, executing pipeline...
+Traceback (most recent call last):
+  File "/home/liang/.openclaw/workspace/coding/airbnb-ai-agent/main.py", line 11, in <module>
+    from market_agent.scraper import AirbnbScraper
+  File "/home/liang/.openclaw/workspace/coding/airbnb-ai-agent/market_agent/scraper.py", line 15, in <module>
+    import pyairbnb
+ModuleNotFoundError: No module named 'pyairbnb'
+[2026-08-04 13:52] Missed run detected, executing pipeline...
+Traceback (most recent call last):
+  File "/home/liang/.openclaw/workspace/coding/airbnb-ai-agent/main.py", line 11, in <module>
+    from market_agent.scraper import AirbnbScraper
+  File "/home/liang/.openclaw/workspace/coding/airbnb-ai-agent/market_agent/scraper.py", line 15, in <module>
+    import pyairbnb
+ModuleNotFoundError: No module named 'pyairbnb'
+=== 2026-08-07 08:00:01 Starting Airbnb market monitoring ===
+2026-08-07 08:00:01,934 [INFO] __main__: === Airbnb AI Agent Starting ===
+2026-08-07 08:00:01,934 [INFO] __main__: Starting market monitoring...
+2026-08-07 08:00:02,046 [INFO] data.storage: Database initialized at /home/liang/.openclaw/workspace/coding/airbnb-ai-agent/data/market.db
+2026-08-07 08:00:02,060 [INFO] market_agent.scraper: Loaded 1 search area(s) from config
+2026-08-07 08:00:02,060 [INFO] market_agent.scraper: Searching: checkin=2026-08-14, checkout=2026-08-15, adults=2
+2026-08-07 08:00:02,061 [WARNING] market_agent.scraper: No bbox found for 'City, State', using Austin defaults. Add a 'bbox' field, 'zip_code', or enable 'scan_around_property'.
+2026-08-07 08:00:02,061 [INFO] market_agent.scraper:   Searching bbox (30.18, -97.9, 30.52, -97.65) for 'City, State' (place_type='', price=50-300)
+2026-08-07 08:00:09,582 [INFO] market_agent.scraper:   [Template Area] 280 → 151 listings after competitor filters
+2026-08-07 08:00:09,583 [INFO] market_agent.scraper: Total competitor listings across all areas: 151
+2026-08-07 08:00:09,583 [INFO] __main__: Found 151 competitor listings
+2026-08-07 08:00:09,611 [INFO] data.storage: Stored 151 listings for 2026-08-07
+2026-08-07 08:00:09,623 [INFO] __main__: Stored 151 listings in database
+2026-08-07 08:00:09,625 [INFO] market_agent.price_analysis: Analyzed 151 listings | median: $217 | range: $127-$300
+2026-08-07 08:00:09,625 [INFO] __main__: Price analysis complete
+2026-08-07 08:00:09,635 [INFO] data.storage: Stored 151 competitor scores for 2026-08-07
+2026-08-07 08:00:09,640 [INFO] __main__: Stored 151 competitor scores
+2026-08-07 08:00:09,640 [INFO] reports.daily_report: Report saved to reports/market_report_2026-08-07.txt
+2026-08-07 08:00:09,651 [INFO] data.storage: Snapshot stored for 2026-08-07
+2026-08-07 08:00:09,653 [INFO] __main__: Daily report generated
+=== 2026-08-07 08:00:09 Completed successfully ===

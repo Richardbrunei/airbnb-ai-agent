@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UT Dallas Top 20 Airbnb — Competitor Map</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #1a1a2e; color: #e0e0e0; }
+  #map { width: 100%; height: 100vh; }
+
+  .leaflet-popup-content-wrapper {
+    background: #16213e; color: #e0e0e0; border-radius: 12px; padding: 4px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+  }
+  .leaflet-popup-tip { background: #16213e; }
+  .leaflet-popup-content { margin: 12px 16px; line-height: 1.5; }
+
+  .popup-title { font-size: 15px; font-weight: 700; margin-bottom: 6px; }
+  .popup-row { font-size: 13px; display: flex; justify-content: space-between; gap: 12px; }
+  .popup-label { color: #888; }
+  .popup-value { font-weight: 600; }
+  .popup-link { color: #74b9ff; text-decoration: none; font-size: 12px; }
+  .popup-link:hover { text-decoration: underline; }
+  .score-badge {
+    display: inline-block; padding: 2px 8px; border-radius: 6px; font-size: 12px; font-weight: 700;
+  }
+
+  .legend {
+    position: absolute; bottom: 20px; left: 20px; z-index: 1000;
+    background: rgba(22,33,62,0.95); padding: 14px 18px; border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.4); font-size: 13px;
+  }
+  .legend h3 { font-size: 14px; margin-bottom: 8px; color: #fff; }
+  .legend-row { display: flex; align-items: center; gap: 8px; margin: 4px 0; }
+  .legend-dot { width: 14px; height: 14px; border-radius: 50%; border: 2px solid #fff; }
+  .legend-dot.our { background: #e74c3c; }
+  .legend-dot.high { background: #2ecc71; }
+  .legend-dot.med { background: #f39c12; }
+  .legend-dot.low { background: #95a5a6; }
+
+  .title-card {
+    position: absolute; top: 20px; left: 20px; z-index: 1000;
+    background: rgba(22,33,62,0.95); padding: 16px 22px; border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.4); max-width: 340px;
+  }
+  .title-card h1 { font-size: 16px; color: #fff; margin-bottom: 4px; }
+  .title-card p { font-size: 12px; color: #888; }
+  .title-card .our-info { margin-top: 8px; padding-top: 8px; border-top: 1px solid #333; font-size: 13px; }
+  .title-card .our-info strong { color: #e74c3c; }
+</style>
+</head>
+<body>
+<div id="map"></div>
+
+<div class="title-card">
+  <h1>🗺️ UT Dallas (75080) — Competitor Map</h1>
+  <p>20 Airbnb listings · Scraped Aug 4, 2026 · Real coordinates</p>
+  <div class="our-info">
+    <strong>● Our Property:</strong> #1 Shared room · $46/night<br>
+    <span style="color:#888">Scored against 19 competitors</span>
+  </div>
+</div>
+
+<div class="legend">
+  <h3>Competitor Score</h3>
+  <div class="legend-row"><div class="legend-dot our"></div> Our Property</div>
+  <div class="legend-row"><div class="legend-dot high"></div> High (65–100)</div>
+  <div class="legend-row"><div class="legend-dot med"></div> Medium (55–64)</div>
+  <div class="legend-row"><div class="legend-dot low"></div> Low (&lt;55)</div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+const OUR_PROPERTY = {
+  idx: 1, title: "Shared room", price: 46, bedrooms: 1, property_type: "Shared room",
+  neighborhood: "Richardson", lat: 32.9949, lng: -96.74742, score: null,
+  url: "https://www.airbnb.com/rooms/1609998115491103363"
+};
+
+const COMPETITORS = [
+  {idx:2,title:"Place to stay",price:48,bedrooms:1,property_type:"Place to stay",neighborhood:"Richardson",lat:32.973852,lng:-96.739824,score:79.3,dist:2.5,url:"https://www.airbnb.com/rooms/1534247361734382289"},
+  {idx:3,title:"Room",price:63,bedrooms:0,property_type:"Room",neighborhood:"Richardson",lat:32.957730,lng:-96.766600,score:74.0,dist:4.5,url:"https://www.airbnb.com/rooms/15755977"},
+  {idx:4,title:"Room",price:63,bedrooms:0,property_type:"Room",neighborhood:"Richardson",lat:32.958010,lng:-96.764330,score:74.2,dist:4.4,url:"https://www.airbnb.com/rooms/22683654"},
+  {idx:5,title:"Sonesta Select",price:86,bedrooms:0,property_type:"Hotel",neighborhood:"N/A",lat:32.979600,lng:-96.708100,score:58.2,dist:4.0,url:"https://www.airbnb.com/rooms/1688507113565031343"},
+  {idx:6,title:"Room (Plano)",price:90,bedrooms:0,property_type:"Room",neighborhood:"Plano",lat:32.957730,lng:-96.766600,score:72.4,dist:1.7,url:"https://www.airbnb.com/rooms/546416136970961223"},
+  {idx:7,title:"Hotel",price:91,bedrooms:1,property_type:"Hotel",neighborhood:"Richardson",lat:33.009730,lng:-96.752760,score:63.3,dist:4.0,url:"https://www.airbnb.com/rooms/856745751280489171"},
+  {idx:8,title:"Room",price:91,bedrooms:0,property_type:"Room",neighborhood:"Richardson",lat:32.958010,lng:-96.764330,score:67.5,dist:4.0,url:"https://www.airbnb.com/rooms/1602414120055917517"},
+  {idx:9,title:"Hotel",price:91,bedrooms:1,property_type:"Hotel",neighborhood:"Richardson",lat:32.979500,lng:-96.708100,score:63.3,dist:4.0,url:"https://www.airbnb.com/rooms/856742705606008442"},
+  {idx:10,title:"Sonesta ES Suites",price:94,bedrooms:0,property_type:"Hotel",neighborhood:"N/A",lat:32.979500,lng:-96.708100,score:56.5,dist:4.0,url:"https://www.airbnb.com/rooms/1632681877027057107"},
+  {idx:11,title:"Hotel",price:101,bedrooms:1,property_type:"Hotel",neighborhood:"Richardson",lat:32.979500,lng:-96.708100,score:61.2,dist:4.0,url:"https://www.airbnb.com/rooms/1074709633584445021"},
+  {idx:12,title:"Hotel",price:103,bedrooms:1,property_type:"Hotel",neighborhood:"Richardson",lat:32.981000,lng:-96.708100,score:60.9,dist:4.0,url:"https://www.airbnb.com/rooms/863678529922646230"},
+  {idx:13,title:"Hotel",price:103,bedrooms:1,property_type:"Hotel",neighborhood:"Richardson",lat:32.979500,lng:-96.708100,score:60.9,dist:4.0,url:"https://www.airbnb.com/rooms/863677681480472481"},
+  {idx:14,title:"Hotel",price:103,bedrooms:1,property_type:"Hotel",neighborhood:"Richardson",lat:32.980600,lng:-96.708100,score:60.9,dist:4.0,url:"https://www.airbnb.com/rooms/863680515896404484"},
+  {idx:15,title:"Room",price:103,bedrooms:0,property_type:"Room",neighborhood:"Richardson",lat:32.980600,lng:-96.708100,score:72.2,dist:0.5,url:"https://www.airbnb.com/rooms/1722656637370406535"},
+  {idx:16,title:"Hotel room",price:105,bedrooms:1,property_type:"Hotel room",neighborhood:"Dallas",lat:32.980600,lng:-96.708100,score:53.5,dist:7.5,url:"https://www.airbnb.com/rooms/1543556654241514400"},
+  {idx:17,title:"Hotel room",price:105,bedrooms:1,property_type:"Hotel room",neighborhood:"Dallas",lat:32.928760,lng:-96.761630,score:53.4,dist:7.5,url:"https://www.airbnb.com/rooms/1543556658554637187"},
+  {idx:18,title:"Room",price:106,bedrooms:0,property_type:"Room",neighborhood:"Richardson",lat:32.928450,lng:-96.763750,score:64.5,dist:4.0,url:"https://www.airbnb.com/rooms/1602419293474689547"},
+  {idx:19,title:"Hotel",price:106,bedrooms:1,property_type:"Hotel",neighborhood:"Richardson",lat:32.995100,lng:-96.742400,score:60.2,dist:4.0,url:"https://www.airbnb.com/rooms/856740122989912859"},
+  {idx:20,title:"Hotel",price:106,bedrooms:1,property_type:"Hotel",neighborhood:"Richardson",lat:32.979500,lng:-96.708100,score:60.2,dist:4.0,url:"https://www.airbnb.com/rooms/856738581530896919"}
+];
+
+// ── Init map centered on our property ────────────────────────────────
+const map = L.map('map').setView([OUR_PROPERTY.lat, OUR_PROPERTY.lng], 13);
+
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  attribution: '© OpenStreetMap',
+  maxZoom: 19
+}).addTo(map);
+
+// ── Helper: color by score ──────────────────────────────────────────
+function markerColor(score) {
+  if (score === null) return '#e74c3c'; // our property (red)
+  if (score >= 65) return '#2ecc71';    // high (green)
+  if (score >= 55) return '#f39c12';    // medium (orange)
+  return '#95a5a6';                      // low (gray)
+}
+
+function scoreBadge(score) {
+  if (score === null) return '<span class="score-badge" style="background:#e74c3c;color:#fff">OUR PROPERTY</span>';
+  const c = markerColor(score);
+  return `<span class="score-badge" style="background:${c};color:#000">${score.toFixed(1)}</span>`;
+}
+
+function buildPopup(l) {
+  const isOurs = l.score === null || l.idx === 1;
+  return `
+    <div class="popup-title">${isOurs ? '🏠 ' : ''}#${l.idx} — ${l.title}</div>
+    <div class="popup-row"><span class="popup-label">Price</span><span class="popup-value">$${l.price}/night</span></div>
+    <div class="popup-row"><span class="popup-label">Bedrooms</span><span class="popup-value">${l.bedrooms}</span></div>
+    <div class="popup-row"><span class="popup-label">Type</span><span class="popup-value">${l.property_type}</span></div>
+    <div class="popup-row"><span class="popup-label">Neighborhood</span><span class="popup-value">${l.neighborhood}</span></div>
+    ${l.score !== null ? `<div class="popup-row"><span class="popup-label">Distance</span><span class="popup-value">${l.dist}km</span></div>` : ''}
+    <div class="popup-row"><span class="popup-label">Score</span>${scoreBadge(l.score)}</div>
+    <div style="margin-top:8px"><a class="popup-link" href="${l.url}" target="_blank">View on Airbnb ↗</a></div>
+  `;
+}
+
+// ── Our property marker (larger, pulsing) ───────────────────────────
+const ourIcon = L.divIcon({
+  className: '',
+  html: `<div style="
+    width: 22px; height: 22px; border-radius: 50%;
+    background: #e74c3c; border: 3px solid #fff;
+    box-shadow: 0 0 0 3px rgba(231,76,60,0.4), 0 2px 8px rgba(0,0,0,0.4);
+  "></div>`,
+  iconSize: [22, 22], iconAnchor: [11, 11], popupAnchor: [0, -14]
+});
+
+L.marker([OUR_PROPERTY.lat, OUR_PROPERTY.lng], { icon: ourIcon, zIndexOffset: 1000 })
+  .bindPopup(buildPopup(OUR_PROPERTY))
+  .addTo(map);
+
+// ── Competitor markers ──────────────────────────────────────────────
+// Cluster nearby markers slightly to reduce overlap
+const offsets = {};
+COMPETITORS.forEach((c, i) => {
+  const key = `${c.lat.toFixed(4)},${c.lng.toFixed(4)}`;
+  if (!offsets[key]) offsets[key] = [];
+  offsets[key].push(c);
+});
+
+COMPETITORS.forEach((c) => {
+  const key = `${c.lat.toFixed(4)},${c.lng.toFixed(4)}`;
+  const cluster = offsets[key];
+  let lat = c.lat, lng = c.lng;
+
+  // Jitter overlapping markers
+  if (cluster.length > 1) {
+    const idxInCluster = cluster.indexOf(c);
+    const angle = (idxInCluster / cluster.length) * 2 * Math.PI;
+    const jitter = 0.0008;
+    lat += Math.cos(angle) * jitter;
+    lng += Math.sin(angle) * jitter;
+  }
+
+  const color = markerColor(c.score);
+  const icon = L.divIcon({
+    className: '',
+    html: `<div style="
+      width: 16px; height: 16px; border-radius: 50%;
+      background: ${color}; border: 2px solid #fff;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.4);
+    "></div>`,
+    iconSize: [16, 16], iconAnchor: [8, 8], popupAnchor: [0, -12]
+  });
+
+  L.marker([lat, lng], { icon })
+    .bindPopup(buildPopup(c))
+    .addTo(map);
+});
+
+// ── Draw radius circles (1km, 3km, 5km) ─────────────────────────────
+[1, 3, 5].forEach(r => {
+  L.circle([OUR_PROPERTY.lat, OUR_PROPERTY.lng], {
+    radius: r * 1000,
+    color: '#e74c3c',
+    weight: 1,
+    opacity: 0.4,
+    fillColor: '#e74c3c',
+    fillOpacity: 0.03,
+    dashArray: '5, 8'
+  }).addTo(map);
+});
+
+// ── Fit bounds to show all markers ──────────────────────────────────
+const allCoords = [OUR_PROPERTY, ...COMPETITORS].map(l => [l.lat, l.lng]);
+map.fitBounds(L.latLngBounds(allCoords).pad(0.15));
+</script>
+</body>
+</html>

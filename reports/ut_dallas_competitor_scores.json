@@ -1,0 +1,345 @@
+{
+  "our_property": {
+    "idx": 1,
+    "room_id": "1609998115491103363",
+    "title": "Shared room",
+    "price": 46.0,
+    "bedrooms": 1,
+    "bathrooms": 0.0,
+    "guests": 1,
+    "rating": null,
+    "reviews": 0,
+    "is_superhost": false,
+    "is_guest_favorite": false,
+    "neighborhood": "Richardson",
+    "url": "https://www.airbnb.com/rooms/1609998115491103363",
+    "property_type": "Shared room",
+    "lat": 32.9949,
+    "lng": -96.74742
+  },
+  "competitors": [
+    {
+      "idx": 2,
+      "title": "Place to stay",
+      "price": 48.0,
+      "bedrooms": 1,
+      "property_type": "Place to stay",
+      "lat": 32.97385194473674,
+      "lng": -96.73982375570958,
+      "distance_km": 2.45,
+      "score": 79.3,
+      "breakdown": {
+        "location": 35.1,
+        "bedrooms": 25.0,
+        "price": 19.1,
+        "property_type": 0.0
+      }
+    },
+    {
+      "idx": 4,
+      "title": "Room",
+      "price": 63.0,
+      "bedrooms": 0,
+      "property_type": "Room",
+      "lat": 32.95801,
+      "lng": -96.76433,
+      "distance_km": 4.39,
+      "score": 74.2,
+      "breakdown": {
+        "location": 31.2,
+        "bedrooms": 18.8,
+        "price": 13.7,
+        "property_type": 10.5
+      }
+    },
+    {
+      "idx": 3,
+      "title": "Room",
+      "price": 63.0,
+      "bedrooms": 0,
+      "property_type": "Room",
+      "lat": 32.95773,
+      "lng": -96.7666,
+      "distance_km": 4.5,
+      "score": 74.0,
+      "breakdown": {
+        "location": 31.0,
+        "bedrooms": 18.8,
+        "price": 13.7,
+        "property_type": 10.5
+      }
+    },
+    {
+      "idx": 6,
+      "title": "Room",
+      "price": 90.0,
+      "bedrooms": 0,
+      "property_type": "Room",
+      "lat": 33.00973,
+      "lng": -96.75276,
+      "distance_km": 1.72,
+      "score": 72.4,
+      "breakdown": {
+        "location": 36.6,
+        "bedrooms": 18.8,
+        "price": 6.6,
+        "property_type": 10.5
+      }
+    },
+    {
+      "idx": 15,
+      "title": "Room",
+      "price": 103.0,
+      "bedrooms": 0,
+      "property_type": "Room",
+      "lat": 32.9951,
+      "lng": -96.7424,
+      "distance_km": 0.47,
+      "score": 72.2,
+      "breakdown": {
+        "location": 39.1,
+        "bedrooms": 18.8,
+        "price": 3.9,
+        "property_type": 10.5
+      }
+    },
+    {
+      "idx": 8,
+      "title": "Room",
+      "price": 91.0,
+      "bedrooms": 0,
+      "property_type": "Room",
+      "lat": 32.9795,
+      "lng": -96.7081,
+      "distance_km": 4.05,
+      "score": 67.5,
+      "breakdown": {
+        "location": 31.9,
+        "bedrooms": 18.8,
+        "price": 6.4,
+        "property_type": 10.5
+      }
+    },
+    {
+      "idx": 18,
+      "title": "Room",
+      "price": 106.0,
+      "bedrooms": 0,
+      "property_type": "Room",
+      "lat": 32.9795,
+      "lng": -96.7081,
+      "distance_km": 4.05,
+      "score": 64.5,
+      "breakdown": {
+        "location": 31.9,
+        "bedrooms": 18.8,
+        "price": 3.3,
+        "property_type": 10.5
+      }
+    },
+    {
+      "idx": 7,
+      "title": "Hotel",
+      "price": 91.0,
+      "bedrooms": 1,
+      "property_type": "Hotel",
+      "lat": 32.9795,
+      "lng": -96.7081,
+      "distance_km": 4.05,
+      "score": 63.3,
+      "breakdown": {
+        "location": 31.9,
+        "bedrooms": 25.0,
+        "price": 6.4,
+        "property_type": 0.0
+      }
+    },
+    {
+      "idx": 9,
+      "title": "Hotel",
+      "price": 91.0,
+      "bedrooms": 1,
+      "property_type": "Hotel",
+      "lat": 32.9795,
+      "lng": -96.7081,
+      "distance_km": 4.05,
+      "score": 63.3,
+      "breakdown": {
+        "location": 31.9,
+        "bedrooms": 25.0,
+        "price": 6.4,
+        "property_type": 0.0
+      }
+    },
+    {
+      "idx": 11,
+      "title": "Hotel",
+      "price": 101.0,
+      "bedrooms": 1,
+      "property_type": "Hotel",
+      "lat": 32.9795,
+      "lng": -96.7081,
+      "distance_km": 4.05,
+      "score": 61.2,
+      "breakdown": {
+        "location": 31.9,
+        "bedrooms": 25.0,
+        "price": 4.3,
+        "property_type": 0.0
+      }
+    },
+    {
+      "idx": 12,
+      "title": "Hotel",
+      "price": 103.0,
+      "bedrooms": 1,
+      "property_type": "Hotel",
+      "lat": 32.9806,
+      "lng": -96.7081,
+      "distance_km": 4.0,
+      "score": 60.9,
+      "breakdown": {
+        "location": 32.0,
+        "bedrooms": 25.0,
+        "price": 3.9,
+        "property_type": 0.0
+      }
+    },
+    {
+      "idx": 13,
+      "title": "Hotel",
+      "price": 103.0,
+      "bedrooms": 1,
+      "property_type": "Hotel",
+      "lat": 32.9806,
+      "lng": -96.7081,
+      "distance_km": 4.0,
+      "score": 60.9,
+      "breakdown": {
+        "location": 32.0,
+        "bedrooms": 25.0,
+        "price": 3.9,
+        "property_type": 0.0
+      }
+    },
+    {
+      "idx": 14,
+      "title": "Hotel",
+      "price": 103.0,
+      "bedrooms": 1,
+      "property_type": "Hotel",
+      "lat": 32.9806,
+      "lng": -96.7081,
+      "distance_km": 4.0,
+      "score": 60.9,
+      "breakdown": {
+        "location": 32.0,
+        "bedrooms": 25.0,
+        "price": 3.9,
+        "property_type": 0.0
+      }
+    },
+    {
+      "idx": 19,
+      "title": "Hotel",
+      "price": 106.0,
+      "bedrooms": 1,
+      "property_type": "Hotel",
+      "lat": 32.9795,
+      "lng": -96.7081,
+      "distance_km": 4.05,
+      "score": 60.2,
+      "breakdown": {
+        "location": 31.9,
+        "bedrooms": 25.0,
+        "price": 3.3,
+        "property_type": 0.0
+      }
+    },
+    {
+      "idx": 20,
+      "title": "Hotel",
+      "price": 106.0,
+      "bedrooms": 1,
+      "property_type": "Hotel",
+      "lat": 32.9795,
+      "lng": -96.7081,
+      "distance_km": 4.05,
+      "score": 60.2,
+      "breakdown": {
+        "location": 31.9,
+        "bedrooms": 25.0,
+        "price": 3.3,
+        "property_type": 0.0
+      }
+    },
+    {
+      "idx": 5,
+      "title": "Sonesta Select Dallas Richardson",
+      "price": 86.0,
+      "bedrooms": 0,
+      "property_type": "Sonesta Select Dallas Richardson",
+      "lat": 32.9796,
+      "lng": -96.7081,
+      "distance_km": 4.04,
+      "score": 58.2,
+      "breakdown": {
+        "location": 31.9,
+        "bedrooms": 18.8,
+        "price": 7.5,
+        "property_type": 0.0
+      }
+    },
+    {
+      "idx": 10,
+      "title": "Sonesta ES Suites Dallas Richardson",
+      "price": 94.0,
+      "bedrooms": 0,
+      "property_type": "Sonesta ES Suites Dallas Richardson",
+      "lat": 32.981,
+      "lng": -96.7081,
+      "distance_km": 3.98,
+      "score": 56.5,
+      "breakdown": {
+        "location": 32.0,
+        "bedrooms": 18.8,
+        "price": 5.7,
+        "property_type": 0.0
+      }
+    },
+    {
+      "idx": 16,
+      "title": "Hotel room",
+      "price": 105.0,
+      "bedrooms": 1,
+      "property_type": "Hotel room",
+      "lat": 32.92876,
+      "lng": -96.76163,
+      "distance_km": 7.47,
+      "score": 53.5,
+      "breakdown": {
+        "location": 25.1,
+        "bedrooms": 25.0,
+        "price": 3.5,
+        "property_type": 0.0
+      }
+    },
+    {
+      "idx": 17,
+      "title": "Hotel room",
+      "price": 105.0,
+      "bedrooms": 1,
+      "property_type": "Hotel room",
+      "lat": 32.92845,
+      "lng": -96.76375,
+      "distance_km": 7.54,
+      "score": 53.4,
+      "breakdown": {
+        "location": 24.9,
+        "bedrooms": 25.0,
+        "price": 3.5,
+        "property_type": 0.0
+      }
+    }
+  ]
+}

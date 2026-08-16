@@ -1,0 +1,438 @@
+{
+  "our_property": {
+    "lat": 32.9949,
+    "lng": -96.7474,
+    "bedrooms": 4,
+    "price": 250,
+    "property_type": "Home"
+  },
+  "weights": {
+    "location": 0.35,
+    "bedrooms": 0.3,
+    "property_type": 0.3,
+    "price": 0.05
+  },
+  "total_scored": 280,
+  "top20": [
+    {
+      "rank": 1,
+      "score": 91.3,
+      "breakdown": {
+        "location": 29.5,
+        "bedrooms": 30.0,
+        "price": 1.8,
+        "property_type": 30.0
+      },
+      "listing_id": "53181926",
+      "title": "The Longhorn House , King bed FREE Wi-Fi & parking",
+      "price": 470.0,
+      "bedrooms": 4,
+      "property_type": "Home",
+      "rating": 4.75,
+      "reviews": 194,
+      "lat": 32.96692,
+      "lng": -96.75281,
+      "url": "https://www.airbnb.com/rooms/53181926",
+      "distance_km": "3.2km"
+    },
+    {
+      "rank": 2,
+      "score": 85.0,
+      "breakdown": {
+        "location": 25.0,
+        "bedrooms": 30.0,
+        "price": 0.0,
+        "property_type": 30.0
+      },
+      "listing_id": "1316887791800340928",
+      "title": "Lovely house in Plano",
+      "price": 1141.18,
+      "bedrooms": 4,
+      "property_type": "Home",
+      "rating": null,
+      "reviews": 0,
+      "lat": 33.04607019761725,
+      "lng": -96.75049637955803,
+      "url": "https://www.airbnb.com/rooms/1316887791800340928",
+      "distance_km": "5.7km"
+    },
+    {
+      "rank": 3,
+      "score": 84.9,
+      "breakdown": {
+        "location": 24.9,
+        "bedrooms": 30.0,
+        "price": 0.0,
+        "property_type": 30.0
+      },
+      "listing_id": "1615295720606535147",
+      "title": "Modern Plano oasis with private pool & spa",
+      "price": 3024.12,
+      "bedrooms": 4,
+      "property_type": "Home",
+      "rating": null,
+      "reviews": 0,
+      "lat": 33.0469,
+      "lng": -96.7516,
+      "url": "https://www.airbnb.com/rooms/1615295720606535147",
+      "distance_km": "5.8km"
+    },
+    {
+      "rank": 4,
+      "score": 81.9,
+      "breakdown": {
+        "location": 21.3,
+        "bedrooms": 30.0,
+        "price": 0.7,
+        "property_type": 30.0
+      },
+      "listing_id": "1669880625982921809",
+      "title": "Plano Retreat | Pool |Games | Sleeps 10|5 Car Park",
+      "price": 595.0,
+      "bedrooms": 4,
+      "property_type": "Home",
+      "rating": 4.83,
+      "reviews": 6,
+      "lat": 33.0653,
+      "lng": -96.7545,
+      "url": "https://www.airbnb.com/rooms/1669880625982921809",
+      "distance_km": "7.9km"
+    },
+    {
+      "rank": 5,
+      "score": 81.5,
+      "breakdown": {
+        "location": 19.8,
+        "bedrooms": 30.0,
+        "price": 1.7,
+        "property_type": 30.0
+      },
+      "listing_id": "1451815615411133323",
+      "title": "4 Bedroom 3 1/2 bath right in the heart of city",
+      "price": 484.0,
+      "bedrooms": 4,
+      "property_type": "Home",
+      "rating": null,
+      "reviews": 0,
+      "lat": 32.92662,
+      "lng": -96.79277,
+      "url": "https://www.airbnb.com/rooms/1451815615411133323",
+      "distance_km": "8.7km"
+    },
+    {
+      "rank": 6,
+      "score": 81.3,
+      "breakdown": {
+        "location": 21.3,
+        "bedrooms": 30.0,
+        "price": 0.0,
+        "property_type": 30.0
+      },
+      "listing_id": "1660026327237693824",
+      "title": "Backyard Oasis |Pool + Game Room|Near Cowboys HQ",
+      "price": 757.0,
+      "bedrooms": 4,
+      "property_type": "Home",
+      "rating": 4.81,
+      "reviews": 16,
+      "lat": 33.0653,
+      "lng": -96.7545,
+      "url": "https://www.airbnb.com/rooms/1660026327237693824",
+      "distance_km": "7.9km"
+    },
+    {
+      "rank": 7,
+      "score": 81.2,
+      "breakdown": {
+        "location": 21.2,
+        "bedrooms": 30.0,
+        "price": 0.0,
+        "property_type": 30.0
+      },
+      "listing_id": "888670806094501558",
+      "title": "Ultimate 4BR Escape | Pool \u2022 Games \u2022 Ping Ping",
+      "price": 1245.0,
+      "bedrooms": 4,
+      "property_type": "Home",
+      "rating": 4.93,
+      "reviews": 148,
+      "lat": 32.93156,
+      "lng": -96.7092,
+      "url": "https://www.airbnb.com/rooms/888670806094501558",
+      "distance_km": "7.9km"
+    },
+    {
+      "rank": 8,
+      "score": 80.9,
+      "breakdown": {
+        "location": 18.9,
+        "bedrooms": 30.0,
+        "price": 2.0,
+        "property_type": 30.0
+      },
+      "listing_id": "727884275512352014",
+      "title": "Executive Plano home central location w/ extras",
+      "price": 456.0,
+      "bedrooms": 4,
+      "property_type": "Home",
+      "rating": 4.73,
+      "reviews": 173,
+      "lat": 33.0751,
+      "lng": -96.7705,
+      "url": "https://www.airbnb.com/rooms/727884275512352014",
+      "distance_km": "9.2km"
+    },
+    {
+      "rank": 9,
+      "score": 79.8,
+      "breakdown": {
+        "location": 23.1,
+        "bedrooms": 22.5,
+        "price": 4.2,
+        "property_type": 30.0
+      },
+      "listing_id": "1557528558921467533",
+      "title": "Private home in Plano",
+      "price": 296.0,
+      "bedrooms": 3,
+      "property_type": "Home",
+      "rating": null,
+      "reviews": 0,
+      "lat": 33.05171124421458,
+      "lng": -96.72103160643108,
+      "url": "https://www.airbnb.com/rooms/1557528558921467533",
+      "distance_km": "6.8km"
+    },
+    {
+      "rank": 10,
+      "score": 78.7,
+      "breakdown": {
+        "location": 15.3,
+        "bedrooms": 30.0,
+        "price": 3.4,
+        "property_type": 30.0
+      },
+      "listing_id": "1745783417608410515",
+      "title": "Nice and beautiful house wonderful area",
+      "price": 345.0,
+      "bedrooms": 4,
+      "property_type": "Home",
+      "rating": null,
+      "reviews": 0,
+      "lat": 33.0949,
+      "lng": -96.7285,
+      "url": "https://www.airbnb.com/rooms/1745783417608410515",
+      "distance_km": "11.3km"
+    },
+    {
+      "rank": 11,
+      "score": 75.5,
+      "breakdown": {
+        "location": 19.4,
+        "bedrooms": 22.5,
+        "price": 3.6,
+        "property_type": 30.0
+      },
+      "listing_id": "581499965370300726",
+      "title": "Cozy & Peaceful- Close to CITY, FOOD, TRAIN, SHOPS",
+      "price": 332.0,
+      "bedrooms": 3,
+      "property_type": "Home",
+      "rating": 4.82,
+      "reviews": 56,
+      "lat": 32.91568,
+      "lng": -96.76016,
+      "url": "https://www.airbnb.com/rooms/581499965370300726",
+      "distance_km": "8.9km"
+    },
+    {
+      "rank": 12,
+      "score": 75.4,
+      "breakdown": {
+        "location": 13.9,
+        "bedrooms": 30.0,
+        "price": 1.5,
+        "property_type": 30.0
+      },
+      "listing_id": "1711340298974810369",
+      "title": "Regent Villa | Theatre | Hot Tub | Game Room | BBQ",
+      "price": 503.0,
+      "bedrooms": 4,
+      "property_type": "Home",
+      "rating": 5.0,
+      "reviews": 7,
+      "lat": 33.0849,
+      "lng": -96.8197,
+      "url": "https://www.airbnb.com/rooms/1711340298974810369",
+      "distance_km": "12.1km"
+    },
+    {
+      "rank": 13,
+      "score": 75.1,
+      "breakdown": {
+        "location": 21.7,
+        "bedrooms": 22.5,
+        "price": 0.9,
+        "property_type": 30.0
+      },
+      "listing_id": "1685966025628884260",
+      "title": "Pool Retreat | Near Legacy West | Sleeps 15",
+      "price": 567.0,
+      "bedrooms": 3,
+      "property_type": "Home",
+      "rating": 5.0,
+      "reviews": 15,
+      "lat": 33.0577,
+      "lng": -96.7153,
+      "url": "https://www.airbnb.com/rooms/1685966025628884260",
+      "distance_km": "7.6km"
+    },
+    {
+      "rank": 14,
+      "score": 75.1,
+      "breakdown": {
+        "location": 21.8,
+        "bedrooms": 22.5,
+        "price": 0.8,
+        "property_type": 30.0
+      },
+      "listing_id": "1682192856937177304",
+      "title": "Luxury Pool Oasis | Game Room | Sleeps 15 | Plano",
+      "price": 582.0,
+      "bedrooms": 3,
+      "property_type": "Home",
+      "rating": 4.88,
+      "reviews": 8,
+      "lat": 33.056803683800744,
+      "lng": -96.71424784409825,
+      "url": "https://www.airbnb.com/rooms/1682192856937177304",
+      "distance_km": "7.5km"
+    },
+    {
+      "rank": 15,
+      "score": 74.9,
+      "breakdown": {
+        "location": 18.7,
+        "bedrooms": 22.5,
+        "price": 3.7,
+        "property_type": 30.0
+      },
+      "listing_id": "1270223025719485444",
+      "title": "North Dallas Oasis",
+      "price": 325.24,
+      "bedrooms": 3,
+      "property_type": "Home",
+      "rating": 4.75,
+      "reviews": 53,
+      "lat": 32.91758,
+      "lng": -96.70966,
+      "url": "https://www.airbnb.com/rooms/1270223025719485444",
+      "distance_km": "9.3km"
+    },
+    {
+      "rank": 16,
+      "score": 74.5,
+      "breakdown": {
+        "location": 18.9,
+        "bedrooms": 22.5,
+        "price": 3.1,
+        "property_type": 30.0
+      },
+      "listing_id": "1666203885931968521",
+      "title": "Quiet, cozy, safe, corner lot, prime location!",
+      "price": 362.89,
+      "bedrooms": 3,
+      "property_type": "Home",
+      "rating": null,
+      "reviews": 0,
+      "lat": 32.91319,
+      "lng": -96.76255,
+      "url": "https://www.airbnb.com/rooms/1666203885931968521",
+      "distance_km": "9.2km"
+    },
+    {
+      "rank": 17,
+      "score": 74.2,
+      "breakdown": {
+        "location": 14.2,
+        "bedrooms": 30.0,
+        "price": 0.0,
+        "property_type": 30.0
+      },
+      "listing_id": "1690657623830988807",
+      "title": "Luxury 2-Acre Estate |Private Events & Retreat",
+      "price": 1225.8,
+      "bedrooms": 4,
+      "property_type": "Home",
+      "rating": null,
+      "reviews": 0,
+      "lat": 33.05523,
+      "lng": -96.64238,
+      "url": "https://www.airbnb.com/rooms/1690657623830988807",
+      "distance_km": "11.9km"
+    },
+    {
+      "rank": 18,
+      "score": 73.8,
+      "breakdown": {
+        "location": 13.5,
+        "bedrooms": 30.0,
+        "price": 0.3,
+        "property_type": 30.0
+      },
+      "listing_id": "1579872366461570375",
+      "title": "2 Mi to Galleria Dallas: Group Retreat w/ Yard!",
+      "price": 643.0,
+      "bedrooms": 4,
+      "property_type": "Home",
+      "rating": 4.54,
+      "reviews": 13,
+      "lat": 32.9153,
+      "lng": -96.8386,
+      "url": "https://www.airbnb.com/rooms/1579872366461570375",
+      "distance_km": "12.3km"
+    },
+    {
+      "rank": 19,
+      "score": 72.9,
+      "breakdown": {
+        "location": 12.5,
+        "bedrooms": 30.0,
+        "price": 0.4,
+        "property_type": 30.0
+      },
+      "listing_id": "1708863342455031346",
+      "title": "World Cup Home in Lake Highlands Family Retreat",
+      "price": 629.93,
+      "bedrooms": 4,
+      "property_type": "Home",
+      "rating": null,
+      "reviews": 0,
+      "lat": 32.88191,
+      "lng": -96.71874,
+      "url": "https://www.airbnb.com/rooms/1708863342455031346",
+      "distance_km": "12.8km"
+    },
+    {
+      "rank": 20,
+      "score": 69.8,
+      "breakdown": {
+        "location": 16.3,
+        "bedrooms": 22.5,
+        "price": 1.0,
+        "property_type": 30.0
+      },
+      "listing_id": "49694843",
+      "title": "Hot Tub \ud83c\udfdd~ Large Groups \ud83c\udf7f~ Centralized  Location \ud83d\udccd",
+      "price": 557.0,
+      "bedrooms": 3,
+      "property_type": "Home",
+      "rating": 4.78,
+      "reviews": 442,
+      "lat": 32.9951,
+      "lng": -96.8618,
+      "url": "https://www.airbnb.com/rooms/49694843",
+      "distance_km": "10.7km"
+    }
+  ]
+}
