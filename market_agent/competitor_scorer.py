@@ -41,10 +41,10 @@ class CompetitorScorer:
     Scores listings by how directly they compete with a reference property.
 
     Weights (sum to 1.0):
-        location    — 0.40  (distance via haversine)
-        bedrooms    — 0.25  (similarity in bedroom count)
-        price       — 0.20  (similarity in nightly rate)
-        prop_type   — 0.15  (exact match vs different category)
+        location    — 0.35  (distance via haversine)
+        bedrooms    — 0.30  (similarity in bedroom count)
+        prop_type   — 0.30  (exact match vs different category)
+        price       — 0.05  (similarity in nightly rate)
 
     Override weights via the constructor if needed.
     """
@@ -60,10 +60,10 @@ class CompetitorScorer:
 
         # Default weights — location dominates
         self.weights = {
-            "location": 0.40,
-            "bedrooms": 0.25,
-            "price": 0.20,
-            "property_type": 0.15,
+            "location": 0.35,
+            "bedrooms": 0.30,
+            "property_type": 0.30,
+            "price": 0.05,
         }
         if weights:
             self.weights.update(weights)

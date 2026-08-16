@@ -251,6 +251,150 @@ def test_get_bbox_known_location():
     assert sw_lng < ne_lng
 
 
+def test_bbox_from_center_basic():
+    """_bbox_from_center should produce a symmetric box around the center."""
+    bbox = AirbnbScraper._bbox_from_center(30.0, -97.0, 10.0)
+    sw_lat, sw_lng, ne_lat, ne_lng = bbox
+    # Center should be midpoint
+    assert abs((sw_lat + ne_lat) / 2 - 30.0) < 0.001
+    assert abs((sw_lng + ne_lng) / 2 - -97.0) < 0.001
+    # Box should have positive extent
+    assert ne_lat > sw_lat
+    assert ne_lng > sw_lng
+
+
+def test_bbox_from_center_radius():
+    """Larger radius should produce larger box."""
+    small = AirbnbScraper._bbox_from_center(30.0, -97.0, 5.0)
+    large = AirbnbScraper._bbox_from_center(30.0, -97.0, 20.0)
+    small_h = small[2] - small[0]  # height
+    large_h = large[2] - large[0]
+    assert large_h > small_h
+
+
+def test_bbox_from_center_lng_shrink_at_poles():
+    """Longitude span should be wider at high latitudes (same km → more degrees)."""
+    equator = AirbnbScraper._bbox_from_center(0.0, 0.0, 10.0)
+    polar = AirbnbScraper._bbox_from_center(80.0, 0.0, 10.0)
+    eq_w = equator[3] - equator[1]  # lng width in degrees
+    polar_w = polar[3] - polar[1]
+    assert polar_w > eq_w
+
+
+def test_get_bbox_scan_around_property():
+    """scan_around_property should generate bbox from lat/lng + radius."""
+    scraper = AirbnbScraper()
+    area = {
+        "scan_around_property": True,
+        "radius_km": 8,
+        "property_profile": {"lat": 30.27, "lng": -97.74},
+    }
+    bbox = scraper._get_bbox(area, "Unknown Place")
+    sw_lat, sw_lng, ne_lat, ne_lng = bbox
+    # Center should be near the property coordinates
+    assert abs((sw_lat + ne_lat) / 2 - 30.27) < 0.01
+    assert abs((sw_lng + ne_lng) / 2 - -97.74) < 0.01
+
+
+def test_get_bbox_scan_around_disabled_falls_through():
+    """scan_around_property=False should fall through to known/default bbox."""
+    scraper = AirbnbScraper()
+    area = {
+        "scan_around_property": False,
+        "radius_km": 8,
+        "property_profile": {"lat": 30.27, "lng": -97.74},
+    }
+    bbox = scraper._get_bbox(area, "Austin, TX")
+    # Should match Austin default, not the computed scan-around box
+    scan_bbox = AirbnbScraper._bbox_from_center(30.27, -97.74, 8)
+    assert bbox != scan_bbox
+    assert bbox == (30.18, -97.90, 30.52, -97.65)  # Austin default
+
+
+def test_get_bbox_scan_around_missing_coords():
+    """scan_around_property=True without coords should fall through gracefully."""
+    scraper = AirbnbScraper()
+    area = {
+        "scan_around_property": True,
+        "radius_km": 8,
+        "property_profile": {},  # no lat/lng
+    }
+    bbox = scraper._get_bbox(area, "Austin, TX")
+    # Should fall through to Austin default
+    assert len(bbox) == 4
+
+
+def test_get_bbox_zip_code(monkeypatch):
+    """zip_code should geocode and generate a bbox around the result."""
+    scraper = AirbnbScraper()
+    # Mock _geocode_zip to avoid network call
+    monkeypatch.setattr(
+        AirbnbScraper, "_geocode_zip",
+        staticmethod(lambda z: (30.27, -97.74))
+    )
+    area = {
+        "zip_code": "78701",
+        "radius_km": 6,
+    }
+    bbox = scraper._get_bbox(area, "Unknown")
+    sw_lat, sw_lng, ne_lat, ne_lng = bbox
+    # Center should be near the mocked coords
+    assert abs((sw_lat + ne_lat) / 2 - 30.27) < 0.01
+    assert abs((sw_lng + ne_lng) / 2 - -97.74) < 0.01
+
+
+def test_get_bbox_zip_code_overrides_scan_around(monkeypatch):
+    """zip_code should take priority over scan_around_property."""
+    scraper = AirbnbScraper()
+    monkeypatch.setattr(
+        AirbnbScraper, "_geocode_zip",
+        staticmethod(lambda z: (29.95, -95.37))  # Houston coords
+    )
+    area = {
+        "zip_code": "77001",
+        "scan_around_property": True,
+        "radius_km": 5,
+        "property_profile": {"lat": 30.27, "lng": -97.74},  # Austin — should NOT be used
+    }
+    bbox = scraper._get_bbox(area, "Unknown")
+    sw_lat, sw_lng, ne_lat, ne_lng = bbox
+    # Center should be Houston, not Austin
+    assert abs((sw_lat + ne_lat) / 2 - 29.95) < 0.01
+    assert abs((sw_lng + ne_lng) / 2 - -95.37) < 0.01
+
+
+def test_get_bbox_zip_code_geocode_fails(monkeypatch):
+    """If zip geocoding returns None, should fall through to next method."""
+    scraper = AirbnbScraper()
+    monkeypatch.setattr(
+        AirbnbScraper, "_geocode_zip",
+        staticmethod(lambda z: None)
+    )
+    area = {
+        "zip_code": "00000",
+        "radius_km": 5,
+    }
+    bbox = scraper._get_bbox(area, "Austin, TX")
+    # Should fall through to Austin default
+    assert bbox == (30.18, -97.90, 30.52, -97.65)
+
+
+def test_get_bbox_explicit_bbox_beats_zip(monkeypatch):
+    """Explicit bbox should take priority over zip_code."""
+    scraper = AirbnbScraper()
+    monkeypatch.setattr(
+        AirbnbScraper, "_geocode_zip",
+        staticmethod(lambda z: (99.0, 99.0))  # shouldn't be called
+    )
+    custom = [10.0, -20.0, 15.0, -15.0]
+    area = {
+        "bbox": custom,
+        "zip_code": "78701",
+    }
+    bbox = scraper._get_bbox(area, "Unknown")
+    assert bbox == tuple(custom)
+
+
 def test_get_bbox_from_config():
     """Explicit bbox in area config should take priority."""
     scraper = AirbnbScraper()

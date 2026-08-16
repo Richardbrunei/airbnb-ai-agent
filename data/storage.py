@@ -21,6 +21,59 @@ from market_agent.price_analysis import MarketStats
 logger = logging.getLogger(__name__)
 
 DB_PATH = Path(__file__).parent / "market.db"
+TEMP_DB_PATH = Path(__file__).parent / "temp_scrapes.db"
+
+TEMP_SCHEMA = """
+CREATE TABLE IF NOT EXISTS temp_listings (
+    id              INTEGER PRIMARY KEY AUTOINCREMENT,
+    scrape_id       TEXT    NOT NULL,
+    scrape_label    TEXT,
+    scrape_date     TEXT    NOT NULL,
+    listing_id      TEXT,
+    title           TEXT,
+    price           REAL,
+    original_price  REAL,
+    discount_amount REAL,
+    discount_pct    REAL,
+    discount_types  TEXT,
+    discounts       TEXT,
+    nights          INTEGER,
+    currency        TEXT    DEFAULT 'USD',
+    rating          REAL,
+    reviews         INTEGER,
+    property_type   TEXT,
+    bedrooms        INTEGER,
+    bathrooms       REAL,
+    guests          INTEGER,
+    neighborhood    TEXT,
+    url             TEXT,
+    available       INTEGER DEFAULT 1,
+    lat             REAL,
+    lng             REAL,
+    badges          TEXT,
+    description     TEXT,
+    is_guest_favorite INTEGER DEFAULT 0,
+    is_super_host   INTEGER DEFAULT 0,
+    home_tier       INTEGER DEFAULT 0,
+    amenities       TEXT,
+    house_rules     TEXT,
+    location_description TEXT,
+    raw             TEXT,
+    detail_raw      TEXT
+);
+
+CREATE INDEX IF NOT EXISTS idx_temp_scrape_id   ON temp_listings(scrape_id);
+CREATE INDEX IF NOT EXISTS idx_temp_label      ON temp_listings(scrape_label);
+CREATE INDEX IF NOT EXISTS idx_temp_date       ON temp_listings(scrape_date);
+
+CREATE TABLE IF NOT EXISTS temp_meta (
+    scrape_id       TEXT    PRIMARY KEY,
+    label           TEXT,
+    scrape_date     TEXT    NOT NULL,
+    listing_count   INTEGER,
+    query_params    TEXT
+);
+"""
 
 
 SCHEMA = """
@@ -459,3 +512,169 @@ def migrate_csv(
         conn.close()
 
     return migrated
+
+
+# ── Temp Scrapes (one-off searches) ───────────────────────────────────────────
+
+
+def init_temp_db(db_path: Optional[Path] = None) -> None:
+    """Create temp scrape tables if they don't exist."""
+    path = db_path or TEMP_DB_PATH
+    conn = sqlite3.connect(path)
+    try:
+        conn.executescript(TEMP_SCHEMA)
+        conn.commit()
+        logger.info(f"Temp DB initialized at {path}")
+    finally:
+        conn.close()
+
+
+def store_temp_listings(
+    listings: list[Listing],
+    label: str,
+    query_params: Optional[dict] = None,
+    db_path: Optional[Path] = None,
+) -> str:
+    """
+    Store a one-off scrape result in the temp database.
+
+    Args:
+        listings: Scraped Listings to store.
+        label: Short label for this scrape (e.g. "75202", "Austin weekend").
+        query_params: Optional dict of search params (checkin, checkout, etc).
+
+    Returns the scrape_id (timestamp-based unique key).
+    """
+    if not listings:
+        return ""
+
+    path = db_path or TEMP_DB_PATH
+    init_temp_db(path)
+
+    now = datetime.now()
+    scrape_id = now.strftime("%Y%m%d_%H%M%S")
+    date_str = now.strftime("%Y-%m-%d")
+
+    conn = sqlite3.connect(path)
+    conn.row_factory = sqlite3.Row
+    inserted = 0
+
+    try:
+        for l in listings:
+            conn.execute(
+                """
+                INSERT INTO temp_listings (
+                    scrape_id, scrape_label, scrape_date, listing_id, title,
+                    price, original_price, discount_amount, discount_pct,
+                    discount_types, discounts, nights, currency, rating,
+                    reviews, property_type, bedrooms, bathrooms, guests,
+                    neighborhood, url, available, lat, lng, badges,
+                    description, is_guest_favorite, is_super_host, home_tier,
+                    amenities, house_rules, location_description, raw, detail_raw
+                ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+                """,
+                (
+                    scrape_id, label, date_str, l.listing_id, l.title,
+                    l.price, l.original_price, l.discount_amount, l.discount_pct,
+                    json.dumps(l.discount_types),
+                    json.dumps([{"type": d.type, "amount": d.amount, "per_night": d.per_night} for d in l.discounts]),
+                    l.nights, l.currency, l.rating,
+                    l.reviews, l.property_type, l.bedrooms, l.bathrooms, l.guests,
+                    l.neighborhood, l.url, int(l.available), l.lat, l.lng,
+                    json.dumps(l.badges),
+                    getattr(l, 'description', ''),
+                    int(getattr(l, 'is_guest_favorite', False)),
+                    int(getattr(l, 'is_super_host', False)),
+                    getattr(l, 'home_tier', 0),
+                    json.dumps(getattr(l, 'amenities', [])),
+                    getattr(l, 'house_rules', ''),
+                    getattr(l, 'location_description', ''),
+                    json.dumps(l.raw),
+                    json.dumps(getattr(l, 'detail_raw', {})),
+                ),
+            )
+            inserted += 1
+
+        conn.execute(
+            """
+            INSERT OR REPLACE INTO temp_meta (scrape_id, label, scrape_date, listing_count, query_params)
+            VALUES (?, ?, ?, ?, ?)
+            """,
+            (scrape_id, label, date_str, inserted, json.dumps(query_params or {})),
+        )
+
+        conn.commit()
+        logger.info(f"Temp scrape '{label}' ({scrape_id}): {inserted} listings stored")
+    finally:
+        conn.close()
+
+    return scrape_id
+
+
+def list_temp_scrapes(db_path: Optional[Path] = None) -> list[dict]:
+    """List all temp scrapes, most recent first."""
+    path = db_path or TEMP_DB_PATH
+    if not path.exists():
+        return []
+    conn = sqlite3.connect(path)
+    conn.row_factory = sqlite3.Row
+    try:
+        rows = conn.execute(
+            "SELECT * FROM temp_meta ORDER BY scrape_date DESC, scrape_id DESC"
+        ).fetchall()
+        return [dict(r) for r in rows]
+    finally:
+        conn.close()
+
+
+def get_temp_listings(
+    scrape_id: str,
+    db_path: Optional[Path] = None,
+) -> list[dict]:
+    """Retrieve all listings from a specific temp scrape."""
+    path = db_path or TEMP_DB_PATH
+    conn = sqlite3.connect(path)
+    conn.row_factory = sqlite3.Row
+    try:
+        rows = conn.execute(
+            "SELECT * FROM temp_listings WHERE scrape_id = ? ORDER BY price",
+            (scrape_id,),
+        ).fetchall()
+        return [dict(r) for r in rows]
+    finally:
+        conn.close()
+
+
+def clear_temp_scrape(
+    scrape_id: str,
+    db_path: Optional[Path] = None,
+) -> int:
+    """Delete a specific temp scrape and its listings. Returns rows deleted."""
+    path = db_path or TEMP_DB_PATH
+    conn = sqlite3.connect(path)
+    try:
+        conn.execute("DELETE FROM temp_listings WHERE scrape_id = ?", (scrape_id,))
+        conn.execute("DELETE FROM temp_meta WHERE scrape_id = ?", (scrape_id,))
+        conn.commit()
+        deleted = conn.total_changes
+        logger.info(f"Cleared temp scrape {scrape_id}")
+    finally:
+        conn.close()
+    return deleted
+
+
+def clear_all_temp(db_path: Optional[Path] = None) -> int:
+    """Wipe all temp scrape data. Returns total rows deleted."""
+    path = db_path or TEMP_DB_PATH
+    if not path.exists():
+        return 0
+    conn = sqlite3.connect(path)
+    try:
+        conn.execute("DELETE FROM temp_listings")
+        conn.execute("DELETE FROM temp_meta")
+        conn.commit()
+        deleted = conn.total_changes
+        logger.info("Cleared all temp scrapes")
+    finally:
+        conn.close()
+    return deleted

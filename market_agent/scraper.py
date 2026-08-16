@@ -7,6 +7,7 @@ Uses the pyairbnb library to search and extract competitor listings.
 import asyncio
 import json
 import logging
+import math
 import re
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -15,6 +16,19 @@ from typing import Optional
 import pyairbnb
 
 logger = logging.getLogger(__name__)
+
+
+def strip_html(text: str) -> str:
+    """Remove HTML tags and normalize whitespace."""
+    if not text:
+        return ""
+    text = re.sub(r'<br\s*/?>', '\n', text, flags=re.IGNORECASE)
+    text = re.sub(r'<[^>]+>', '', text)
+    text = text.replace('&amp;', '&').replace('&lt;', '<').replace('&gt;', '>')
+    text = text.replace('&nbsp;', ' ').replace('&#39;', "'").replace('&quot;', '"')
+    text = re.sub(r'[ \t]+', ' ', text)
+    text = re.sub(r'\n{3,}', '\n\n', text)
+    return text.strip()
 
 
 @dataclass
@@ -50,6 +64,15 @@ class Listing:
     lat: Optional[float] = None
     lng: Optional[float] = None
     badges: list[str] = field(default_factory=list)
+    # Extended fields from get_details()
+    description: str = ""
+    is_guest_favorite: bool = False
+    is_super_host: bool = False
+    home_tier: int = 0
+    amenities: list[str] = field(default_factory=list)
+    house_rules: str = ""
+    location_description: str = ""
+    detail_raw: dict = field(default_factory=dict)
     raw: dict = field(default_factory=dict)
 
 
@@ -149,6 +172,168 @@ class AirbnbScraper:
 
         logger.info(f"Total competitor listings across all areas: {len(all_listings)}")
         return all_listings
+
+    async def search_adhoc(
+        self,
+        location: str = "",
+        zip_code: str = "",
+        label: str = "",
+        checkin: str = "",
+        checkout: str = "",
+        adults: int = 2,
+        radius_km: float = 5.0,
+        store_temp: bool = True,
+        detail: str = "full",
+        max_concurrent: int = 5,
+    ) -> list[Listing]:
+        """
+        Run a one-off search and optionally store results in temp_scrapes.db.
+
+        Args:
+            location: Location string (e.g. "Austin, TX")
+            zip_code: Zip code to geocode and search around (overrides bbox)
+            label: Label for this scrape in temp storage (default: zip or location)
+            checkin / checkout: Dates (default: next Fri–Sat)
+            adults: Number of guests
+            radius_km: Search radius for zip/scan-around bbox
+            store_temp: If True, save to data/temp_scrapes.db
+            detail: "full" (default) fetches full details per listing (slower,
+                complete data). "basic" skips enrichment (fast, search-only data).
+            max_concurrent: Max concurrent detail requests when detail="full"
+
+        Returns:
+            List of Listing objects (also stored in temp DB)
+        """
+        from datetime import date, timedelta
+
+        if not checkin:
+            today = date.today()
+            days_until_friday = (4 - today.weekday()) % 7 or 7
+            checkin = (today + timedelta(days=days_until_friday)).isoformat()
+            checkout = (today + timedelta(days=days_until_friday + 1)).isoformat()
+
+        # Build ad-hoc area
+        area: dict = {"location": location or "", "radius_km": radius_km}
+        if zip_code:
+            area["zip_code"] = zip_code
+            area["name"] = zip_code
+        else:
+            area["name"] = location
+
+        label = label or zip_code or location or "adhoc"
+
+        logger.info(f"Ad-hoc search: label='{label}', zip={zip_code!r}, location={location!r}")
+
+        try:
+            raw_results = await asyncio.to_thread(
+                self._pyairbnb_search, area, checkin, checkout, adults
+            )
+            listings = [self._parse_result(r) for r in raw_results]
+            listings = [l for l in listings if l is not None]
+            logger.info(f"  [{label}] {len(listings)} listings found")
+        except Exception as e:
+            logger.error(f"  [{label}] Search failed: {e}")
+            listings = []
+
+        # Enrich with full details (concurrent, rate-limited)
+        if detail == "full" and listings:
+            listings = await self._enrich_listings(listings, max_concurrent=max_concurrent)
+        elif detail == "basic":
+            logger.info(f"  Basic mode — skipping detail enrichment ({len(listings)} listings)")
+
+        # Store in temp DB
+        if store_temp and listings:
+            from data.storage import store_temp_listings
+            scrape_id = store_temp_listings(
+                listings,
+                label=label,
+                query_params={
+                    "location": location,
+                    "zip_code": zip_code,
+                    "checkin": checkin,
+                    "checkout": checkout,
+                    "adults": adults,
+                    "radius_km": radius_km,
+                    "detail": detail,
+                },
+            )
+            logger.info(f"  Stored as temp scrape '{scrape_id}' (label: '{label}')")
+
+        return listings
+
+    async def _enrich_listings(
+        self,
+        listings: list[Listing],
+        max_concurrent: int = 5,
+    ) -> list[Listing]:
+        """
+        Fetch full details for each listing concurrently and merge.
+
+        Uses a semaphore to limit concurrency and a small delay between
+        batches to avoid rate limiting.
+        """
+        semaphore = asyncio.Semaphore(max_concurrent)
+        total = len(listings)
+        enriched: list[Listing] = []
+
+        async def enrich_one(idx: int, listing: Listing) -> Listing:
+            async with semaphore:
+                logger.info(f"  Enriching {idx+1}/{total}: {listing.listing_id}")
+                detail = await self.get_listing_details(listing.listing_id)
+                if detail:
+                    return self._merge_listing(listing, detail)
+                return listing
+
+        tasks = [enrich_one(i, l) for i, l in enumerate(listings)]
+        enriched = await asyncio.gather(*tasks, return_exceptions=False)
+
+        success = sum(1 for e in enriched if e.description or e.detail_raw)
+        logger.info(f"  Enriched {success}/{total} listings with full details")
+        return enriched
+
+    @staticmethod
+    def _merge_listing(search: Listing, detail: Listing) -> Listing:
+        """
+        Merge search results with detail results.
+
+        Search has: price, discounts, bedrooms (sometimes), badges, neighborhood.
+        Detail has: description, amenities, house_rules, is_super_host, etc.
+        Take the best of each; don't overwrite non-zero search values with zero detail values.
+        """
+        merged = Listing(
+            listing_id=search.listing_id,
+            title=search.title or detail.title,
+            price=search.price,
+            original_price=search.original_price,
+            discount_amount=search.discount_amount,
+            discount_pct=search.discount_pct,
+            discount_types=search.discount_types,
+            discounts=search.discounts,
+            nights=search.nights,
+            currency=search.currency,
+            rating=search.rating if search.rating else detail.rating,
+            reviews=max(search.reviews, detail.reviews),
+            property_type=search.property_type or detail.property_type,
+            bedrooms=search.bedrooms,
+            bathrooms=search.bathrooms,
+            guests=detail.guests or search.guests,
+            neighborhood=search.neighborhood,
+            url=search.url,
+            available=search.available,
+            lat=search.lat or detail.lat,
+            lng=search.lng or detail.lng,
+            badges=search.badges,
+            description=detail.description,
+            is_guest_favorite=detail.is_guest_favorite,
+            is_super_host=detail.is_super_host,
+            home_tier=detail.home_tier,
+            amenities=detail.amenities,
+            house_rules=detail.house_rules,
+            location_description=detail.location_description,
+            detail_raw=detail.detail_raw,
+            raw=search.raw,
+        )
+        return merged
 
     def score_competitors(
         self, listings: list[Listing], area: dict
@@ -316,24 +501,110 @@ class AirbnbScraper:
         """
         Get bounding box as (sw_lat, sw_lng, ne_lat, ne_lng) for an area.
 
-        Priority: explicit bbox in config > known location lookup > default.
+        Priority:
+          1. Explicit bbox in config
+          2. zip_code: geocode to lat/lng, then bbox_from_center
+          3. scan_around_property: generate from property lat/lng + radius_km
+          4. Known location lookup (DEFAULT_BBOXES)
+          5. Default (Austin)
         """
-        # Check if bbox provided directly in config (expects [sw_lat, sw_lng, ne_lat, ne_lng])
+        # 1. Explicit bbox in config
         if "bbox" in area:
             return tuple(area["bbox"])  # type: ignore
 
-        # Check known locations
+        radius = area.get("radius_km", 5)
+
+        # 2. Zip code geocoding
+        zip_code = area.get("zip_code")
+        if zip_code:
+            coords = self._geocode_zip(zip_code)
+            if coords:
+                lat, lng = coords
+                bbox = self._bbox_from_center(lat, lng, radius)
+                logger.info(
+                    f"  Zip code {zip_code}: center=({lat}, {lng}) "
+                    f"radius={radius}km → bbox={bbox}"
+                )
+                return bbox
+            else:
+                logger.warning(
+                    f"  Could not geocode zip_code '{zip_code}' — falling back"
+                )
+
+        # 3. Scan around property center
+        if area.get("scan_around_property"):
+            profile = area.get("property_profile", {})
+            lat = profile.get("lat")
+            lng = profile.get("lng")
+            if lat is not None and lng is not None:
+                bbox = self._bbox_from_center(lat, lng, radius)
+                logger.info(
+                    f"  Scan-around-property: center=({lat}, {lng}) "
+                    f"radius={radius}km → bbox={bbox}"
+                )
+                return bbox
+            else:
+                logger.warning(
+                    "  scan_around_property is true but property_profile "
+                    "lat/lng missing — falling back"
+                )
+
+        # 4. Known locations
         loc_lower = location.lower()
         for key, bbox in DEFAULT_BBOXES.items():
             if key in loc_lower:
                 return bbox
 
-        # Default: Austin (project base)
+        # 5. Default: Austin (project base)
         logger.warning(
             f"No bbox found for '{location}', using Austin defaults. "
-            "Add a 'bbox' field to areas.json to configure."
+            "Add a 'bbox' field, 'zip_code', or enable 'scan_around_property'."
         )
         return DEFAULT_BBOXES["austin"]
+
+    @staticmethod
+    def _geocode_zip(zip_code: str) -> Optional[tuple[float, float]]:
+        """
+        Geocode a US zip code to (lat, lng) using geopy Nominatim.
+
+        Returns None if geocoding fails.
+        """
+        from geopy.geocoders import Nominatim
+
+        try:
+            geolocator = Nominatim(user_agent="airbnb-ai-agent")
+            query = f"{zip_code}, USA"
+            location_obj = geolocator.geocode(query, exactly_one=True, timeout=10)
+            if location_obj:
+                return (location_obj.latitude, location_obj.longitude)
+            logger.warning(f"  Geocoder returned no result for zip '{zip_code}'")
+            return None
+        except Exception as e:
+            logger.warning(f"  Zip geocoding failed for '{zip_code}': {e}")
+            return None
+
+    @staticmethod
+    def _bbox_from_center(
+        lat: float, lng: float, radius_km: float
+    ) -> tuple[float, float, float, float]:
+        """
+        Compute a bounding box from a center point and radius in km.
+
+        Uses simple spherical approximation:
+          - 1° latitude ≈ 111.0 km
+          - 1° longitude ≈ 111.32 × cos(lat) km
+
+        Returns (sw_lat, sw_lng, ne_lat, ne_lng).
+        """
+        lat_offset = radius_km / 111.0
+        lng_offset = radius_km / (111.32 * math.cos(math.radians(lat)))
+
+        sw_lat = round(lat - lat_offset, 6)
+        ne_lat = round(lat + lat_offset, 6)
+        sw_lng = round(lng - lng_offset, 6)
+        ne_lng = round(lng + lng_offset, 6)
+
+        return (sw_lat, sw_lng, ne_lat, ne_lng)
 
     def _extract_nightly_price(self, price_data: dict) -> tuple[float, float, int]:
         """
@@ -687,7 +958,7 @@ class AirbnbScraper:
     def _parse_details(self, raw: dict, listing_id: str) -> Optional[Listing]:
         """Parse the detailed listing response from pyairbnb.get_details()."""
         try:
-            # Rating block: { guest_satisfaction: 4.97, review_count: "344", ... }
+            # Rating block
             rating = None
             reviews = 0
             rating_info = raw.get("rating", {})
@@ -711,20 +982,81 @@ class AirbnbScraper:
                     seg.get("text", "") if isinstance(seg, dict) else str(seg)
                     for seg in title
                 ).strip()
+            if not title:
+                # get_details title is often in raw['title'] as list
+                raw_title = raw.get("title")
+                if isinstance(raw_title, list):
+                    title = " ".join(
+                        seg.get("text", "") if isinstance(seg, dict) else str(seg)
+                        for seg in raw_title
+                    ).strip()
+                elif isinstance(raw_title, str):
+                    title = raw_title
+
+            # Description
+            description = strip_html(raw.get("description", "") or "")
+
+            # Booleans / tier
+            is_guest_favorite = bool(raw.get("is_guest_favorite", False))
+            is_super_host = bool(raw.get("is_super_host", False))
+            home_tier = int(raw.get("home_tier", 0) or 0)
+
+            # Amenities
+            amenities_raw = raw.get("amenities", [])
+            if isinstance(amenities_raw, list):
+                amenities = []
+                for a in amenities_raw:
+                    if isinstance(a, str):
+                        amenities.append(a)
+                    elif isinstance(a, dict):
+                        amenities.append(a.get("title", a.get("name", str(a))))
+            else:
+                amenities = []
+
+            # House rules
+            house_rules_raw = raw.get("house_rules", {})
+            if isinstance(house_rules_raw, dict):
+                parts = [house_rules_raw.get("aditional", "")]
+                for rule in house_rules_raw.get("rules", []):
+                    if isinstance(rule, dict):
+                        parts.append(rule.get("title", ""))
+                    elif isinstance(rule, str):
+                        parts.append(rule)
+                house_rules = strip_html(" \n".join(p for p in parts if p).strip())
+            else:
+                house_rules = strip_html(str(house_rules_raw or ""))
+
+            # Location description
+            loc_desc_raw = raw.get("location_descriptions", [])
+            if isinstance(loc_desc_raw, list):
+                location_description = strip_html(" \n".join(
+                    item.get("content", "")
+                    for item in loc_desc_raw
+                    if isinstance(item, dict)
+                ).strip())
+            else:
+                location_description = ""
 
             return Listing(
                 listing_id=listing_id,
                 title=title,
-                price=0.0,  # Details endpoint doesn't always include nightly price
+                price=0.0,
                 currency="USD",
                 rating=rating,
                 reviews=reviews,
                 property_type=raw.get("room_type", ""),
-                guests=int(raw.get("person_capacity", 0)),
+                guests=int(raw.get("person_capacity", 0) or 0),
                 url=f"https://www.airbnb.com/rooms/{listing_id}",
                 lat=lat,
                 lng=lng,
-                raw=raw,
+                description=description,
+                is_guest_favorite=is_guest_favorite,
+                is_super_host=is_super_host,
+                home_tier=home_tier,
+                amenities=amenities,
+                house_rules=house_rules,
+                location_description=location_description,
+                detail_raw=raw,
             )
         except Exception as e:
             logger.warning(f"Failed to parse details for {listing_id}: {e}")

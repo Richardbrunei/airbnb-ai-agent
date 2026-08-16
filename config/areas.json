@@ -4,13 +4,24 @@
       "name": "Template Area",
       "location": "City, State",
       "radius_km": 5,
-      "property_types": ["Entire home/apt", "Private room"],
+      "scan_around_property": false,
+      "property_types": [
+        "Entire home/apt",
+        "Private room"
+      ],
       "target_price_min": 50,
       "target_price_max": 300,
       "competitor_filters": {
         "min_bedrooms": 1,
         "max_bedrooms": 3,
-        "property_types": ["Entire home", "Apartment", "Condo", "House", "Home", "Townhouse"],
+        "property_types": [
+          "Entire home",
+          "Apartment",
+          "Condo",
+          "House",
+          "Home",
+          "Townhouse"
+        ],
         "neighborhoods": [],
         "target_price_min": 80,
         "target_price_max": 350
@@ -23,6 +34,41 @@
         "property_type": "Home"
       },
       "max_competitor_distance_km": 15
+    },
+    {
+      "name": "UT Dallas House",
+      "location": "Richardson, TX 75080",
+      "radius_km": 10,
+      "scan_around_property": true,
+      "property_types": [
+        "Entire home/apt",
+        "Home",
+        "House",
+        "Townhouse"
+      ],
+      "target_price_min": 100,
+      "target_price_max": 600,
+      "competitor_filters": {
+        "min_bedrooms": 3,
+        "max_bedrooms": 5,
+        "property_types": [
+          "Entire home",
+          "Home",
+          "House",
+          "Townhouse"
+        ],
+        "neighborhoods": [],
+        "target_price_min": 150,
+        "target_price_max": 600
+      },
+      "property_profile": {
+        "lat": 32.9949,
+        "lng": -96.7474,
+        "bedrooms": 4,
+        "price": 250,
+        "property_type": "Home"
+      },
+      "max_competitor_distance_km": 20
     }
   ],
   "schedule": {
