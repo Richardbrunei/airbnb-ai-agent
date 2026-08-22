@@ -46,12 +46,19 @@ async def run_market_monitoring():
     logger.info("Price analysis complete")
 
     # 4. Score competitors (if property profile is configured)
-    scored = _score_competitors(listings)
+    scored, profile = _score_competitors(listings)
     if scored:
         storage.store_scores(scored)
         logger.info(f"Stored {len(scored)} competitor scores")
 
-    # 5. Generate report (also stores snapshot)
+    # 5. Pricing recommendation from the 20 closest comps
+    if profile and scored:
+        rec = analyzer.recommend(profile, scored)
+        if rec:
+            analysis["recommendations"] = [rec]
+            logger.info("Pricing recommendation generated")
+
+    # 6. Generate report (also stores snapshot)
     report = reporter.generate(analysis)
     logger.info("Daily report generated")
 
@@ -79,35 +86,59 @@ async def main():
     # guest_bot = await run_guest_agent()
 
 
-def _score_competitors(listings: list) -> list:
-    """Score competitors if a property profile is configured in areas.json."""
+def _score_competitors(listings: list) -> tuple[list, PropertyProfile | None]:
+    """Score competitors if a property profile is configured in areas.json.
+
+    Returns (scored_listings, profile); both empty/None if unconfigured.
+    """
+    profile = _load_profile()
+    if profile is None:
+        return [], None
+
+    config = _load_areas_config()
+    if config is None:
+        return [], None
+
+    max_dist = config["search_areas"][0].get("max_competitor_distance_km", 20.0)
+    scorer = CompetitorScorer(profile, max_distance_km=max_dist)
+    return scorer.score_all(listings), profile
+
+
+def _load_areas_config() -> dict | None:
+    """Load config/areas.json, or None if missing/empty."""
     import json
     areas_path = Path(__file__).parent / "config" / "areas.json"
     if not areas_path.exists():
-        return []
+        return None
 
     with open(areas_path) as f:
         config = json.load(f)
 
-    areas = config.get("search_areas", [])
-    if not areas:
-        return []
+    if not config.get("search_areas"):
+        return None
+    return config
 
-    profile_data = areas[0].get("property_profile", {})
+
+def _load_profile() -> PropertyProfile | None:
+    """Load the first search area's property profile from areas.json."""
+    config = _load_areas_config()
+    if config is None:
+        return None
+
+    profile_data = config["search_areas"][0].get("property_profile", {})
     if not profile_data:
-        return []
+        return None
 
-    profile = PropertyProfile(
+    return PropertyProfile(
         lat=profile_data.get("lat", 0),
         lng=profile_data.get("lng", 0),
         bedrooms=profile_data.get("bedrooms", 0),
         price=profile_data.get("price", 0),
         property_type=profile_data.get("property_type", ""),
+        rating=profile_data.get("rating"),
+        is_guest_favorite=profile_data.get("is_guest_favorite", False),
+        is_superhost=profile_data.get("is_superhost", False),
     )
-
-    max_dist = areas[0].get("max_competitor_distance_km", 20.0)
-    scorer = CompetitorScorer(profile, max_distance_km=max_dist)
-    return scorer.score_all(listings)
 
 
 if __name__ == "__main__":

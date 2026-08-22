@@ -1,7 +1,28 @@
 """Tests for the price analysis module."""
 
+from market_agent.competitor_scorer import PropertyProfile, ScoredListing
 from market_agent.scraper import Listing
 from market_agent.price_analysis import PriceAnalyzer, MarketStats
+
+
+def _comp(price: float, rating: float | None = None, discount: float = 0.0,
+          available: bool = True) -> ScoredListing:
+    """Helper: a scored comp at the given price."""
+    return ScoredListing(
+        listing=Listing(
+            listing_id=f"p{price}", title="Comp", price=price,
+            rating=rating, bedrooms=4, available=available,
+            discount_amount=discount,
+        ),
+        total_score=0.8,
+    )
+
+
+def _profile(**kwargs) -> PropertyProfile:
+    defaults = dict(lat=32.99, lng=-96.74, bedrooms=4, price=250,
+                    property_type="Home")
+    defaults.update(kwargs)
+    return PropertyProfile(**defaults)
 
 
 def test_analyze_empty_listings():
@@ -70,3 +91,76 @@ def test_analyze_no_discounts():
     assert stats.avg_discount_pct == 0.0
     trends = result["trends"]
     assert trends["discounted_listings"] == 0
+
+
+# ----------------------------------------------------------------------
+# Pricing recommendations
+# ----------------------------------------------------------------------
+
+
+def test_recommend_skips_tiny_comp_set():
+    """Fewer than 4 priced comps → no recommendation."""
+    analyzer = PriceAnalyzer()
+    assert analyzer.recommend(_profile(), [_comp(200), _comp(210)]) is None
+
+
+def test_recommend_anchors_to_comp_median():
+    """Neutral profile → suggestion should equal the comp median (IQR-clamped, $5-rounded)."""
+    # 20 comps, median 400 — well outside profile price, no quality signals
+    prices = [300, 320, 340, 360, 380, 390, 395, 400, 400, 400,
+              400, 400, 405, 410, 420, 440, 460, 480, 500, 520]
+    scored = [_comp(p, rating=4.5) for p in prices]
+
+    analyzer = PriceAnalyzer()
+    rec = analyzer.recommend(_profile(rating=4.5), scored)
+
+    assert rec is not None
+    assert rec.current_price == 250
+    # Neutral multipliers → suggestion == median effective price
+    assert rec.suggested_price == 400
+    assert 0.0 < rec.confidence <= 0.85
+    assert "median effective $400" in rec.reasoning
+    assert "+60%" in rec.reasoning  # 250 → 400
+
+
+def test_recommend_quality_boost():
+    """Higher rating + badges should push the suggestion above the median (within IQR)."""
+    prices = [300, 320, 340, 360, 380, 390, 395, 400, 400, 400,
+              400, 400, 405, 410, 420, 440, 460, 480, 500, 520]
+    scored = [_comp(p, rating=4.5) for p in prices]
+    strong = _profile(rating=4.9, is_guest_favorite=True, is_superhost=True)
+
+    analyzer = PriceAnalyzer()
+    rec = analyzer.recommend(strong, scored)
+
+    assert rec.suggested_price > 400  # quality lift
+    assert rec.suggested_price % 5 == 0  # $5 steps
+    # IQR clamp: must not exceed p75 of comp prices
+    assert rec.suggested_price <= 460
+
+
+def test_recommend_soft_demand_discounts():
+    """Heavy comp discounting should lean the suggestion below the median."""
+    prices = [300, 320, 340, 360, 380, 390, 395, 400, 400, 400,
+              400, 400, 405, 410, 420, 440, 460, 480, 500, 520]
+    scored = [
+        _comp(p, rating=4.5, discount=50.0 if i < 12 else 0.0)  # 60% discounting
+        for i, p in enumerate(prices)
+    ]
+
+    analyzer = PriceAnalyzer()
+    rec = analyzer.recommend(_profile(rating=4.5), scored)
+
+    assert rec.suggested_price < 400
+    assert "soft demand" in rec.reasoning
+
+
+def test_recommend_uses_only_top_n_comps():
+    """Comps beyond top_n must not influence the anchor."""
+    close = [_comp(400, rating=4.5) for _ in range(20)]
+    far = [_comp(9999) for _ in range(10)]  # would skew mean, not this median
+
+    analyzer = PriceAnalyzer()
+    rec = analyzer.recommend(_profile(rating=4.5), close + far, top_n=20)
+
+    assert rec.suggested_price == 400

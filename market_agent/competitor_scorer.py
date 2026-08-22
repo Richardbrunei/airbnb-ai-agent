@@ -9,6 +9,7 @@ property type.
 import logging
 import math
 from dataclasses import dataclass, field
+from typing import Optional
 
 from market_agent.scraper import Listing
 
@@ -23,6 +24,10 @@ class PropertyProfile:
     bedrooms: int = 0
     price: float = 0.0          # Your typical nightly rate
     property_type: str = ""     # e.g. "Home", "Apartment"
+    # Optional quality signals for pricing recommendations
+    rating: Optional[float] = None
+    is_guest_favorite: bool = False
+    is_superhost: bool = False
 
 
 @dataclass

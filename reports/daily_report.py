@@ -62,6 +62,27 @@ class DailyReportGenerator:
                 f"→ ${stats.median_effective_price:.0f} (effective)"
             )
 
+        recommendations = analysis.get("recommendations", [])
+        if recommendations:
+            lines.append("")
+            lines.append("💡 Pricing Recommendation")
+            for rec in recommendations:
+                if rec.current_price > 0:
+                    delta_pct = (
+                        (rec.suggested_price - rec.current_price)
+                        / rec.current_price * 100
+                    )
+                    lines.append(
+                        f"  Current ${rec.current_price:.0f} → "
+                        f"Suggested ${rec.suggested_price:.0f} ({delta_pct:+.0f}%)"
+                    )
+                else:
+                    lines.append(f"  Suggested: ${rec.suggested_price:.0f}")
+                lines.append(f"  Confidence: {rec.confidence:.0%}")
+                for sentence in rec.reasoning.split(". "):
+                    if sentence.strip(". "):
+                        lines.append(f"    • {sentence.rstrip('.')}")
+
         if stats.by_bedrooms:
             lines.append("")
             lines.append("🏠 Price by Bedroom Count")

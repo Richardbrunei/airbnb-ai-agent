@@ -11,8 +11,8 @@ cd "$PROJECT_DIR"
 
 echo "=== $(date '+%Y-%m-%d %H:%M:%S') Starting Airbnb market monitoring ===" >> "$LOG_FILE"
 
-# Run the pipeline
-python3 main.py >> "$LOG_FILE" 2>&1
+# Run the pipeline (venv python — system python3 lost deps once already)
+"$PROJECT_DIR/venv/bin/python3" main.py >> "$LOG_FILE" 2>&1
 
 EXIT_CODE=$?
 if [ $EXIT_CODE -eq 0 ]; then
