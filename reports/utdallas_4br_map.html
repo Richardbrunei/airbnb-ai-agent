@@ -35,7 +35,17 @@
   .title-card .our-info { margin-top: 8px; padding-top: 8px; border-top: 1px solid #333; font-size: 12px; }
   .title-card .our-info strong { color: #e74c3c; }
   .weights { margin-top: 6px; font-size: 11px; color: #aaa; }
+<!--REC-CSS-START-->
+<style>
+  .rec-card { position: absolute; top: 20px; right: 20px; z-index: 1000; background: rgba(15,23,41,0.95); padding: 14px 18px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.4); max-width: 300px; font-size: 12px; border: 1px solid #2a3a5c; }
+  .rec-card h3 { font-size: 12px; color: #f39c12; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .rec-price { font-size: 26px; font-weight: 800; color: #fff; line-height: 1.1; }
+  .rec-price span { font-size: 11px; font-weight: 400; color: #888; }
+  .rec-delta { color: #2ecc71; font-weight: 600; margin: 2px 0; }
+  .rec-conf { color: #7788aa; font-size: 11px; margin-bottom: 6px; }
+  .rec-bullet { color: #aabbcc; font-size: 11px; line-height: 1.45; }
 </style>
+<!--REC-CSS-END--></style>
 </head>
 <body>
 <div id="map"></div>
@@ -98,7 +108,7 @@ function buildBreakdown(bd) {
   }).join('');
 }
 function buildPopup(c, isOurs) {
-  if (isOurs) { return `<div class="popup-title">🏠 OUR PROPERTY (Imaginary)</div><div class="popup-row"><span class="popup-label">Type</span><span class="popup-value">4BR Home</span></div><div class="popup-row"><span class="popup-label">Price</span><span class="popup-value">$250/night</span></div><div class="popup-row"><span class="popup-label">Location</span><span class="popup-value">Richardson, TX 75080</span></div>`; }
+  if (isOurs) { return `<div class="popup-title">🏠 OUR PROPERTY (Imaginary)</div><div class="popup-row"><span class="popup-label">Type</span><span class="popup-value">4BR Home</span></div><div class="popup-row"><span class="popup-label">Price</span><span class="popup-value">$250/night</span></div><div class="popup-row"><span class="popup-label">Location</span><span class="popup-value">Richardson, TX 75080</span></div><div class="popup-row"><span class="popup-label">Suggested</span><span class="popup-value" style="color:#f39c12">$560/night</span></div><div class="popup-row"><span class="popup-label">Confidence</span><span class="popup-value">20%</span></div>`; }
   const ratingStr = c.rating ? `⭐${c.rating} (${c.reviews} reviews)` : 'No reviews yet';
   const color = markerColor(c.score);
   return `<div class="popup-title"><span style="display:inline-block;width:20px;height:20px;border-radius:50%;background:${color};border:2px solid #fff;text-align:center;line-height:16px;font-size:10px;font-weight:700;color:#000;margin-right:4px;">${c.rank}</span> ${c.title}</div>
@@ -125,5 +135,26 @@ COMPETITORS.forEach(c => {
 const allCoords = [OUR, ...COMPETITORS].map(l => [l.lat, l.lng]);
 map.fitBounds(L.latLngBounds(allCoords).pad(0.15));
 </script>
-</body>
+<!--REC-START-->
+<script>
+const REC = {
+  current: 250,
+  suggested: 560,
+  confidence: 0.20,
+  bullets: ["Comp set: 20 closest listings, median effective $562 (IQR $386-$728, CV 1.09)", "No quality signals on profile \u2192 neutral (x1.00)", "No discount/availability data in this scrape \u2014 demand signal unavailable (treated as neutral)", "Current $250 \u2192 suggested $560 (+124%)"],
+};
+(function () {
+  const card = document.createElement('div');
+  card.className = 'rec-card';
+  const sign = +124 >= 0 ? '+' : '';
+  card.innerHTML =
+    '<h3>💡 Recommended Price</h3>' +
+    `<div class="rec-price">${REC.suggested}<span>/night</span></div>` +
+    `<div class="rec-delta">${REC.current ? `currently $${REC.current} · ${sign}124%` : 'no current price set'}</div>` +
+    `<div class="rec-conf">confidence ${(REC.confidence * 100).toFixed(0)}%</div>` +
+    REC.bullets.map(b => `<div class="rec-bullet">• ${b}</div>`).join('');
+  document.body.appendChild(card);
+})();
+</script>
+<!--REC-END--></body>
 </html>
