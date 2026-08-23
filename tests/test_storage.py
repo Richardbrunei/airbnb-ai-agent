@@ -310,3 +310,41 @@ def test_migrate_csv_missing_file(tmp_db):
     """Migration with no CSV should return 0 gracefully."""
     result = storage.migrate_csv(Path("/nonexistent/file.csv"), tmp_db)
     assert result == 0
+
+
+# ── Same-day re-store dedup ───────────────────────────────────────────────────
+
+
+def test_store_listings_same_day_replaces_not_duplicates(tmp_db, sample_listings):
+    """Re-storing the same listings for the same date must not duplicate rows."""
+    storage.store_listings(sample_listings, scrape_date="2026-08-23", db_path=tmp_db)
+    # Store the same listings again for the same date (e.g. pipeline re-run)
+    storage.store_listings(sample_listings, scrape_date="2026-08-23", db_path=tmp_db)
+
+    rows = storage.get_listings_by_date("2026-08-23", db_path=tmp_db)
+    ids = sorted(r["listing_id"] for r in rows)
+    assert ids == sorted(l.listing_id for l in sample_listings)
+    assert len(ids) == len(set(ids)), "same-day re-store created duplicate rows"
+
+
+def test_store_listings_different_dates_both_kept(tmp_db, sample_listings):
+    """Same listing on different dates is history, not a duplicate."""
+    storage.store_listings(sample_listings[:1], scrape_date="2026-08-22", db_path=tmp_db)
+    storage.store_listings(sample_listings[:1], scrape_date="2026-08-23", db_path=tmp_db)
+
+    history = storage.get_listing_history(sample_listings[0].listing_id, db_path=tmp_db)
+    assert len(history) == 2
+
+
+def test_store_scores_same_day_replaces_not_duplicates(tmp_db, sample_listings):
+    """Re-storing scores for the same date must not duplicate rows."""
+    profile = PropertyProfile(lat=30.27, lng=-97.74, bedrooms=2, price=200.0,
+                              property_type="Condo")
+    scored = CompetitorScorer(profile).score_all(sample_listings[:1])
+
+    storage.store_scores(scored, scrape_date="2026-08-23", db_path=tmp_db)
+    storage.store_scores(scored, scrape_date="2026-08-23", db_path=tmp_db)
+
+    rows = storage.get_top_competitors("2026-08-23", top_n=50, db_path=tmp_db)
+    ids = [r["listing_id"] for r in rows]
+    assert len(ids) == len(set(ids)), "same-day score re-store created duplicates"

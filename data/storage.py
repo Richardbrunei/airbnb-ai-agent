@@ -187,6 +187,10 @@ def store_listings(
     """
     Insert all listings from a scrape run.
 
+    A (scrape_date, listing_id) pair is unique: re-storing the same
+    listing for the same date replaces the previous row instead of
+    appending a duplicate.
+
     Returns the number of rows inserted.
     """
     if not listings:
@@ -198,6 +202,10 @@ def store_listings(
 
     try:
         for l in listings:
+            conn.execute(
+                "DELETE FROM listings WHERE scrape_date = ? AND listing_id = ?",
+                (date_str, l.listing_id),
+            )
             conn.execute(
                 """
                 INSERT INTO listings (
@@ -362,6 +370,7 @@ def store_scores(
     Store competitor scoring results.
 
     Accepts ScoredListing objects from CompetitorScorer.
+    A (scrape_date, listing_id) pair is unique: re-storing replaces.
     Returns rows inserted.
     """
     if not scored_listings:
@@ -374,6 +383,10 @@ def store_scores(
     try:
         for sl in scored_listings:
             l = sl.listing
+            conn.execute(
+                "DELETE FROM competitor_scores WHERE scrape_date = ? AND listing_id = ?",
+                (date_str, l.listing_id),
+            )
             conn.execute(
                 """
                 INSERT INTO competitor_scores (
