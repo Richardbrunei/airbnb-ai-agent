@@ -108,7 +108,7 @@ function buildBreakdown(bd) {
   }).join('');
 }
 function buildPopup(c, isOurs) {
-  if (isOurs) { return `<div class="popup-title">🏠 OUR PROPERTY (Imaginary)</div><div class="popup-row"><span class="popup-label">Type</span><span class="popup-value">4BR Home</span></div><div class="popup-row"><span class="popup-label">Price</span><span class="popup-value">$250/night</span></div><div class="popup-row"><span class="popup-label">Location</span><span class="popup-value">Richardson, TX 75080</span></div><div class="popup-row"><span class="popup-label">Suggested</span><span class="popup-value" style="color:#f39c12">$560/night</span></div><div class="popup-row"><span class="popup-label">Confidence</span><span class="popup-value">20%</span></div>`; }
+  if (isOurs) { return `<div class="popup-title">🏠 OUR PROPERTY (Imaginary)</div><div class="popup-row"><span class="popup-label">Type</span><span class="popup-value">4BR Home</span></div><div class="popup-row"><span class="popup-label">Price</span><span class="popup-value">$250/night</span></div><div class="popup-row"><span class="popup-label">Location</span><span class="popup-value">Richardson, TX 75080</span></div><div class="popup-row"><span class="popup-label">Suggested</span><span class="popup-value" style="color:#f39c12">$340/night</span></div><div class="popup-row"><span class="popup-label">Confidence</span><span class="popup-value">42%</span></div>`; }
   const ratingStr = c.rating ? `⭐${c.rating} (${c.reviews} reviews)` : 'No reviews yet';
   const color = markerColor(c.score);
   return `<div class="popup-title"><span style="display:inline-block;width:20px;height:20px;border-radius:50%;background:${color};border:2px solid #fff;text-align:center;line-height:16px;font-size:10px;font-weight:700;color:#000;margin-right:4px;">${c.rank}</span> ${c.title}</div>
@@ -139,18 +139,18 @@ map.fitBounds(L.latLngBounds(allCoords).pad(0.15));
 <script>
 const REC = {
   current: 250,
-  suggested: 560,
-  confidence: 0.20,
-  bullets: ["Comp set: 20 closest listings, median effective $562 (IQR $386-$728, CV 1.09)", "No quality signals on profile \u2192 neutral (x1.00)", "No discount/availability data in this scrape \u2014 demand signal unavailable (treated as neutral)", "Current $250 \u2192 suggested $560 (+124%)"],
+  suggested: 340,
+  confidence: 0.42,
+  bullets: ["Comp basis: daily scan 2026-08-22 ($150-$600, 3-5BR) \u2014 display pins outside the band aren't counted", "Comp set: 11 closest listings, median effective $363 (IQR $298-$468, CV 0.27)", "No quality signals on profile \u2192 neutral (x1.00)", "55% of comps discounting \u2192 soft demand, -6%", "Current $250 \u2192 suggested $340 (+36%)"],
 };
 (function () {
   const card = document.createElement('div');
   card.className = 'rec-card';
-  const sign = +124 >= 0 ? '+' : '';
+  const sign = +36 >= 0 ? '+' : '';
   card.innerHTML =
     '<h3>💡 Recommended Price</h3>' +
     `<div class="rec-price">${REC.suggested}<span>/night</span></div>` +
-    `<div class="rec-delta">${REC.current ? `currently $${REC.current} · ${sign}124%` : 'no current price set'}</div>` +
+    `<div class="rec-delta">${REC.current ? `currently $${REC.current} · ${sign}36%` : 'no current price set'}</div>` +
     `<div class="rec-conf">confidence ${(REC.confidence * 100).toFixed(0)}%</div>` +
     REC.bullets.map(b => `<div class="rec-bullet">• ${b}</div>`).join('');
   document.body.appendChild(card);

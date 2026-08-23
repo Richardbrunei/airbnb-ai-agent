@@ -170,8 +170,24 @@ class AirbnbScraper:
                 logger.error(f"  [{area_name}] Search failed: {e}")
                 continue
 
-        logger.info(f"Total competitor listings across all areas: {len(all_listings)}")
-        return all_listings
+        # Dedup across search pages/tiles — the same listing often appears
+        # on multiple pages of the same search. Count each property once.
+        seen: set[str] = set()
+        deduped: list[Listing] = []
+        for listing in all_listings:
+            key = listing.listing_id or listing.url or listing.title
+            if not key or key in seen:
+                continue
+            seen.add(key)
+            deduped.append(listing)
+        if len(deduped) != len(all_listings):
+            logger.info(
+                f"Deduped {len(all_listings) - len(deduped)} repeat listings "
+                f"({len(all_listings)} → {len(deduped)})"
+            )
+
+        logger.info(f"Total competitor listings across all areas: {len(deduped)}")
+        return deduped
 
     async def search_adhoc(
         self,

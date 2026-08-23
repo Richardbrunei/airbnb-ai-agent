@@ -712,3 +712,30 @@ def test_parse_result_captures_discount_types():
     assert listing.discount_amount > 0
     assert "Last-minute discount" in listing.discount_types
     assert len(listing.discounts) >= 1
+
+
+@pytest.mark.asyncio
+async def test_search_competitors_dedups_repeat_listings(monkeypatch):
+    """Same listing appearing on multiple search pages should count once."""
+    scraper = AirbnbScraper()
+
+    def fake_listing(listing_id: str) -> Listing:
+        return Listing(listing_id=listing_id, title=f"Home {listing_id}", price=300.0)
+
+    def fake_search(area, checkin, checkout, adults):
+        # Page tiles overlap: listing "A" returned twice, "B" once
+        return ["A", "B", "A"]
+
+    monkeypatch.setattr(scraper, "_pyairbnb_search", fake_search)
+    monkeypatch.setattr(
+        scraper, "_parse_result", lambda raw: fake_listing(raw)
+    )
+
+    checkin, checkout = _next_weekend()
+    results = await scraper.search_competitors(
+        location="Austin, TX", checkin=checkin, checkout=checkout
+    )
+
+    ids = [l.listing_id for l in results]
+    assert sorted(ids) == ["A", "B"]
+    assert len(ids) == len(set(ids)), "duplicate listings leaked through"
