@@ -130,7 +130,7 @@ def load_data():
     meta = {}
     for d in days:
         rows = db.execute(
-            "SELECT l.* FROM listings l JOIN competitor_scores c "
+            "SELECT l.*, c.total_score AS comp_score FROM listings l JOIN competitor_scores c "
             "ON c.scrape_date = l.scrape_date AND c.listing_id = l.listing_id "
             "WHERE l.scrape_date=? AND c.total_score >= ?", (d, MIN_TOTAL_SCORE)).fetchall()
         for r in rows:
@@ -175,6 +175,7 @@ def build_map(days, hist, meta, day_stats):
         series = " · ".join(
             f"{d[5:]} <b>{fmt_d(h[d]['price'])}</b>" for d in seen_days)
         cur = h[last_seen]["price"]
+        score = h[last_seen]["comp_score"]
         if in_last:
             color = TIER_COLORS[tier(cur)]
             if first_d == days[0] and len(seen_days) >= len(days) - 1:
@@ -186,7 +187,8 @@ def build_map(days, hist, meta, day_stats):
             icon_html = (f'<div style="transform:translate(-50%,-100%);white-space:nowrap;'
                          f'font:700 11px -apple-system,sans-serif;color:#fff;background:{color};'
                          f'padding:2px 7px;border-radius:12px;border:2px solid #fff;'
-                         f'box-shadow:0 1px 4px rgba(0,0,0,.4)">{fmt_d(cur)}</div>')
+                         f'box-shadow:0 1px 4px rgba(0,0,0,.4)">{fmt_d(cur)}'
+                         f'<span style="opacity:.85;font-weight:600"> · {score:.2f}</span></div>')
         else:
             color = TIER_COLORS["ghost"]
             status, sc = "Former competitor — last seen " + last_seen[5:], "#757575"
@@ -201,7 +203,9 @@ def build_map(days, hist, meta, day_stats):
             {(' · ★ ' + str(m['rating'])) if m['rating'] else ''}</div>
           <div style="font-size:12px;margin:4px 0">
             <span style="background:{sc}22;color:{sc};font-weight:700;
-                  padding:1px 8px;border-radius:10px;font-size:11px">{status}</span></div>
+                  padding:1px 8px;border-radius:10px;font-size:11px">{status}</span>
+            <span style="background:#eef2f7;color:#333;font-weight:700;
+                  padding:1px 8px;border-radius:10px;font-size:11px">score {score:.2f}</span></div>
           <div style="border-top:1px solid #eee;margin-top:6px;padding-top:6px;
                font-size:12px;line-height:1.7">{series}</div>
           {f'<a href="{m["url"]}" target="_blank" style="font-size:12px">View listing ↗</a>' if m['url'] else ''}
