@@ -379,6 +379,17 @@ def build_report(days, day_stats, hist, meta, recs):
         for d, r in recs.items())
 
     first = days[0]
+    # reasoning bullets from the latest daily report (if present)
+    bullets_html = "<li>—</li>"
+    latest_txt = REPORTS_DIR / f"market_report_{last}.txt"
+    if latest_txt.exists():
+        txt = latest_txt.read_text(errors="replace")
+        m = re.search(r"Pricing Recommendation(.*?)(?:\n\n|\Z)", txt, re.S)
+        if m:
+            bl = [l.strip()[1:].strip() for l in m.group(1).splitlines()
+                  if l.strip().startswith("•")]
+            if bl:
+                bullets_html = "".join(f"<li>{b}</li>" for b in bl)
     html = REPORT_TEMPLATE
     html = (html.replace("__GENERATED__", str(date.today()))
                 .replace("__RANGE__", f"{first} → {last}")
@@ -394,6 +405,7 @@ def build_report(days, day_stats, hist, meta, recs):
                 .replace("__NEW_ROWS__", new_html)
                 .replace("__GONE_ROWS__", gone_html)
                 .replace("__REC_ROWS__", rec_rows)
+                .replace("__RECBULLETS__", bullets_html)
                 .replace("__PREV__", prev or "")
                 .replace("__LAST__", last)
                 .replace("__MINSCORE__", f"{MIN_TOTAL_SCORE:.2f}"))
@@ -464,6 +476,28 @@ REPORT_TEMPLATE = """<!DOCTYPE html>
     </table>
     <div class="note" style="margin-top:8px">This report shows only competitors scoring ≥ __MINSCORE__ — weak matches are excluded.
       Scoring lives in <code>market_agent/competitor_scorer.py</code>.</div>
+  </div>
+
+  <h2>How the recommended price is calculated</h2>
+  <div class="panel" style="font-size:13px">
+    <ol style="margin-left:18px;line-height:1.8">
+      <li><b>Comp set</b> — the top 20 closest competitors by similarity score (needs ≥ 4 priced comps).
+        The daily pipeline ranks the full scored set, independent of this report's ≥ __MINSCORE__ display cutoff.</li>
+      <li><b>Anchor</b> — the median <i>effective</i> (post-discount) nightly price of that comp set.</li>
+      <li><b>Quality multiplier</b> (×0.90–1.15) — rating vs comp median (±0.5★ ≈ ±10%), +3% Guest Favorite,
+        +2% Superhost. The imaginary anchor has no quality signals → ×1.00.</li>
+      <li><b>Demand multiplier</b> (×0.90–1.10) — &gt;50% of comps discounting → −6%; &gt;30% → −3%;
+        fewer than 30% of comps still available → +3%.</li>
+      <li><b>Clamp &amp; round</b> — anchor × quality × demand, clamped to the comp-set interquartile range
+        (no suggestion outside what the market bears), rounded to $5.</li>
+    </ol>
+    <div style="border-top:1px solid #eee;margin-top:8px;padding-top:8px">
+      <b>Latest run breakdown (__LAST__):</b>
+      <ul style="margin:6px 0 0 18px;font-size:12.5px;line-height:1.7;color:#444">__RECBULLETS__</ul>
+    </div>
+    <div class="note" style="margin-top:8px">Confidence (max 0.85) = 0.2 + 0.65 × size factor (comps ÷ 15, capped) ×
+      dispersion factor (1 − CV ÷ 0.5) — small or scattered comp sets → low confidence.
+      Source: <code>market_agent/price_analysis.py</code>.</div>
   </div>
 
   <div class="cards">
