@@ -91,7 +91,7 @@ const COMPETITORS = [
   {rank:20,score:69.8,bd:{loc:16.3,beds:22.5,price:1.0,ptype:30.0},title:"Hot Tub 🏝 Large Groups 🍿 Centralized",price:557,beds:3,type:"Home",rating:4.78,reviews:442,lat:32.9951,lng:-96.8618,dist:"10.7km",url:"https://www.airbnb.com/rooms/49694843"},
 ];
 const map = L.map('map').setView([OUR.lat, OUR.lng], 12);
-L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', { attribution: '© OpenStreetMap', maxZoom: 19 }).addTo(map);
+L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', { attribution: '&copy; &lt;a href="https://www.openstreetmap.org/copyright"&gt;OpenStreetMap contributors&lt;/a&gt; &copy; &lt;a href="https://carto.com/attributions"&gt;CARTO&lt;/a&gt;', maxZoom: 19 }).addTo(map);
 function markerColor(score) { if (score >= 80) return '#2ecc71'; if (score >= 73) return '#f1c40f'; return '#e67e22'; }
 const BD_PARTS = [
   { key: 'loc',   label: 'Location', max: 35, color: '#3498db' },
