@@ -216,6 +216,28 @@ def build_map(days, hist, meta, day_stats):
     center = [statistics.mean(f["lat"] for f in feats),
               statistics.mean(f["lng"] for f in feats)]
 
+    # Anchor property from config — the imaginary home everything is scored against
+    try:
+        cfg = json.loads((PROJECT_ROOT / "config" / "areas.json").read_text())
+        prof = cfg["search_areas"][0]["property_profile"]
+    except Exception:
+        prof = {"lat": 32.9949, "lng": -96.7474, "bedrooms": 4, "price": 250}
+    anchor = {
+        "lat": prof["lat"], "lng": prof["lng"],
+        "icon": (f'<div style="transform:translate(-50%,-100%);white-space:nowrap;'
+                 f'font:700 11px -apple-system,sans-serif;color:#fff;background:#1a237e;'
+                 f'padding:3px 9px;border-radius:12px;border:2px solid #fff;'
+                 f'box-shadow:0 2px 6px rgba(0,0,0,.5)">🏠 {fmt_d(prof["price"])} anchor</div>'),
+        "popup": (f'<div style="font-family:-apple-system,sans-serif;min-width:210px">'
+                  f'<div style="font-weight:700;margin-bottom:2px">🏠 Imaginary anchor home</div>'
+                  f'<div style="color:#666;font-size:12px;margin-bottom:6px">'
+                  f'{prof["bedrooms"]} BR · UT Dallas campus · listed {fmt_d(prof["price"])}</div>'
+                  f'<div style="font-size:12px;line-height:1.6;border-top:1px solid #eee;padding-top:6px">'
+                  f'<b>This property does not exist.</b> It is the placeholder profile all competitor '
+                  f'scores and price recommendations are measured against.</div>'
+                  f'<div style="font-size:11px;color:#999;margin-top:4px">{prof["lat"]}, {prof["lng"]}</div></div>'),
+    }
+
     stats_card = f"""
       <div style="font-weight:700;margin-bottom:4px">{last} · live comp set</div>
       <div style="font-size:12px;line-height:1.8">
@@ -227,6 +249,7 @@ def build_map(days, hist, meta, day_stats):
 
     html = MAP_TEMPLATE.replace("__CENTER__", json.dumps(center))
     html = html.replace("__DATA__", json.dumps(feats))
+    html = html.replace("__ANCHOR__", json.dumps(anchor))
     html = html.replace("__STATS__", stats_card)
     html = html.replace("__GENERATED__", str(date.today()))
     MAP_OUT.write_text(html)
@@ -263,12 +286,14 @@ MAP_TEMPLATE = """<!DOCTYPE html>
   <span class="sw" style="background:#1565c0"></span>$301–400<br>
   <span class="sw" style="background:#ef6c00"></span>$401–500<br>
   <span class="sw" style="background:#c62828"></span>&gt; $500<br>
-  <span class="sw" style="background:transparent;border:2px dashed #757575"></span>former competitor
+  <span class="sw" style="background:transparent;border:2px dashed #757575"></span>former competitor<br>
+  <span style="margin-right:6px">🏠</span><b>$250 anchor</b> (imaginary)
 </div>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 const center = __CENTER__;
 const feats = __DATA__;
+const anchor = __ANCHOR__;
 const map = L.map('map').setView(center, 12);
 L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
   maxZoom: 19,
@@ -281,7 +306,9 @@ for (const f of active)
 for (const f of ghosts)
   L.marker([f.lat, f.lng], {icon: L.divIcon({html: f.icon, className: '', iconSize: null})})
    .addTo(map).bindPopup(f.popup);
-if (active.length) map.fitBounds(active.map(f => [f.lat, f.lng]), {padding:[60,60]});
+L.marker([anchor.lat, anchor.lng], {icon: L.divIcon({html: anchor.icon, className: '', iconSize: null}), zIndexOffset: 1000})
+ .addTo(map).bindPopup(anchor.popup);
+if (active.length) map.fitBounds(active.concat([anchor]).map(f => [f.lat, f.lng]), {padding:[60,60]});
 </script>
 </body>
 </html>
