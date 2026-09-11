@@ -500,6 +500,8 @@ REPORT_TEMPLATE = """<!DOCTYPE html>
       Source: <code>market_agent/price_analysis.py</code>.</div>
   </div>
 
+  <h2>📈 Market data (__RANGE__)</h2>
+
   <div class="cards">
     <div class="card"><div class="label">Days of data</div>
       <div class="big">__NDAYS__</div><div class="small">__RANGE__</div></div>
