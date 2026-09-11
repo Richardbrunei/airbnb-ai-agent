@@ -261,9 +261,9 @@ MAP_TEMPLATE = """<!DOCTYPE html>
 const center = __CENTER__;
 const feats = __DATA__;
 const map = L.map('map').setView(center, 12);
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
   maxZoom: 19,
-  attribution: '&copy; OpenStreetMap contributors'
+  attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a> &copy; <a href="https://carto.com/attributions">CARTO</a>'
 }).addTo(map);
 const active = feats.filter(f => f.active), ghosts = feats.filter(f => !f.active);
 for (const f of active)
