@@ -87,8 +87,8 @@ const COMPETITORS = [
 ];
 
 const map = L.map('map').setView([OUR.lat, OUR.lng], 12);
-L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-  attribution: '&copy; &lt;a href="https://www.openstreetmap.org/copyright"&gt;OpenStreetMap contributors&lt;/a&gt; &copy; &lt;a href="https://carto.com/attributions"&gt;CARTO&lt;/a&gt;', maxZoom: 19
+L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
+  attribution: 'Tiles © Esri — Source: Esri, DeLorme, NAVTEQ, USGS, Intermap, iPC, NRCAN, Esri Japan, METI, Esri China (Hong Kong), Esri (Thailand), TomTom', maxZoom: 19
 }).addTo(map);
 
 // Jitter overlapping markers

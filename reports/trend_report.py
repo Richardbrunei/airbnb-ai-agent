@@ -261,9 +261,9 @@ MAP_TEMPLATE = """<!DOCTYPE html>
 const center = __CENTER__;
 const feats = __DATA__;
 const map = L.map('map').setView(center, 12);
-L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
   maxZoom: 19,
-  attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a> &copy; <a href="https://carto.com/attributions">CARTO</a>'
+  attribution: 'Tiles &copy; Esri &mdash; Source: Esri, DeLorme, NAVTEQ, USGS, Intermap, iPC, NRCAN, Esri Japan, METI, Esri China (Hong Kong), Esri (Thailand), TomTom'
 }).addTo(map);
 const active = feats.filter(f => f.active), ghosts = feats.filter(f => !f.active);
 for (const f of active)
