@@ -288,6 +288,8 @@ MAP_TEMPLATE = """<!DOCTYPE html>
   <span class="sw" style="background:#c62828"></span>&gt; $500<br>
   <span class="sw" style="background:transparent;border:2px dashed #757575"></span>former competitor<br>
   <span style="margin-right:6px">🏠</span><b>$250 anchor</b> (imaginary)
+  <div style="border-top:1px solid #eee;margin-top:6px;padding-top:6px;color:#777">
+    score = .35·location + .30·bedrooms +<br>.30·type + .05·price (similarity to anchor)</div>
 </div>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
@@ -444,6 +446,25 @@ REPORT_TEMPLATE = """<!DOCTYPE html>
     <b>⚠️ Hypothetical anchor:</b> all scoring, comp-set selection and price recommendations
     are based on an <b>imaginary 4BR home at UT Dallas</b> (32.9949, -96.7474, listed at $250) —
     a placeholder profile, not a real property. Treat every number as illustrative.</div>
+
+  <h2>How competitors are scored</h2>
+  <div class="panel" style="font-size:13px">
+    Every competitor gets a <b>similarity score (0–1)</b> against the imaginary anchor —
+    a weighted mix of four components (weights sum to 1.0):
+    <table style="box-shadow:none;border-radius:8px;margin-top:8px">
+      <tr><th>Component</th><th style="text-align:right">Weight</th><th>Rule</th></tr>
+      <tr><td>📍 Location</td><td style="text-align:right"><b>35%</b></td>
+          <td>Haversine distance from the anchor: 0 km = 1.0, falling linearly to 0.0 at 20 km</td></tr>
+      <tr><td>🛏 Bedrooms</td><td style="text-align:right"><b>30%</b></td>
+          <td>Exact 4BR match = 1.0; −0.25 per bedroom of difference</td></tr>
+      <tr><td>🏠 Property type</td><td style="text-align:right"><b>30%</b></td>
+          <td>Exact match = 1.0; same broad category (house / townhouse / cabin / …) = 0.7; different category = 0</td></tr>
+      <tr><td>💰 Price</td><td style="text-align:right"><b>5%</b></td>
+          <td>Log-ratio to the anchor's $250: within ±20% → &gt;0.8; 2× away → ≈0.25</td></tr>
+    </table>
+    <div class="note" style="margin-top:8px">This report shows only competitors scoring ≥ __MINSCORE__ — weak matches are excluded.
+      Scoring lives in <code>market_agent/competitor_scorer.py</code>.</div>
+  </div>
 
   <div class="cards">
     <div class="card"><div class="label">Days of data</div>
