@@ -109,7 +109,10 @@ def load_data():
             "ON c.scrape_date = l.scrape_date AND c.listing_id = l.listing_id "
             "WHERE l.scrape_date=? AND c.total_score >= ?", (d, MIN_TOTAL_SCORE)).fetchall()
         prices = [r["price"] for r in rows if r["price"] is not None]
-        discounted = [r for r in rows if r["original_price"] is not None]
+        # discounted = active price cut (discount_pct > 0). original_price is
+        # populated on EVERY row (equals price when undiscounted) — never use
+        # its presence as the discount signal.
+        discounted = [r for r in rows if r["discount_pct"]]
         day_stats.append({
             "date": d,
             "count": len(rows),
