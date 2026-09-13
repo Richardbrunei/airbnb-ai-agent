@@ -9,7 +9,8 @@ __pycache__/
 data/*.csv
 data/*.bak*
 data/*.db
-reports/market_report_*.txt
+# persisted: the DB is the accumulated history (GitHub Actions commits it back)
+!data/market.db
 
 # IDE
 .vscode/
