@@ -68,3 +68,94 @@ ModuleNotFoundError: No module named 'pyairbnb'
 2026-08-07 08:00:09,651 [INFO] data.storage: Snapshot stored for 2026-08-07
 2026-08-07 08:00:09,653 [INFO] __main__: Daily report generated
 === 2026-08-07 08:00:09 Completed successfully ===
+[2026-09-05 20:15] Missed run detected, executing pipeline...
+2026-09-05 20:15:04,280 [INFO] __main__: === Airbnb AI Agent Starting ===
+2026-09-05 20:15:04,280 [INFO] __main__: Starting market monitoring...
+2026-09-05 20:15:04,282 [INFO] data.storage: Database initialized at /home/liang/.openclaw/workspace/coding/airbnb-ai-agent/data/market.db
+2026-09-05 20:15:04,283 [INFO] market_agent.scraper: Loaded 1 search area(s) from config
+2026-09-05 20:15:04,284 [INFO] market_agent.scraper: Searching: checkin=2026-09-11, checkout=2026-09-12, adults=2
+2026-09-05 20:15:04,284 [INFO] market_agent.scraper:   Scan-around-property: center=(32.9949, -96.7474) radius=10km → bbox=(32.90481, -96.854505, 33.08499, -96.640295)
+2026-09-05 20:15:04,284 [INFO] market_agent.scraper:   Searching bbox (32.90481, -96.854505, 33.08499, -96.640295) for 'Richardson, TX 75080' (place_type='', price=100-600)
+2026-09-05 20:15:09,525 [INFO] market_agent.scraper:   [UT Dallas House] 233 → 22 listings after competitor filters
+2026-09-05 20:15:09,525 [INFO] market_agent.scraper: Deduped 1 repeat listings (22 → 21)
+2026-09-05 20:15:09,525 [INFO] market_agent.scraper: Total competitor listings across all areas: 21
+2026-09-05 20:15:09,525 [INFO] __main__: Found 21 competitor listings
+2026-09-05 20:15:09,546 [INFO] data.storage: Stored 21 listings for 2026-09-05
+2026-09-05 20:15:09,554 [INFO] __main__: Stored 21 listings in database
+2026-09-05 20:15:09,554 [INFO] market_agent.price_analysis: Analyzed 21 listings | median: $359 | range: $150-$590
+2026-09-05 20:15:09,555 [INFO] __main__: Price analysis complete
+2026-09-05 20:15:09,563 [INFO] data.storage: Stored 21 competitor scores for 2026-09-05
+2026-09-05 20:15:09,566 [INFO] __main__: Stored 21 competitor scores
+2026-09-05 20:15:09,566 [INFO] market_agent.price_analysis: Pricing recommendation: $325 (anchor $345, quality x1.00, demand x0.94, confidence 0.49)
+2026-09-05 20:15:09,566 [INFO] __main__: Pricing recommendation generated
+2026-09-05 20:15:09,567 [INFO] reports.daily_report: Report saved to reports/market_report_2026-09-05.txt
+2026-09-05 20:15:09,575 [INFO] data.storage: Snapshot stored for 2026-09-05
+2026-09-05 20:15:09,576 [INFO] __main__: Daily report generated
+[2026-09-07 12:00] Missed run detected, executing pipeline...
+2026-09-07 12:00:02,833 [INFO] __main__: === Airbnb AI Agent Starting ===
+2026-09-07 12:00:02,833 [INFO] __main__: Starting market monitoring...
+2026-09-07 12:00:02,834 [INFO] data.storage: Database initialized at /home/liang/.openclaw/workspace/coding/airbnb-ai-agent/data/market.db
+2026-09-07 12:00:02,836 [INFO] market_agent.scraper: Loaded 1 search area(s) from config
+2026-09-07 12:00:02,836 [INFO] market_agent.scraper: Searching: checkin=2026-09-11, checkout=2026-09-12, adults=2
+2026-09-07 12:00:02,841 [INFO] market_agent.scraper:   Scan-around-property: center=(32.9949, -96.7474) radius=10km → bbox=(32.90481, -96.854505, 33.08499, -96.640295)
+2026-09-07 12:00:02,841 [INFO] market_agent.scraper:   Searching bbox (32.90481, -96.854505, 33.08499, -96.640295) for 'Richardson, TX 75080' (place_type='', price=100-600)
+2026-09-07 12:00:09,200 [INFO] market_agent.scraper:   [UT Dallas House] 228 → 21 listings after competitor filters
+2026-09-07 12:00:09,200 [INFO] market_agent.scraper: Deduped 1 repeat listings (21 → 20)
+2026-09-07 12:00:09,200 [INFO] market_agent.scraper: Total competitor listings across all areas: 20
+2026-09-07 12:00:09,200 [INFO] __main__: Found 20 competitor listings
+2026-09-07 12:00:09,255 [INFO] data.storage: Stored 20 listings for 2026-09-07
+2026-09-07 12:00:09,270 [INFO] __main__: Stored 20 listings in database
+2026-09-07 12:00:09,272 [INFO] market_agent.price_analysis: Analyzed 20 listings | median: $361 | range: $215-$590
+2026-09-07 12:00:09,272 [INFO] __main__: Price analysis complete
+2026-09-07 12:00:09,290 [INFO] data.storage: Stored 20 competitor scores for 2026-09-07
+2026-09-07 12:00:09,294 [INFO] __main__: Stored 20 competitor scores
+2026-09-07 12:00:09,295 [INFO] market_agent.price_analysis: Pricing recommendation: $340 (anchor $361, quality x1.00, demand x0.94, confidence 0.46)
+2026-09-07 12:00:09,295 [INFO] __main__: Pricing recommendation generated
+2026-09-07 12:00:09,296 [INFO] reports.daily_report: Report saved to reports/market_report_2026-09-07.txt
+2026-09-07 12:00:09,316 [INFO] data.storage: Snapshot stored for 2026-09-07
+2026-09-07 12:00:09,319 [INFO] __main__: Daily report generated
+[2026-09-11 16:55] Missed run detected, executing pipeline...
+2026-09-11 16:55:40,685 [INFO] __main__: === Airbnb AI Agent Starting ===
+2026-09-11 16:55:40,686 [INFO] __main__: Starting market monitoring...
+2026-09-11 16:55:40,686 [INFO] data.storage: Database initialized at /home/liang/.openclaw/workspace/coding/airbnb-ai-agent/data/market.db
+2026-09-11 16:55:40,687 [INFO] market_agent.scraper: Loaded 1 search area(s) from config
+2026-09-11 16:55:40,687 [INFO] market_agent.scraper: Searching: checkin=2026-09-18, checkout=2026-09-19, adults=2
+2026-09-11 16:55:40,689 [INFO] market_agent.scraper:   Scan-around-property: center=(32.9949, -96.7474) radius=10km → bbox=(32.90481, -96.854505, 33.08499, -96.640295)
+2026-09-11 16:55:40,689 [INFO] market_agent.scraper:   Searching bbox (32.90481, -96.854505, 33.08499, -96.640295) for 'Richardson, TX 75080' (place_type='', price=100-600)
+2026-09-11 16:55:47,408 [INFO] market_agent.scraper:   [UT Dallas House] 277 → 14 listings after competitor filters
+2026-09-11 16:55:47,408 [INFO] market_agent.scraper: Total competitor listings across all areas: 14
+2026-09-11 16:55:47,409 [INFO] __main__: Found 14 competitor listings
+2026-09-11 16:55:47,426 [INFO] data.storage: Stored 14 listings for 2026-09-11
+2026-09-11 16:55:47,430 [INFO] __main__: Stored 14 listings in database
+2026-09-11 16:55:47,430 [INFO] market_agent.price_analysis: Analyzed 14 listings | median: $361 | range: $215-$590
+2026-09-11 16:55:47,430 [INFO] __main__: Price analysis complete
+2026-09-11 16:55:47,442 [INFO] data.storage: Stored 14 competitor scores for 2026-09-11
+2026-09-11 16:55:47,446 [INFO] __main__: Stored 14 competitor scores
+2026-09-11 16:55:47,446 [INFO] market_agent.price_analysis: Pricing recommendation: $350 (anchor $361, quality x1.00, demand x0.97, confidence 0.43)
+2026-09-11 16:55:47,446 [INFO] __main__: Pricing recommendation generated
+2026-09-11 16:55:47,446 [INFO] reports.daily_report: Report saved to reports/market_report_2026-09-11.txt
+2026-09-11 16:55:47,454 [INFO] data.storage: Snapshot stored for 2026-09-11
+2026-09-11 16:55:47,456 [INFO] __main__: Daily report generated
+[2026-09-12 12:00] Missed run detected, executing pipeline...
+2026-09-12 12:00:02,112 [INFO] __main__: === Airbnb AI Agent Starting ===
+2026-09-12 12:00:02,113 [INFO] __main__: Starting market monitoring...
+2026-09-12 12:00:02,115 [INFO] data.storage: Database initialized at /home/liang/.openclaw/workspace/coding/airbnb-ai-agent/data/market.db
+2026-09-12 12:00:02,116 [INFO] market_agent.scraper: Loaded 1 search area(s) from config
+2026-09-12 12:00:02,116 [INFO] market_agent.scraper: Searching: checkin=2026-09-18, checkout=2026-09-19, adults=2
+2026-09-12 12:00:02,118 [INFO] market_agent.scraper:   Scan-around-property: center=(32.9949, -96.7474) radius=10km → bbox=(32.90481, -96.854505, 33.08499, -96.640295)
+2026-09-12 12:00:02,118 [INFO] market_agent.scraper:   Searching bbox (32.90481, -96.854505, 33.08499, -96.640295) for 'Richardson, TX 75080' (place_type='', price=100-600)
+2026-09-12 12:00:07,702 [INFO] market_agent.scraper:   [UT Dallas House] 221 → 11 listings after competitor filters
+2026-09-12 12:00:07,702 [INFO] market_agent.scraper: Deduped 1 repeat listings (11 → 10)
+2026-09-12 12:00:07,702 [INFO] market_agent.scraper: Total competitor listings across all areas: 10
+2026-09-12 12:00:07,702 [INFO] __main__: Found 10 competitor listings
+2026-09-12 12:00:07,884 [INFO] data.storage: Stored 10 listings for 2026-09-12
+2026-09-12 12:00:07,912 [INFO] __main__: Stored 10 listings in database
+2026-09-12 12:00:07,929 [INFO] market_agent.price_analysis: Analyzed 10 listings | median: $367 | range: $215-$590
+2026-09-12 12:00:07,929 [INFO] __main__: Price analysis complete
+2026-09-12 12:00:08,038 [INFO] data.storage: Stored 10 competitor scores for 2026-09-12
+2026-09-12 12:00:08,079 [INFO] __main__: Stored 10 competitor scores
+2026-09-12 12:00:08,138 [INFO] market_agent.price_analysis: Pricing recommendation: $355 (anchor $367, quality x1.00, demand x0.97, confidence 0.37)
+2026-09-12 12:00:08,138 [INFO] __main__: Pricing recommendation generated
+2026-09-12 12:00:08,210 [INFO] reports.daily_report: Report saved to reports/market_report_2026-09-12.txt
+2026-09-12 12:00:08,639 [INFO] data.storage: Snapshot stored for 2026-09-12
+2026-09-12 12:00:08,654 [INFO] __main__: Daily report generated
