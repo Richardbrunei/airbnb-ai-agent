@@ -582,6 +582,17 @@ pip install -r requirements.txt   # then: search.py, reports/trend_report.py, py
 
 Nothing is OpenClaw-specific beyond the path conventions and the portal — the pipeline runs entirely on GitHub Actions regardless. OpenClaw is just the butler watching the shop.
 
+### The OpenClaw skill
+
+`skill/SKILL.md` packages the whole operating procedure (setup, property config, automation checks, sync rules, report reading, change discipline) as an installable OpenClaw skill, so an agent on any gateway can run this monitor for any property on request. To install into a workspace:
+
+```bash
+mkdir -p ~/.openclaw/workspace/skills/airbnb-market-monitor
+cp skill/SKILL.md ~/.openclaw/workspace/skills/airbnb-market-monitor/
+```
+
+(Re-copy after editing the source — the workspace copy is what the agent loads.)
+
 ## Output
 
 ### Market Report (`reports/market_report_YYYY-MM-DD.txt`)
