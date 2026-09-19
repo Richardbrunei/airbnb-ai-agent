@@ -179,6 +179,16 @@ def load_changelog():
     return out
 
 
+def load_profile() -> dict:
+    """Anchor property profile from config/areas.json (first search area)."""
+    try:
+        cfg = json.loads((PROJECT_ROOT / "config" / "areas.json").read_text())
+        return cfg["search_areas"][0]["property_profile"]
+    except Exception:
+        return {"lat": 32.9949, "lng": -96.7474, "bedrooms": 4, "price": 250,
+                "property_type": "Home", "hypothetical": True}
+
+
 def build_map(days, hist, meta, day_stats):
     last = days[-1]
     feats = []
@@ -239,12 +249,9 @@ def build_map(days, hist, meta, day_stats):
     center = [statistics.mean(f["lat"] for f in feats),
               statistics.mean(f["lng"] for f in feats)]
 
-    # Anchor property from config — the imaginary home everything is scored against
-    try:
-        cfg = json.loads((PROJECT_ROOT / "config" / "areas.json").read_text())
-        prof = cfg["search_areas"][0]["property_profile"]
-    except Exception:
-        prof = {"lat": 32.9949, "lng": -96.7474, "bedrooms": 4, "price": 250}
+    # Anchor property from config — the (possibly hypothetical) home everything is scored against
+    prof = load_profile()
+    hyp = bool(prof.get("hypothetical"))
     anchor = {
         "lat": prof["lat"], "lng": prof["lng"],
         "icon": (f'<div style="transform:translate(-50%,-100%);white-space:nowrap;'
@@ -252,12 +259,16 @@ def build_map(days, hist, meta, day_stats):
                  f'padding:3px 9px;border-radius:12px;border:2px solid #fff;'
                  f'box-shadow:0 2px 6px rgba(0,0,0,.5)">🏠 {fmt_d(prof["price"])} anchor</div>'),
         "popup": (f'<div style="font-family:-apple-system,sans-serif;min-width:210px">'
-                  f'<div style="font-weight:700;margin-bottom:2px">🏠 Imaginary anchor home</div>'
+                  f'<div style="font-weight:700;margin-bottom:2px">🏠 '
+                  f'{"Imaginary anchor home" if hyp else "Anchor property"}</div>'
                   f'<div style="color:#666;font-size:12px;margin-bottom:6px">'
                   f'{prof["bedrooms"]} BR · UT Dallas campus · listed {fmt_d(prof["price"])}</div>'
                   f'<div style="font-size:12px;line-height:1.6;border-top:1px solid #eee;padding-top:6px">'
-                  f'<b>This property does not exist.</b> It is the placeholder profile all competitor '
-                  f'scores and price recommendations are measured against.</div>'
+                  + (f'<b>This property does not exist.</b> It is the placeholder profile all competitor '
+                     f'scores and price recommendations are measured against.' if hyp else
+                     'This is the configured property all competitor scores and '
+                     'price recommendations are measured against.')
+                  + f'</div>'
                   f'<div style="font-size:11px;color:#999;margin-top:4px">{prof["lat"]}, {prof["lng"]}</div></div>'),
     }
 
@@ -266,8 +277,8 @@ def build_map(days, hist, meta, day_stats):
       <div style="font-size:12px;line-height:1.8">
         <div><b style="font-size:18px">{day_stats[-1]['count']}</b> active · median <b>{fmt_d(day_stats[-1]['median'])}</b></div>
         <div>{sum(1 for f in feats if not f['active'])} former competitors (dropped)</div>
-        <div style="margin-top:4px;color:#7a5c00">⚠ anchored to an imaginary
-        <span style="white-space:nowrap">4BR @ UT Dallas</span></div>
+        <div style="margin-top:4px;color:#7a5c00">{'⚠ anchored to an imaginary' if hyp else 'anchored to the configured'}
+        <span style="white-space:nowrap">{prof['bedrooms']}BR {'placeholder' if hyp else 'property'}</span></div>
       </div>"""
 
     html = MAP_TEMPLATE.replace("__CENTER__", json.dumps(center))
@@ -402,6 +413,23 @@ def build_report(days, day_stats, hist, meta, recs):
         for d, r in recs.items())
 
     first = days[0]
+    # anchor banner — adapts to whether the configured profile is hypothetical
+    prof = load_profile()
+    if prof.get("hypothetical"):
+        banner = (f'<div style="background:#fff8e1;border:1px solid #ffe082;border-radius:10px;'
+                  f'padding:10px 14px;font-size:13px;color:#7a5c00;margin-bottom:20px">'
+                  f'<b>⚠️ Hypothetical anchor:</b> all scoring, comp-set selection and price recommendations '
+                  f'are based on an <b>imaginary {prof.get("bedrooms", "?")}BR '
+                  f'{prof.get("property_type", "home")}</b> ({prof.get("lat")}, {prof.get("lng")}, '
+                  f'listed {fmt_d(prof.get("price"))}) — a placeholder profile, not a real property. '
+                  f'Treat every number as illustrative.</div>')
+    else:
+        banner = (f'<div style="background:#e8f0fe;border:1px solid #c6dafc;border-radius:10px;'
+                  f'padding:10px 14px;font-size:13px;color:#1a3e72;margin-bottom:20px">'
+                  f'<b>🏠 Anchor property:</b> all scoring, comp-set selection and price recommendations '
+                  f'are relative to the configured property — a {prof.get("bedrooms", "?")}BR '
+                  f'{prof.get("property_type", "home")} at {prof.get("lat")}, {prof.get("lng")}, '
+                  f'listed {fmt_d(prof.get("price"))}.</div>')
     # reasoning bullets from the latest daily report (if present)
     bullets_html = "<li>—</li>"
     latest_txt = REPORTS_DIR / f"market_report_{last}.txt"
@@ -431,7 +459,8 @@ def build_report(days, day_stats, hist, meta, recs):
                 .replace("__RECBULLETS__", bullets_html)
                 .replace("__PREV__", prev or "")
                 .replace("__LAST__", last)
-                .replace("__MINSCORE__", f"{MIN_TOTAL_SCORE:.2f}"))
+                .replace("__MINSCORE__", f"{MIN_TOTAL_SCORE:.2f}")
+                .replace("__ANCHOR_BANNER__", banner))
     changelog = load_changelog()
     if changelog:
         cl_html = "".join(
@@ -484,11 +513,7 @@ REPORT_TEMPLATE = """<!DOCTYPE html>
 <div class="wrap">
   <h1>📊 Competitor Trend Report</h1>
   <div class="sub">Richardson TX comp set · __RANGE__ (__NDAYS__ days of data) · generated __GENERATED__</div>
-  <div style="background:#fff8e1;border:1px solid #ffe082;border-radius:10px;
-       padding:10px 14px;font-size:13px;color:#7a5c00;margin-bottom:20px">
-    <b>⚠️ Hypothetical anchor:</b> all scoring, comp-set selection and price recommendations
-    are based on an <b>imaginary 4BR home at UT Dallas</b> (32.9949, -96.7474, listed at $250) —
-    a placeholder profile, not a real property. Treat every number as illustrative.</div>
+  __ANCHOR_BANNER__
 
   <h2>How competitors are scored</h2>
   <div class="panel" style="font-size:13px">
@@ -516,7 +541,7 @@ REPORT_TEMPLATE = """<!DOCTYPE html>
         The daily pipeline ranks the full scored set, independent of this report's ≥ __MINSCORE__ display cutoff.</li>
       <li><b>Anchor</b> — the median <i>effective</i> (post-discount) nightly price of that comp set.</li>
       <li><b>Quality multiplier</b> (×0.90–1.15) — rating vs comp median (±0.5★ ≈ ±10%), +3% Guest Favorite,
-        +2% Superhost. The imaginary anchor has no quality signals → ×1.00.</li>
+        +2% Superhost. Quality multipliers apply only when rating/badges are set on the anchor profile — without them it stays ×1.00.</li>
       <li><b>Demand multiplier</b> (×0.90–1.10) — &gt;50% of comps discounting → −6%; &gt;30% → −3%;
         fewer than 30% of comps still available → +3%.</li>
       <li><b>Clamp &amp; round</b> — anchor × quality × demand, clamped to the comp-set interquartile range
@@ -597,7 +622,7 @@ REPORT_TEMPLATE = """<!DOCTYPE html>
   <div class="note" style="margin-top:24px">Strong competitors only: listings passing the config/areas.json competitor
     filters (3–5 BR houses/townhomes, $150–600, ≤20 km) with a matching competitor_scores row
     of total_score ≥ __MINSCORE__ on that date — low-scoring weak matches are excluded.
-    Scoring is similarity to the <b>hypothetical</b> 4BR anchor at UT Dallas, not a real listing.
+    Scoring is similarity to the configured anchor profile in config/areas.json.
     Source: data/market.db · generated by reports/trend_report.py — re-run after any daily run.</div>
 </div>
 </body>

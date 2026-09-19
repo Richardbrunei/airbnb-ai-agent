@@ -25,7 +25,8 @@
         "lng": -96.7474,
         "bedrooms": 4,
         "price": 250,
-        "property_type": "Home"
+        "property_type": "Home",
+        "hypothetical": true
       },
       "max_competitor_distance_km": 20
     }

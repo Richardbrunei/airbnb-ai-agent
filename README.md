@@ -69,6 +69,43 @@ cp .env.example .env
 # Edit config/areas.json (see Configuration below)
 ```
 
+## Tracking Your Own Property
+
+The repo ships with a **hypothetical placeholder anchor** — a fictional 4BR at UT Dallas (`"hypothetical": true` in `property_profile`) — so everything works out of the box with no real property attached. To track a real one:
+
+**1. Get your property's details.** If it's listed on Airbnb, the fastest route prints everything you need:
+
+```bash
+python search.py --url "https://www.airbnb.com/rooms/YOUR_LISTING_ID"
+```
+
+**2. Replace the profile** in `config/areas.json` → `search_areas[0].property_profile`:
+
+```json
+"property_profile": {
+  "lat": 30.2672, "lng": -97.7431, "bedrooms": 3, "price": 210,
+  "property_type": "House",
+  "rating": 4.9, "is_guest_favorite": true, "is_superhost": false
+}
+```
+
+Drop `"hypothetical"` (or set it to `false`) — the report's banner, map anchor popup, and stats card adapt automatically: the "imaginary property" warning becomes a plain "anchor property" note. `rating` / `is_guest_favorite` / `is_superhost` are optional but unlock the quality adjustment in the price recommendation (without them it stays neutral ×1.00).
+
+**3. Tune the net to your market:** `radius_km`, `competitor_filters` (BR range, price band, types), `max_competitor_distance_km`. Test changes with the dry-run snippet in [Automation](#automation) — it prints how many competitors a config would store, without writing anything.
+
+**4. Reset the history.** Stored scores are similarity to the *old* anchor — mixing anchors muddies every trend. On your own fork:
+
+```bash
+mv data/market.db data/market.db.archived   # optional: keep the old history
+ git rm --cached data/market.db* && git commit -m "reset: new property anchor" && git push
+```
+
+The next Actions run rebuilds the database from scratch under the new anchor.
+
+**5. Add a `CHANGELOG.md` entry** ("property anchor changed to …") — the trend report renders it, so the reset boundary stays interpretable.
+
+`properties.py add --interactive` walks through the same fields as a CLI alternative.
+
 ## Configuration
 
 ### `config/areas.json`
