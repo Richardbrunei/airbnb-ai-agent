@@ -141,6 +141,14 @@
     Click any pin for its full price history. Also openable directly:
     <a href="market_trend_map.html">market_trend_map.html</a></div>
 
+  <h2>📜 Changelog</h2>
+  <details style="background:#fff;border-radius:12px;box-shadow:0 1px 4px rgba(0,0,0,.07);padding:12px 16px">
+    <summary style="cursor:pointer;font-size:13px;color:#555">Methodology &amp; pipeline changes that affect how to read this data</summary>
+    <div style="font-size:12.5px;line-height:1.9;margin-top:8px">
+    <div style="padding:3px 0;border-bottom:1px dashed #f0f0f0"><b>2026-09-19</b> — Search radius widened 10 km → 20 km; dead top-level property_types list removed (it never reached Airbnb — scraper only forwards a single type). Stored comp-set sizes step up sharply from this date (~30–50 vs 6–14): a lens change, not a market shift. Read trend tables across this boundary with care.</div><div style="padding:3px 0;border-bottom:1px dashed #f0f0f0"><b>2026-09-19</b> — Map pin labels now recognize returning competitors ("Back after a gap"). Display-only; no stored data changed.</div><div style="padding:3px 0;border-bottom:1px dashed #f0f0f0"><b>2026-09-13</b> — Pipeline moved to GitHub Actions: two scrapes daily (8:17 AM + 12:17 PM CDT, results bot-committed to this repo). Data density roughly doubles from here; the WSL box became a read-only consumer. data/market.db and daily report .txt files became git-tracked from this date.</div><div style="padding:3px 0;border-bottom:1px dashed #f0f0f0"><b>2026-09-11</b> — Trend report introduced: competitors-only display (listings ⨝ competitor_scores) with a ≥ 0.70 competitiveness cutoff — weak matches (0.59–0.67) excluded from report display. Discount-share counting corrected the same day (discount_pct > 0, not original_price presence; the daily reports were always correct).</div><div style="padding:3px 0;border-bottom:1px dashed #f0f0f0"><b>2026-08-22</b> — Database persistence begins. Report files exist back to 2026-06-27, but queryable history starts here.</div><div style="padding:3px 0;border-bottom:1px dashed #f0f0f0"><b>2026-06-27</b> — First daily market report generated.</div>
+    </div>
+  </details>
+
   <div class="note" style="margin-top:24px">Strong competitors only: listings passing the config/areas.json competitor
     filters (3–5 BR houses/townhomes, $150–600, ≤20 km) with a matching competitor_scores row
     of total_score ≥ 0.70 on that date — low-scoring weak matches are excluded.

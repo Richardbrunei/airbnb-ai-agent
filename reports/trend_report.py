@@ -162,6 +162,23 @@ def parse_recs(days):
     return recs
 
 
+def load_changelog():
+    """Entries from CHANGELOG.md (repo root), newest first as written."""
+    f = PROJECT_ROOT / "CHANGELOG.md"
+    if not f.exists():
+        return []
+    out = []
+    for line in f.read_text(errors="replace").splitlines():
+        line = line.strip()
+        if not line.startswith("- "):
+            continue
+        body = line[2:]
+        date_s, sep, text = body.partition("—")
+        if sep and re.match(r"\d{4}-\d\d-\d\d", date_s.strip()):
+            out.append((date_s.strip(), text.strip()))
+    return out
+
+
 def build_map(days, hist, meta, day_stats):
     last = days[-1]
     feats = []
@@ -415,6 +432,14 @@ def build_report(days, day_stats, hist, meta, recs):
                 .replace("__PREV__", prev or "")
                 .replace("__LAST__", last)
                 .replace("__MINSCORE__", f"{MIN_TOTAL_SCORE:.2f}"))
+    changelog = load_changelog()
+    if changelog:
+        cl_html = "".join(
+            f'<div style="padding:3px 0;border-bottom:1px dashed #f0f0f0">'
+            f'<b>{d}</b> — {t}</div>' for d, t in changelog)
+    else:
+        cl_html = "<div style=\"color:#999\">No changelog entries.</div>"
+    html = html.replace("__CHANGELOG__", cl_html)
     REPORT_OUT.write_text(html)
 
 
@@ -560,6 +585,14 @@ REPORT_TEMPLATE = """<!DOCTYPE html>
   <div class="note">Price-coded chips = current competitors; dashed grey pins = former competitors.
     Click any pin for its full price history. Also openable directly:
     <a href="market_trend_map.html">market_trend_map.html</a></div>
+
+  <h2>📜 Changelog</h2>
+  <details style="background:#fff;border-radius:12px;box-shadow:0 1px 4px rgba(0,0,0,.07);padding:12px 16px">
+    <summary style="cursor:pointer;font-size:13px;color:#555">Methodology &amp; pipeline changes that affect how to read this data</summary>
+    <div style="font-size:12.5px;line-height:1.9;margin-top:8px">
+    __CHANGELOG__
+    </div>
+  </details>
 
   <div class="note" style="margin-top:24px">Strong competitors only: listings passing the config/areas.json competitor
     filters (3–5 BR houses/townhomes, $150–600, ≤20 km) with a matching competitor_scores row
