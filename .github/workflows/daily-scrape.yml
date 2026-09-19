@@ -23,7 +23,10 @@ permissions:
 
 jobs:
   scrape:
-    runs-on: ubuntu-latest
+    # Pinned (not ubuntu-latest): this is an unattended pipeline — no surprise
+    # OS migrations (ubuntu-latest → 26.0 was announced for 2026-10-19).
+    # Bump deliberately, e.g. when planning 24.04 EOL (2029).
+    runs-on: ubuntu-24.04
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v5
