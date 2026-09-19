@@ -506,6 +506,45 @@ print(len(asyncio.run(AirbnbScraper().search_competitors())), "competitors would
 
 `CHANGELOG.md` is rendered into the trend report. **Add a dated entry whenever you change scoring, filters, config, or cadence** — trend boundaries (like the 2026-09-19 radius widening) are only interpretable with that context.
 
+### Porting to another OpenClaw install
+
+The GitHub repo is the single source of truth — data, history, automation, and docs all live in it. A fresh OpenClaw gateway (or any other host) only needs a read-only consumer setup:
+
+1. **Clone into the new workspace** (the conventional spot — adjust to taste):
+
+```bash
+git clone git@github.com:Richardbrunei/airbnb-ai-agent.git \
+  ~/.openclaw/workspace/coding/airbnb-ai-agent
+```
+
+No venv needed for the consumer role — you're not executing anything, just pulling.
+
+2. **Add the pull-back cron** (runs only when that machine is awake; harmless if it sleeps):
+
+```bash
+*/20 * * * * cd $HOME/.openclaw/workspace/coding/airbnb-ai-agent && git pull -q --ff-only origin main 2>>logs/pull.log
+```
+
+3. **Serve the report** (optional): any static server on the reports dir, e.g.
+
+```bash
+cd ~/.openclaw/workspace/coding/airbnb-ai-agent/reports && python3 -m http.server 8791 --bind 127.0.0.1
+```
+
+…then expose it via OpenClaw's **Portals** feature (Control UI → Portals) or just open `market_trend_report.html` directly in a browser.
+
+4. **Tell the new agent the rules.** The critical one lives in workspace memory, not in code: **the Actions bot is the sole writer — never run `main.py` or `run_daily.sh` from the production clone.** Add that to the new OpenClaw workspace's `MEMORY.md`/daily notes so its agent enforces it too. Config-change testing uses the dry-run snippet above.
+
+5. **Local analysis on a scratch clone** (venv required only here):
+
+```bash
+git clone git@github.com:Richardbrunei/airbnb-ai-agent.git /tmp/airbnb-scratch
+cd /tmp/airbnb-scratch && python3 -m venv venv && source venv/bin/activate
+pip install -r requirements.txt   # then: search.py, reports/trend_report.py, pytest, etc.
+```
+
+Nothing is OpenClaw-specific beyond the path conventions and the portal — the pipeline runs entirely on GitHub Actions regardless. OpenClaw is just the butler watching the shop.
+
 ## Output
 
 ### Market Report (`reports/market_report_YYYY-MM-DD.txt`)
