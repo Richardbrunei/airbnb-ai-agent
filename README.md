@@ -2,6 +2,8 @@
 
 AI-powered automation platform for Airbnb property management — competitor price monitoring, scoring, and guest communication.
 
+> **Current deployment note:** this repo's live configuration tracks a **hypothetical 4BR home at UT Dallas** (listed $250) — a placeholder profile, not a real property. All scores and price recommendations are anchored to it. The production pipeline runs on **GitHub Actions** (see [Automation](#automation)); the local clone is a read-only consumer.
+
 ## Project Structure
 
 ```
@@ -10,10 +12,12 @@ airbnb-ai-agent/
 ├── search.py                       # Standalone CLI for competitor search
 ├── properties.py                   # Manage properties (add/edit/view/remove)
 ├── reply.py                        # Draft AI replies to guest messages
-├── run_daily.sh                    # Shell wrapper for cron/systemd
-├── run_if_missed.py                # Catch-up runner if schedule was missed
+├── run_daily.sh                    # Shell wrapper (legacy manual use)
+├── run_if_missed.py                # Catch-up runner (legacy; Actions has its own cadence)
 ├── requirements.txt                # Python dependencies
+├── CHANGELOG.md                    # Methodology/config history — rendered into the trend report
 ├── .env.example                    # Environment variable template
+├── .github/workflows/daily-scrape.yml  # GitHub Actions — the production scraper (2×/day)
 │
 ├── market_agent/                   # Market Monitoring
 │   ├── scraper.py                  # Airbnb competitor data collection (pyairbnb)
@@ -24,9 +28,11 @@ airbnb-ai-agent/
 │   ├── chatbot.py                  # AI guest message handler
 │   └── knowledge_base.json         # Property info & FAQ
 │
-├── reports/                        # Daily market reports
-│   ├── daily_report.py             # Report generator
-│   └── market_report_*.txt         # Generated reports
+├── reports/                        # Reports
+│   ├── daily_report.py             # Daily report generator
+│   ├── trend_report.py             # Multi-day trend report + map generator
+│   ├── market_report_*.txt         # Generated daily reports
+│   └── market_trend_*.html         # Generated trend report + interactive map
 │
 ├── data/                           # Data storage
 │   ├── storage.py                  # SQLite + CSV storage layer
@@ -76,8 +82,6 @@ This is the core config file. It defines where to search, what to filter for, an
       "name": "My Area",
       "location": "Austin, TX",
       "radius_km": 5,
-      "property_types": ["Entire home/apt", "Private room"],
-
       "target_price_min": 50,
       "target_price_max": 300,
 
@@ -119,10 +123,11 @@ This is the core config file. It defines where to search, what to filter for, an
 | Field | Description |
 |-------|-------------|
 | `location` | City or area name — used for logging and bbox lookup |
+| `radius_km` | Search radius around the property profile (bounding box) |
 | `bbox` | Optional: `[sw_lat, sw_lng, ne_lat, ne_lng]` to override auto-detection |
-| `competitor_filters` | Filters raw results down to real competitors. All fields optional — omit to skip that filter |
+| `competitor_filters` | Filters raw results down to real competitors. All fields optional — omit to skip that filter. **Property types belong here** — a top-level `property_types` list is only forwarded to Airbnb when it contains exactly one entry, so leave it out and filter locally |
 | `property_profile` | Your property's stats. Used by the competitor scorer to rank similarity |
-| `max_competitor_distance_km` | Max distance from your property for scoring (listings beyond this get score 0) |
+| `max_competitor_distance_km` | Distance at which the location score falls to 0 (also the scorer's falloff scale) |
 
 #### Competitor filters available
 
@@ -363,6 +368,16 @@ This will:
 5. Score competitors against your property profile
 6. Generate a daily market report in `reports/`
 
+> ⚠️ On the production clone, don't — the Actions bot is the sole writer (see [Automation](#automation)). Use a scratch clone or the dry-run pattern.
+
+### Regenerate the trend report + map
+
+```bash
+python reports/trend_report.py
+```
+
+Reads `data/market.db` and writes `reports/market_trend_report.html` + `market_trend_map.html`. The Actions workflow regenerates these after every scrape; running it locally is for scratch clones (it writes tracked files, which would dirty a production clone).
+
 ### Run via shell wrapper (for cron)
 
 ```bash
@@ -441,20 +456,55 @@ For the `bbox`, go to Google Maps, zoom to your area, and note the southwest and
 
 ## Automation
 
-### Cron (daily run)
+### GitHub Actions (production)
+
+The pipeline runs on GitHub Actions' always-awake runners — no server needed, no machine of yours has to be on.
+
+**What `.github/workflows/daily-scrape.yml` does:**
+
+- Scrapes **2×/day** (8:17 AM + 12:17 PM CDT — GitHub cron is UTC, and runs can be delayed during peak hours; data still lands daily)
+- Runs the full pipeline, then regenerates the trend report + map
+- Commits results back to `main` as `github-actions[bot]` (`data/market.db`, `reports/`, `logs/`)
+- Queued via `concurrency` so runs never overlap; runner pinned to `ubuntu-24.04` (deliberate — no surprise OS migrations)
+
+**Zero configuration:** no secrets, no API keys. The workflow uses the built-in `GITHUB_TOKEN` (granted `contents: write`). On a public repo, Actions minutes are free.
+
+**Replicating on your own repo or fork:**
+
+1. Push the project to GitHub (or fork this repo)
+2. Repo → **Actions** tab → enable the **"Daily Airbnb scrape"** workflow (forks require manually enabling scheduled workflows)
+3. Done — the next scheduled run creates the data commits; `market.db` starts empty and accumulates from there
+
+**Manual run:** Actions tab → *Daily Airbnb scrape* → *Run workflow*. (The workflow also self-tests on any push that changes the workflow file itself.)
+
+**60-day rule:** GitHub disables schedules in repos with 60 days of no activity — a non-issue here, since the bot's daily commits count as activity.
+
+### Local clone = read-only consumer
+
+The Actions bot is the **sole writer** of the database and reports. On any local clone:
+
+- **Never run `python main.py` on the production clone** — local DB writes create divergent history and break fast-forward pulls
+- Sync with `git pull --ff-only origin main` (fails loudly instead of merging if anything ever diverges). Optional cron for an always-on-ish machine:
 
 ```bash
-# Run every day at 8:00 AM CT
-0 8 * * * /home/liang/.openclaw/workspace/coding/airbnb-ai-agent/run_daily.sh
+*/20 * * * * cd /path/to/airbnb-ai-agent && git pull -q --ff-only origin main 2>>logs/pull.log
 ```
 
-### Catch-up runner
+- **Dry-run config changes** (searches + filters, prints counts, stores nothing):
 
-If a scheduled run was missed, `run_if_missed.py` checks whether today's run happened and executes it if not:
-
-```bash
-python run_if_missed.py
+```python
+import asyncio
+from market_agent.scraper import AirbnbScraper
+print(len(asyncio.run(AirbnbScraper().search_competitors())), "competitors would be stored")
 ```
+
+### Legacy: local scheduling
+
+`run_daily.sh` (logs to `logs/daily.log`) and `run_if_missed.py` still work for a standalone, machine-only deployment — but never on the production clone while Actions is active.
+
+### Changelog discipline
+
+`CHANGELOG.md` is rendered into the trend report. **Add a dated entry whenever you change scoring, filters, config, or cadence** — trend boundaries (like the 2026-09-19 radius widening) are only interpretable with that context.
 
 ## Output
 
