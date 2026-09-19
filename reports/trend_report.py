@@ -178,12 +178,18 @@ def build_map(days, hist, meta, day_stats):
         score = h[last_seen]["comp_score"]
         if in_last:
             color = TIER_COLORS[tier(cur)]
-            if first_d == days[0] and len(seen_days) >= len(days) - 1:
-                status, sc = "Stable competitor", "#2e7d32"
-            elif first_d != days[0]:
+            first_idx = days.index(first_d)
+            # days present vs days in span since first appearance
+            span = days.index(days[-1]) - first_idx + 1
+            has_gap = len(seen_days) < span
+            if first_idx >= len(days) - 3 and first_idx > 0:
                 status, sc = "New competitor since " + first_d[5:], "#1565c0"
+            elif first_d == days[0] and not has_gap:
+                status, sc = "Stable competitor", "#2e7d32"
+            elif has_gap:
+                status, sc = "Back after a gap · first seen " + first_d[5:], "#00897b"
             else:
-                status, sc = "Active competitor", "#1565c0"
+                status, sc = "Active since " + first_d[5:], "#1565c0"
             icon_html = (f'<div style="transform:translate(-50%,-100%);white-space:nowrap;'
                          f'font:700 11px -apple-system,sans-serif;color:#fff;background:{color};'
                          f'padding:2px 7px;border-radius:12px;border:2px solid #fff;'
