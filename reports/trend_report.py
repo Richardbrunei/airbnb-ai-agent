@@ -493,7 +493,7 @@ def build_report(days, day_stats, hist, meta, recs):
     if t["pct"] is None:
         trend_card = ""
         meddod = "latest snapshot"
-        direction_html = ('<div class="panel" style="font-size:13px;color:#777">'
+        direction_html = ('<div class="panel" style="margin-top:16px;font-size:13px;color:#777">'
                           'Not enough history for a direction yet — it appears once there '
                           'are at least two days of data.</div>')
     else:
@@ -525,7 +525,7 @@ def build_report(days, day_stats, hist, meta, recs):
                  + chip(f'comp set {"+" if d_cnt > 0 else "−" if d_cnt < 0 else "±"}{abs(d_cnt)}',
                         "#546e7a"))
         direction_html = (
-            f'<div class="panel" style="font-size:13px">'
+            f'<div class="panel" style="margin-top:16px;font-size:13px">'
             f'<div style="font-size:16px;font-weight:800;color:{t["col"]};margin-bottom:4px">{head}</div>'
             f'The comp-set median is <b>{t["label"]}</b> — best fit {t["day_s"]}/day, '
             f'<b>{t["tot_s"]} ({t["pct_s"]})</b> across the {n_days}-day window. '
