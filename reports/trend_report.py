@@ -56,6 +56,30 @@ TIER_COLORS = {  # price chip colors, legend in map
 MIN_TOTAL_SCORE = 0.70
 
 
+def day_rows(db, day):
+    """Strong competitors for one date, combined across the whole day.
+
+    Two scrapes can land on the same scrape_date (morning + midday since
+    the Actions migration). Storage upserts per (scrape_date, listing_id),
+    so the DB already holds the day's union with the latest price per
+    listing; this keeps only the newest row per listing as hardening so
+    counts/medians can never double-count a day, even if storage ever
+    changes to append-only."""
+    rows = db.execute(
+        "SELECT l.*, c.total_score AS comp_score, l.id AS _lrow, c.id AS _crow "
+        "FROM listings l JOIN competitor_scores c "
+        "ON c.scrape_date = l.scrape_date AND c.listing_id = l.listing_id "
+        "WHERE l.scrape_date=? AND c.total_score >= ?",
+        (day, MIN_TOTAL_SCORE)).fetchall()
+    best = {}
+    for r in rows:
+        k = r["listing_id"]
+        cur = best.get(k)
+        if cur is None or (r["_lrow"], r["_crow"]) > (cur["_lrow"], cur["_crow"]):
+            best[k] = r
+    return list(best.values())
+
+
 def fmt_d(v):
     return f"${v:,.0f}" if v is not None else "—"
 
@@ -146,10 +170,7 @@ def load_data():
         "SELECT DISTINCT scrape_date FROM listings ORDER BY scrape_date")]
     day_stats = []
     for d in days:
-        rows = db.execute(
-            "SELECT l.* FROM listings l JOIN competitor_scores c "
-            "ON c.scrape_date = l.scrape_date AND c.listing_id = l.listing_id "
-            "WHERE l.scrape_date=? AND c.total_score >= ?", (d, MIN_TOTAL_SCORE)).fetchall()
+        rows = day_rows(db, d)
         prices = [r["price"] for r in rows if r["price"] is not None]
         # discounted = active price cut (discount_pct > 0). original_price is
         # populated on EVERY row (equals price when undiscounted) — never use
@@ -171,10 +192,7 @@ def load_data():
     hist = defaultdict(dict)   # listing_id -> {date: row}
     meta = {}
     for d in days:
-        rows = db.execute(
-            "SELECT l.*, c.total_score AS comp_score FROM listings l JOIN competitor_scores c "
-            "ON c.scrape_date = l.scrape_date AND c.listing_id = l.listing_id "
-            "WHERE l.scrape_date=? AND c.total_score >= ?", (d, MIN_TOTAL_SCORE)).fetchall()
+        rows = day_rows(db, d)
         for r in rows:
             hist[r["listing_id"]][d] = r
             m = meta.setdefault(r["listing_id"], {
@@ -694,7 +712,8 @@ REPORT_TEMPLATE = """<!DOCTYPE html>
         <th style="text-align:right">Rec. price</th></tr>
     __TREND_ROWS__
   </table>
-  <div class="note">Rec. price = suggested price for the hypothetical $250 anchor listing from that day's daily report (comp-set anchored).</div>
+  <div class="note">Rec. price = suggested price for the hypothetical $250 anchor listing from that day's daily report (comp-set anchored).
+    Days with two scrapes (morning + midday) are combined: union of all listings seen that day, latest price per listing wins.</div>
 
   <h2>Comp-set churn (__PREV__ → __LAST__)</h2>
   <table>
