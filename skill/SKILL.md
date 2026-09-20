@@ -67,7 +67,8 @@ over bot commits.
 ## 5. Read the results
 
 - `reports/market_trend_report.html` — self-contained: per-day trend
-  table + sparklines, comp-set churn, price movers, recommendation
+  market-direction verdict (best-fit trend + day-over-day), per-day
+  trend table + sparklines, comp-set churn, price movers, recommendation
   history, scoring + pricing methodology, changelog, embedded map.
 - `reports/market_trend_map.html` — price·score chips, anchor pin,
   former/returning competitor pins with full price histories.

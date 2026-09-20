@@ -3,6 +3,7 @@
 Methodology, configuration, and pipeline changes that affect how the stored
 data should be read. Newest first. Rendered into the trend report footer.
 
+- 2026-09-20 — Report: market-direction verdict added (best-fit line over daily medians + day-over-day delta + discounting/comp-set chips), per-day Δ median column, direction card, and a trend line on the map stats. Direction is a least-squares fit over the whole window — read sharp one-day steps against this changelog, not as market moves.
 - 2026-09-19 — Search radius widened 10 km → 20 km; dead top-level property_types list removed (it never reached Airbnb — scraper only forwards a single type). Stored comp-set sizes step up sharply from this date (~30–50 vs 6–14): a lens change, not a market shift. Read trend tables across this boundary with care.
 - 2026-09-19 — Map pin labels now recognize returning competitors ("Back after a gap"). Display-only; no stored data changed.
 - 2026-09-13 — Pipeline moved to GitHub Actions: two scrapes daily (8:17 AM + 12:17 PM CDT, results bot-committed to this repo). Data density roughly doubles from here; the WSL box became a read-only consumer. data/market.db and daily report .txt files became git-tracked from this date.

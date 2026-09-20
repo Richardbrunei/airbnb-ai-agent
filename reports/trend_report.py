@@ -94,6 +94,48 @@ def spark(values, w=150, h=34, color="#1565c0"):
     )
 
 
+def trend_info(day_stats):
+    """Best-fit (least-squares) direction over the daily medians.
+
+    Slope is $/day; total drift spans first→last data day. Also exposes the
+    day-over-day delta and ready-made display strings. Days without a median
+    are skipped; fewer than 2 points → no trend (pct stays None)."""
+    pts = [(i, s["median"]) for i, s in enumerate(day_stats)
+           if s["median"] is not None]
+    t = {"slope": None, "total": None, "pct": None, "dod": None,
+         "dod_pct": None, "prev_date": None, "label": "not enough data",
+         "dir": "flat", "col": "#666", "arrow": "·"}
+    if len(pts) < 2:
+        return t
+    xs, ys = [p[0] for p in pts], [p[1] for p in pts]
+    n = len(xs)
+    mx, my = sum(xs) / n, sum(ys) / n
+    den = sum((x - mx) ** 2 for x in xs)
+    slope = (sum((x - mx) * (y - my) for x, y in zip(xs, ys)) / den) if den else 0.0
+    span = (xs[-1] - xs[0]) or 1
+    total = slope * span
+    pct = 100 * total / my if my else 0.0
+    dod = ys[-1] - ys[-2]
+    dod_pct = 100 * dod / ys[-2] if ys[-2] else 0.0
+    t.update(slope=slope, total=total, pct=pct, dod=dod, dod_pct=dod_pct,
+             prev_date=day_stats[pts[-2][0]]["date"])
+    if abs(pct) < 2:
+        t["label"] = "holding steady"
+    elif abs(pct) < 8:
+        t["label"] = "modestly down" if pct < 0 else "modestly up"
+    else:
+        t["label"] = "strongly down" if pct < 0 else "strongly up"
+    t["dir"] = "down" if pct < -2 else ("up" if pct > 2 else "flat")
+    t["col"] = {"down": "#c62828", "up": "#2e7d32", "flat": "#546e7a"}[t["dir"]]
+    t["arrow"] = {"down": "▼", "up": "▲", "flat": "➡"}[t["dir"]]
+    t["pct_s"] = ("+" if pct > 0 else "−") + f"{abs(pct):.1f}%"
+    t["tot_s"] = ("+" if total > 0 else "−") + f"${abs(total):,.0f}"
+    t["day_s"] = ("+" if slope > 0 else "−") + f"${abs(slope):,.1f}"
+    t["dod_s"] = "±$0" if dod == 0 else ("+" if dod > 0 else "−") + f"${abs(dod):,.0f}"
+    t["dod_pct_s"] = ("+" if dod_pct > 0 else "−") + f"{abs(dod_pct):.1f}%"
+    return t
+
+
 def load_data():
     """Load strong competitors only: rows present in BOTH listings and
     competitor_scores for the same date AND with total_score >=
@@ -272,10 +314,14 @@ def build_map(days, hist, meta, day_stats):
                   f'<div style="font-size:11px;color:#999;margin-top:4px">{prof["lat"]}, {prof["lng"]}</div></div>'),
     }
 
+    t = trend_info(day_stats)
+    map_trend = (f'<div style="color:{t["col"]}"><b>{t["arrow"]}</b> median {t["label"]}'
+                 f' · {t["pct_s"]} over {len(days)}d</div>') if t["pct"] is not None else ""
     stats_card = f"""
       <div style="font-weight:700;margin-bottom:4px">{last} · live comp set</div>
       <div style="font-size:12px;line-height:1.8">
         <div><b style="font-size:18px">{day_stats[-1]['count']}</b> active · median <b>{fmt_d(day_stats[-1]['median'])}</b></div>
+        {map_trend}
         <div>{sum(1 for f in feats if not f['active'])} former competitors (dropped)</div>
         <div style="margin-top:4px;color:#7a5c00">{'⚠ anchored to an imaginary' if hyp else 'anchored to the configured'}
         <span style="white-space:nowrap">{prof['bedrooms']}BR {'placeholder' if hyp else 'property'}</span></div>
@@ -354,6 +400,7 @@ if (active.length) map.fitBounds(active.concat([anchor]).map(f => [f.lat, f.lng]
 def build_report(days, day_stats, hist, meta, recs):
     last = days[-1]
     n_days = len(days)
+    t = trend_info(day_stats)
 
     prev = days[-2] if n_days >= 2 else None
     ids = {d: {lid for lid in hist if d in hist[lid]} for d in days}
@@ -375,19 +422,31 @@ def build_report(days, day_stats, hist, meta, recs):
     movers.sort(key=lambda x: -(max(p for _, p in x[1]) - min(p for _, p in x[1])))
 
     trend_rows = ""
+    prev_med = None
     for s in day_stats:
         r = recs.get(s["date"], {})
+        if prev_med is not None and s["median"] is not None:
+            dlt = s["median"] - prev_med
+            dcell = (f'<span style="color:{"#2e7d32" if dlt > 0 else "#c62828"};font-weight:700">'
+                     f'{"▲ +" if dlt > 0 else "▼ −"}{fmt_d(abs(dlt))}</span>') if dlt \
+                else '<span style="color:#999">· flat</span>'
+        else:
+            dcell = '<span style="color:#bbb">—</span>'
+        if s["median"] is not None:
+            prev_med = s["median"]
         trend_rows += (
             f'<tr><td><b>{s["date"]}</b></td>'
             f'<td style="text-align:right">{s["count"]}</td>'
             f'<td style="text-align:right"><b>{fmt_d(s["median"])}</b></td>'
+            f'<td style="text-align:right">{dcell}</td>'
             f'<td style="text-align:right">{fmt_d(s["min"])}–{fmt_d(s["max"])}</td>'
             f'<td style="text-align:right">{s["disc_count"]}/{s["count"]} ({s["disc_pct"]:.0f}%)</td>'
             f'<td style="text-align:right">{fmt_d(r.get("suggested"))}'
             + (f' <span style="color:#999;font-size:11px">@{r["conf"]}%</span>' if r.get("conf") else "")
             + '</td></tr>')
 
-    med_spark = spark([s["median"] for s in day_stats], color="#1565c0")
+    med_spark = spark([s["median"] for s in day_stats],
+                      color=t["col"] if t["pct"] is not None else "#1565c0")
     cnt_spark = spark([s["count"] for s in day_stats], color="#6a1b9a")
     dsc_spark = spark([round(s["disc_pct"]) for s in day_stats], color="#ef6c00")
 
@@ -411,6 +470,52 @@ def build_report(days, day_stats, hist, meta, recs):
         f'<tr><td>{d}</td><td style="text-align:right"><b>${r["suggested"]}</b></td>'
         f'<td style="text-align:right">{r["conf"] if r["conf"] else "—"}%</td></tr>'
         for d, r in recs.items())
+
+    # direction card + market-direction panel (the "are prices going up or down?" answer)
+    if t["pct"] is None:
+        trend_card = ""
+        meddod = "latest snapshot"
+        direction_html = ('<div class="panel" style="font-size:13px;color:#777">'
+                          'Not enough history for a direction yet — it appears once there '
+                          'are at least two days of data.</div>')
+    else:
+        trend_card = (
+            f'<div class="card"><div class="label">Direction ({n_days}d best fit)</div>'
+            f'<div class="big" style="color:{t["col"]}">{t["arrow"]} {t["pct_s"]}</div>'
+            f'<div class="small">median {t["tot_s"]} total · {t["day_s"]}/day</div></div>')
+        if t["dod"]:
+            meddod = (f'<span style="color:{"#2e7d32" if t["dod"] > 0 else "#c62828"};font-weight:700">'
+                      f'{"▲ +" if t["dod"] > 0 else "▼ −"}${abs(t["dod"]):,.0f}</span> '
+                      f'vs {t["prev_date"][5:]}')
+        else:
+            meddod = f'<span style="color:#666;font-weight:600">· flat</span> vs {t["prev_date"][5:]}'
+
+        def chip(txt, col):
+            return (f'<span style="background:{col}22;color:{col};font-weight:700;'
+                    f'padding:2px 10px;border-radius:11px;font-size:12px;'
+                    f'white-space:nowrap">{txt}</span>')
+
+        d_disc = day_stats[-1]["disc_pct"] - day_stats[0]["disc_pct"]
+        d_cnt = day_stats[-1]["count"] - day_stats[0]["count"]
+        head = {"down": "📉 Prices are trending down",
+                "up": "📈 Prices are trending up",
+                "flat": "➡️ Prices are holding steady"}[t["dir"]]
+        chips = (chip(f'median {t["arrow"]} {t["pct_s"]} · {n_days}d best fit', t["col"])
+                 + chip(f'discounting {"▲" if d_disc > 0 else "▼" if d_disc < 0 else "·"} '
+                        f'{"+" if d_disc > 0 else "−" if d_disc < 0 else "±"}{abs(d_disc):.0f} pts',
+                        "#ef6c00" if d_disc > 0 else "#2e7d32" if d_disc < 0 else "#666")
+                 + chip(f'comp set {"+" if d_cnt > 0 else "−" if d_cnt < 0 else "±"}{abs(d_cnt)}',
+                        "#546e7a"))
+        direction_html = (
+            f'<div class="panel" style="font-size:13px">'
+            f'<div style="font-size:16px;font-weight:800;color:{t["col"]};margin-bottom:4px">{head}</div>'
+            f'The comp-set median is <b>{t["label"]}</b> — best fit {t["day_s"]}/day, '
+            f'<b>{t["tot_s"]} ({t["pct_s"]})</b> across the {n_days}-day window. '
+            f'Day-over-day: <b>{t["dod_s"]}</b> ({t["dod_pct_s"]}) vs {t["prev_date"][5:]}.'
+            f'<div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">{chips}</div>'
+            f'<div class="note" style="margin-top:8px">The best-fit line smooths single-day noise. '
+            f'A sharp one-day step is more often a comp-set or methodology change than a market '
+            f'move — cross-check the 📜 Changelog below before acting on it.</div></div>')
 
     first = days[0]
     # anchor banner — adapts to whether the configured profile is hypothetical
@@ -446,8 +551,11 @@ def build_report(days, day_stats, hist, meta, recs):
                 .replace("__RANGE__", f"{first} → {last}")
                 .replace("__NDAYS__", str(n_days))
                 .replace("__MED__", fmt_d(day_stats[-1]["median"]))
+                .replace("__MEDDOD__", meddod)
                 .replace("__CNT__", str(day_stats[-1]["count"]))
                 .replace("__DISC__", f"{day_stats[-1]['disc_pct']:.0f}%")
+                .replace("__TREND_CARD__", trend_card)
+                .replace("__DIRECTION__", direction_html)
                 .replace("__MED_SPARK__", med_spark)
                 .replace("__CNT_SPARK__", cnt_spark)
                 .replace("__DSC_SPARK__", dsc_spark)
@@ -562,11 +670,12 @@ REPORT_TEMPLATE = """<!DOCTYPE html>
     <div class="card"><div class="label">Days of data</div>
       <div class="big">__NDAYS__</div><div class="small">__RANGE__</div></div>
     <div class="card"><div class="label">Median price (__LAST__)</div>
-      <div class="big">__MED__</div><div class="small">latest snapshot</div></div>
+      <div class="big">__MED__</div><div class="small">__MEDDOD__</div></div>
     <div class="card"><div class="label">Active competitors</div>
       <div class="big">__CNT__</div><div class="small">in current comp set</div></div>
     <div class="card"><div class="label">Discounting</div>
       <div class="big">__DISC__</div><div class="small">of current competitors</div></div>
+    __TREND_CARD__
   </div>
 
   <div class="cards" style="margin-top:12px">
@@ -575,10 +684,12 @@ REPORT_TEMPLATE = """<!DOCTYPE html>
     <div class="card"><div class="label">% discounting</div>__DSC_SPARK__</div>
   </div>
 
+  __DIRECTION__
+
   <h2>Per-day summary</h2>
   <table>
     <tr><th>Date</th><th style="text-align:right">Competitors</th>
-        <th style="text-align:right">Median</th><th style="text-align:right">Range</th>
+        <th style="text-align:right">Median</th><th style="text-align:right">Δ median</th><th style="text-align:right">Range</th>
         <th style="text-align:right">Discounted</th>
         <th style="text-align:right">Rec. price</th></tr>
     __TREND_ROWS__
