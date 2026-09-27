@@ -75,6 +75,10 @@ over bot commits.
 - Ghost pins carry probe verdicts: 🟡 likely booked (page still live) vs
   🔴 removed — daily URL probes, `listing_probes` table, max 10/run
   (market_agent/ghost_prober.py). Grey = unprobed.
+- `reports/ai_analysis_*.txt` — automated z.ai anomaly read per scrape
+  (NOTHING_UNUSUAL + one-liner when calm; ANOMALY + analysis when the
+  rubric trips). Needs the `ZAI_API_KEY` repo secret; check the latest
+  file first when asked "anything unusual?".
 - Quick numbers from SQLite (read-only, copy the DB out first if
   tooling blocks the state dir):
   `listings` (raw comps per day) ⨝ `competitor_scores` (scores);

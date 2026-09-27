@@ -3,6 +3,8 @@
 Methodology, configuration, and pipeline changes that affect how the stored
 data should be read. Newest first. Rendered into the trend report footer.
 
+- 2026-09-27 — AI analyst: every scrape gets an automated z.ai anomaly read committed as `reports/ai_analysis_<date>_<HHMM>.txt` (NOTHING_UNUSUAL + one-liner when calm; ANOMALY + <200-word analysis when the rubric trips — median ±8% DoD, comp-set ±30% cross-checked vs changelog, discount ±15 pts, rec ±5%, probe verdicts, ≥5 vanished/returned). Needs the ZAI_API_KEY repo secret; without it the step skips harmlessly.
+- 2026-09-27 — Probe classification: HTTP 410 (Gone) now counts as delisted (was "error"). First runner-IP probe batch: 16 live (likely booked/blocked), 1 delisted-by-410, zero 403s.
 - 2026-09-27 — Daily reports: each scrape now keeps its own file (`market_report_<date>_<HHMM>.txt`) — the afternoon run no longer overwrites the morning report. Trend report reads the latest run of each day for recommendations; older date-only files still parse.
 - 2026-09-26 — Ghost probes: vanished competitors get a polite daily URL probe (max 10/run, one per listing per day, ever-displayed ≥0.70 competitors only). Map/report now split "likely booked — page still live" (amber) from "removed/delisted" (red); grey = unprobed. Absence alone stays ambiguous — Airbnb search hides calendar-closed listings. First verdicts appear from the next Actions run.
 - 2026-09-20 — Report: market-direction verdict added (best-fit line over daily medians + day-over-day delta + discounting/comp-set chips), per-day Δ median column, direction card, and a trend line on the map stats. Direction is a least-squares fit over the whole window — read sharp one-day steps against this changelog, not as market moves.

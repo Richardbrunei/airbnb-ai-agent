@@ -35,7 +35,7 @@ DELISTED_MARKERS = (
 
 def classify(status_code: int, body: str) -> str:
     """Map an HTTP response to live | delisted | error."""
-    if status_code == 404:
+    if status_code in (404, 410):   # Not Found / Gone — both permanent exits
         return "delisted"
     low = (body or "").lower()
     if any(m in low for m in DELISTED_MARKERS):
