@@ -447,7 +447,7 @@ pytest
 
 5. **Storage** — Listings and scores go to SQLite (`data/` module). A CSV snapshot is also kept in `data/market_history.csv`.
 
-6. **Reporting** — A human-readable report is generated in `reports/market_report_YYYY-MM-DD.txt`.
+6. **Reporting** — A human-readable report is generated per scrape in `reports/market_report_YYYY-MM-DD_HHMM.txt` (the trend report reads the latest run of each day).
 
 ## Finding Competitors for a Specific Property
 
@@ -596,7 +596,7 @@ cp skill/SKILL.md ~/.openclaw/workspace/skills/airbnb-market-monitor/
 
 ## Output
 
-### Market Report (`reports/market_report_YYYY-MM-DD.txt`)
+### Market Report (`reports/market_report_YYYY-MM-DD_HHMM.txt`)
 
 Human-readable summary including:
 - Number of competitors found

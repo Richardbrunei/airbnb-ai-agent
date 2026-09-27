@@ -3,6 +3,7 @@
 Methodology, configuration, and pipeline changes that affect how the stored
 data should be read. Newest first. Rendered into the trend report footer.
 
+- 2026-09-27 — Daily reports: each scrape now keeps its own file (`market_report_<date>_<HHMM>.txt`) — the afternoon run no longer overwrites the morning report. Trend report reads the latest run of each day for recommendations; older date-only files still parse.
 - 2026-09-26 — Ghost probes: vanished competitors get a polite daily URL probe (max 10/run, one per listing per day, ever-displayed ≥0.70 competitors only). Map/report now split "likely booked — page still live" (amber) from "removed/delisted" (red); grey = unprobed. Absence alone stays ambiguous — Airbnb search hides calendar-closed listings. First verdicts appear from the next Actions run.
 - 2026-09-20 — Report: market-direction verdict added (best-fit line over daily medians + day-over-day delta + discounting/comp-set chips), per-day Δ median column, direction card, and a trend line on the map stats. Direction is a least-squares fit over the whole window — read sharp one-day steps against this changelog, not as market moves.
 - 2026-09-19 — Search radius widened 10 km → 20 km; dead top-level property_types list removed (it never reached Airbnb — scraper only forwards a single type). Stored comp-set sizes step up sharply from this date (~30–50 vs 6–14): a lens change, not a market shift. Read trend tables across this boundary with care.

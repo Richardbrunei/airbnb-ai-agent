@@ -108,8 +108,9 @@ class DailyReportGenerator:
 
         report = "\n".join(lines)
 
-        # Save to file
-        filename = f"market_report_{date_str}.txt"
+        # Save to file — one file per scrape (since 2026-09-27): the
+        # afternoon run no longer overwrites the morning report
+        filename = f"market_report_{date_str}_{datetime.now().strftime('%H%M')}.txt"
         filepath = self.output_dir / filename
         filepath.write_text(report)
         logger.info(f"Report saved to {filepath}")

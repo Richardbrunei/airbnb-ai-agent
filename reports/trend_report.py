@@ -218,12 +218,30 @@ def load_data():
     return days, day_stats, hist, meta, probes
 
 
+def latest_daily_report(day):
+    """Latest daily-report file for one date: time-suffixed (HHMM) files
+    from same-day scrapes beat the legacy date-only filename."""
+    cands = list(REPORTS_DIR.glob(f"market_report_{day}.txt"))
+    cands += [f for f in REPORTS_DIR.glob(f"market_report_{day}_????.txt")
+              if re.search(r"_\d{4}\.txt$", f.name)]
+    if not cands:
+        return None
+
+    def hhmm(f):
+        m = re.search(r"_(\d{4})\.txt$", f.name)
+        return m.group(1) if m else "0000"
+
+    return max(cands, key=hhmm)
+
+
 def parse_recs(days):
-    """Pull recommendation history from daily report .txt files."""
+    """Pull recommendation history from daily report .txt files.
+    Every scrape keeps its own file (since 2026-09-27); per day the
+    latest run's recommendation wins."""
     recs = {}
     for d in days:
-        f = REPORTS_DIR / f"market_report_{d}.txt"
-        if not f.exists():
+        f = latest_daily_report(d)
+        if f is None:
             continue
         txt = f.read_text(errors="replace")
         m = re.search(r"Current \$\d+ → Suggested \$(\d+)", txt)
@@ -592,8 +610,8 @@ def build_report(days, day_stats, hist, meta, recs, probes=None):
                   f'listed {fmt_d(prof.get("price"))}.</div>')
     # reasoning bullets from the latest daily report (if present)
     bullets_html = "<li>—</li>"
-    latest_txt = REPORTS_DIR / f"market_report_{last}.txt"
-    if latest_txt.exists():
+    latest_txt = latest_daily_report(last)
+    if latest_txt:
         txt = latest_txt.read_text(errors="replace")
         m = re.search(r"Pricing Recommendation(.*?)(?:\n\n|\Z)", txt, re.S)
         if m:
