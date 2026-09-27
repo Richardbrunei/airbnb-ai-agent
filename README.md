@@ -500,6 +500,7 @@ The pipeline runs on GitHub Actions' always-awake runners — no server needed, 
 **What `.github/workflows/daily-scrape.yml` does:**
 
 - Scrapes **2×/day** (8:17 AM + 12:17 PM CDT — GitHub cron is UTC, and runs can be delayed during peak hours; data still lands daily)
+- Probes vanished competitors (max 10/run): classifies 🟡 likely booked (page still live) vs 🔴 removed (delisted) — verdicts stored in `listing_probes`, rendered on the map and churn note
 - Runs the full pipeline, then regenerates the trend report + map
 - Commits results back to `main` as `github-actions[bot]` (`data/market.db`, `reports/`, `logs/`)
 - Queued via `concurrency` so runs never overlap; runner pinned to `ubuntu-24.04` (deliberate — no surprise OS migrations)

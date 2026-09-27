@@ -202,8 +202,20 @@ def load_data():
             })
             if r["lat"] is not None:  # keep freshest coords
                 m.update(lat=r["lat"], lng=r["lng"])
+    # ghost-probe verdicts (latest per listing): booked vs removed forensics;
+    # table absent (fresh clone / pre-migration DB) → {} → grey pins as before
+    probes = {}
+    try:
+        for r in db.execute(
+                "SELECT p.listing_id, p.status, p.probe_date FROM listing_probes p "
+                "JOIN (SELECT listing_id, MAX(probe_date) md FROM listing_probes "
+                "GROUP BY listing_id) x ON x.listing_id = p.listing_id "
+                "AND x.md = p.probe_date"):
+            probes[r["listing_id"]] = {"status": r["status"], "date": r["probe_date"]}
+    except sqlite3.OperationalError:
+        pass
     db.close()
-    return days, day_stats, hist, meta
+    return days, day_stats, hist, meta, probes
 
 
 def parse_recs(days):
@@ -249,7 +261,7 @@ def load_profile() -> dict:
                 "property_type": "Home", "hypothetical": True}
 
 
-def build_map(days, hist, meta, day_stats):
+def build_map(days, hist, meta, day_stats, probes=None):
     last = days[-1]
     feats = []
     for lid, h in hist.items():
@@ -285,6 +297,15 @@ def build_map(days, hist, meta, day_stats):
         else:
             color = TIER_COLORS["ghost"]
             status, sc = "Former competitor — last seen " + last_seen[5:], "#757575"
+            pr = (probes or {}).get(lid)
+            if pr and pr.get("status") == "live":
+                color, sc = "#f9a825", "#b28704"
+                status = f"Likely booked — page still live (probed {pr['date'][5:]})"
+            elif pr and pr.get("status") == "delisted":
+                color, sc = "#c62828", "#c62828"
+                status = f"Removed — listing delisted (probed {pr['date'][5:]})"
+            elif pr and pr.get("status") == "error":
+                status += " · probe failed"
             icon_html = (f'<div style="transform:translate(-50%,-100%);width:12px;height:12px;'
                          f'border-radius:50%;background:transparent;border:2px dashed {color};'
                          f'box-shadow:0 1px 3px rgba(0,0,0,.3)"></div>')
@@ -304,7 +325,7 @@ def build_map(days, hist, meta, day_stats):
           {f'<a href="{m["url"]}" target="_blank" style="font-size:12px">View listing ↗</a>' if m['url'] else ''}
         </div>"""
         feats.append({"lat": m["lat"], "lng": m["lng"], "icon": icon_html,
-                      "popup": popup, "active": in_last})
+                      "popup": popup, "active": in_last, "lid": lid})
 
     center = [statistics.mean(f["lat"] for f in feats),
               statistics.mean(f["lng"] for f in feats)]
@@ -332,6 +353,11 @@ def build_map(days, hist, meta, day_stats):
                   f'<div style="font-size:11px;color:#999;margin-top:4px">{prof["lat"]}, {prof["lng"]}</div></div>'),
     }
 
+    g_n = sum(1 for f in feats if not f["active"])
+    g_live = sum(1 for f in feats if not f["active"]
+                 and (probes or {}).get(f["lid"], {}).get("status") == "live")
+    g_rm = sum(1 for f in feats if not f["active"]
+               and (probes or {}).get(f["lid"], {}).get("status") == "delisted")
     t = trend_info(day_stats)
     map_trend = (f'<div style="color:{t["col"]}"><b>{t["arrow"]}</b> median {t["label"]}'
                  f' · {t["pct_s"]} over {len(days)}d</div>') if t["pct"] is not None else ""
@@ -340,7 +366,7 @@ def build_map(days, hist, meta, day_stats):
       <div style="font-size:12px;line-height:1.8">
         <div><b style="font-size:18px">{day_stats[-1]['count']}</b> active · median <b>{fmt_d(day_stats[-1]['median'])}</b></div>
         {map_trend}
-        <div>{sum(1 for f in feats if not f['active'])} former competitors (dropped)</div>
+        <div>{g_n} former competitors (dropped){f' · 🟡 {g_live} likely booked · 🔴 {g_rm} removed' if (g_live or g_rm) else ''}</div>
         <div style="margin-top:4px;color:#7a5c00">{'⚠ anchored to an imaginary' if hyp else 'anchored to the configured'}
         <span style="white-space:nowrap">{prof['bedrooms']}BR {'placeholder' if hyp else 'property'}</span></div>
       </div>"""
@@ -384,7 +410,9 @@ MAP_TEMPLATE = """<!DOCTYPE html>
   <span class="sw" style="background:#1565c0"></span>$301–400<br>
   <span class="sw" style="background:#ef6c00"></span>$401–500<br>
   <span class="sw" style="background:#c62828"></span>&gt; $500<br>
-  <span class="sw" style="background:transparent;border:2px dashed #757575"></span>former competitor<br>
+  <span class="sw" style="background:transparent;border:2px dashed #f9a825"></span>likely booked (page live)<br>
+  <span class="sw" style="background:transparent;border:2px dashed #c62828"></span>removed (delisted)<br>
+  <span class="sw" style="background:transparent;border:2px dashed #757575"></span>former competitor (unprobed)<br>
   <span style="margin-right:6px">🏠</span><b>$250 anchor</b> (imaginary)
   <div style="border-top:1px solid #eee;margin-top:6px;padding-top:6px;color:#777">
     score = .35·location + .30·bedrooms +<br>.30·type + .05·price (similarity to anchor)</div>
@@ -415,7 +443,7 @@ if (active.length) map.fitBounds(active.concat([anchor]).map(f => [f.lat, f.lng]
 """
 
 
-def build_report(days, day_stats, hist, meta, recs):
+def build_report(days, day_stats, hist, meta, recs, probes=None):
     last = days[-1]
     n_days = len(days)
     t = trend_info(day_stats)
@@ -483,6 +511,15 @@ def build_report(days, day_stats, hist, meta, recs):
 
     new_html = "".join(listing_row(l, last) for l in new_now) or "<tr><td colspan=3 style='color:#999'>none</td></tr>"
     gone_html = "".join(listing_row(l, prev) for l in gone_now) or "<tr><td colspan=3 style='color:#999'>none</td></tr>"
+    pl = probes or {}
+    g_live_r = sum(1 for l in gone_now if pl.get(l, {}).get("status") == "live")
+    g_rm_r = sum(1 for l in gone_now if pl.get(l, {}).get("status") == "delisted")
+    gone_probe_html = (f'<div class="note" style="margin-top:6px">Probe verdicts among the dropped: '
+                       f'<b style="color:#b28704">🟡 {g_live_r} likely booked</b> (page still live) · '
+                       f'<b style="color:#c62828">🔴 {g_rm_r} removed</b> · '
+                       f'{len(gone_now) - g_live_r - g_rm_r} unprobed. Vanished ≠ delisted — '
+                       f'Airbnb search hides listings whose calendar is closed for the target window.</div>') \
+        if (g_live_r or g_rm_r) else ""
 
     rec_rows = "".join(
         f'<tr><td>{d}</td><td style="text-align:right"><b>${r["suggested"]}</b></td>'
@@ -581,6 +618,7 @@ def build_report(days, day_stats, hist, meta, recs):
                 .replace("__MOVERS__", movers_html or "<p style='color:#999'>No price changes detected.</p>")
                 .replace("__NEW_ROWS__", new_html)
                 .replace("__GONE_ROWS__", gone_html)
+                .replace("__GONE_PROBE__", gone_probe_html)
                 .replace("__REC_ROWS__", rec_rows)
                 .replace("__RECBULLETS__", bullets_html)
                 .replace("__PREV__", prev or "")
@@ -725,6 +763,7 @@ REPORT_TEMPLATE = """<!DOCTYPE html>
     <tr><th>👋 Competitors dropped since __PREV__</th><th></th><th style="text-align:right">Last price</th></tr>
     __GONE_ROWS__
   </table>
+  __GONE_PROBE__
 
   <h2>Price movers (competitors, across all days)</h2>
   <div class="panel">__MOVERS__</div>
@@ -737,7 +776,8 @@ REPORT_TEMPLATE = """<!DOCTYPE html>
 
   <h2>🗺️ Competitor map (__LAST__)</h2>
   <iframe src="market_trend_map.html" title="Competitor trend map"></iframe>
-  <div class="note">Price-coded chips = current competitors; dashed grey pins = former competitors.
+  <div class="note">Price-coded chips = current competitors; dashed pins = vanished competitors —
+    🟡 likely booked (page still live) · 🔴 removed (delisted) · grey unprobed.
     Click any pin for its full price history. Also openable directly:
     <a href="market_trend_map.html">market_trend_map.html</a></div>
 
@@ -763,12 +803,12 @@ REPORT_TEMPLATE = """<!DOCTYPE html>
 def main():
     if not DB_PATH.exists():
         sys.exit(f"No database at {DB_PATH}")
-    days, day_stats, hist, meta = load_data()
+    days, day_stats, hist, meta, probes = load_data()
     if not days:
         sys.exit("No snapshots in database")
     recs = parse_recs(days)
-    build_map(days, hist, meta, day_stats)
-    build_report(days, day_stats, hist, meta, recs)
+    build_map(days, hist, meta, day_stats, probes)
+    build_report(days, day_stats, hist, meta, recs, probes)
     print(f"OK: {MAP_OUT.name} + {REPORT_OUT.name}  "
           f"({len(days)} days, {len(hist)} competitors, {len(recs)} recs)")
 

@@ -51,14 +51,24 @@ async def run_market_monitoring():
         storage.store_scores(scored)
         logger.info(f"Stored {len(scored)} competitor scores")
 
-    # 5. Pricing recommendation from the 20 closest comps
+    # 5. Probe vanished competitors: booked vs removed (never fatal)
+    try:
+        from market_agent.ghost_prober import probe_ghosts
+        pr = probe_ghosts()
+        logger.info(f"Ghost probes: {pr['probed']} probed "
+                    f"({pr['live']} live/blocked, {pr['delisted']} delisted, "
+                    f"{pr['errors']} errors, {pr['skipped']} skipped)")
+    except Exception as e:
+        logger.warning(f"Ghost probe step skipped: {e}")
+
+    # 6. Pricing recommendation from the 20 closest comps
     if profile and scored:
         rec = analyzer.recommend(profile, scored)
         if rec:
             analysis["recommendations"] = [rec]
             logger.info("Pricing recommendation generated")
 
-    # 6. Generate report (also stores snapshot)
+    # 7. Generate report (also stores snapshot)
     report = reporter.generate(analysis)
     logger.info("Daily report generated")
 

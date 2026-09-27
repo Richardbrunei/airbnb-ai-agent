@@ -165,13 +165,108 @@ def get_db(db_path: Optional[Path] = None) -> sqlite3.Connection:
     return conn
 
 
+PROBE_SCHEMA = """
+CREATE TABLE IF NOT EXISTS listing_probes (
+    id          INTEGER PRIMARY KEY AUTOINCREMENT,
+    probe_date  TEXT    NOT NULL,
+    listing_id  TEXT    NOT NULL,
+    url         TEXT,
+    title       TEXT,
+    status      TEXT,             -- live | delisted | error
+    detail      TEXT,             -- e.g. "http 200", error message
+    UNIQUE (probe_date, listing_id)
+);
+"""
+
+
 def init_db(db_path: Optional[Path] = None) -> None:
     """Create tables if they don't exist."""
     conn = get_db(db_path)
     try:
         conn.executescript(SCHEMA)
+        conn.executescript(PROBE_SCHEMA)
         conn.commit()
         logger.info(f"Database initialized at {db_path or DB_PATH}")
+    finally:
+        conn.close()
+
+
+# ── Ghost probes (booked vs removed forensics) ───────────────────────────────
+
+
+def store_probe(listing_id: str, url: str, title: str, status: str,
+                detail: str, probe_date: Optional[str] = None,
+                db_path: Optional[Path] = None) -> None:
+    """Store one probe verdict. UNIQUE(probe_date, listing_id) makes
+    re-probing the same listing the same day idempotent (one probe/day)."""
+    date_str = probe_date or datetime.now().strftime("%Y-%m-%d")
+    conn = get_db(db_path)
+    try:
+        conn.execute(
+            "INSERT OR REPLACE INTO listing_probes "
+            "(probe_date, listing_id, url, title, status, detail) "
+            "VALUES (?,?,?,?,?,?)",
+            (date_str, listing_id, url, title, status, detail))
+        conn.commit()
+    finally:
+        conn.close()
+
+
+def find_ghosts(lookback_days: int = 3, limit: int = 50,
+                db_path: Optional[Path] = None) -> list[dict]:
+    """Competitors that vanished: seen within the last `lookback_days`
+    days before the latest scrape date, absent from the latest scrape.
+
+    Carries the latest probe status/date (if any) so callers can skip
+    same-day re-probes and confirmed delistings."""
+    conn = get_db(db_path)
+    conn.row_factory = sqlite3.Row
+    try:
+        rows = conn.execute(
+            """
+            WITH latest AS (SELECT MAX(scrape_date) d FROM listings)
+            SELECT l.listing_id, l.title, l.url,
+                   MAX(l.scrape_date) AS last_seen,
+                   (SELECT p.status FROM listing_probes p
+                     WHERE p.listing_id = l.listing_id
+                     ORDER BY p.probe_date DESC, p.id DESC LIMIT 1) AS probe_status,
+                   (SELECT p.probe_date FROM listing_probes p
+                     WHERE p.listing_id = l.listing_id
+                     ORDER BY p.probe_date DESC, p.id DESC LIMIT 1) AS probe_date
+            FROM listings l, latest
+            WHERE l.scrape_date < latest.d
+              AND l.scrape_date >= date(latest.d, ?)
+              AND l.listing_id NOT IN
+                  (SELECT listing_id FROM listings WHERE scrape_date = latest.d)
+              -- only ever-displayed competitors (map/report population):
+              -- probe budget shouldn't be spent on sub-threshold listings
+              AND l.listing_id IN (SELECT DISTINCT listing_id FROM competitor_scores
+                                   WHERE total_score >= 0.70)
+            GROUP BY l.listing_id
+            ORDER BY last_seen DESC
+            LIMIT ?
+            """,
+            (f"-{lookback_days} day", limit)).fetchall()
+        return [dict(r) for r in rows]
+    finally:
+        conn.close()
+
+
+def get_latest_probes(db_path: Optional[Path] = None) -> dict:
+    """Latest probe verdict per listing: {listing_id: {status, date}}.
+    Empty dict if the table doesn't exist yet (fresh clone, older DB)."""
+    conn = get_db(db_path)
+    conn.row_factory = sqlite3.Row
+    try:
+        rows = conn.execute(
+            "SELECT p.listing_id, p.status, p.probe_date FROM listing_probes p "
+            "JOIN (SELECT listing_id, MAX(probe_date) md FROM listing_probes "
+            "      GROUP BY listing_id) x "
+            "ON x.listing_id = p.listing_id AND x.md = p.probe_date").fetchall()
+        return {r["listing_id"]: {"status": r["status"], "date": r["probe_date"]}
+                for r in rows}
+    except sqlite3.OperationalError:
+        return {}
     finally:
         conn.close()
 

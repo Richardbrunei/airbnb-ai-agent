@@ -72,6 +72,9 @@ over bot commits.
   history, scoring + pricing methodology, changelog, embedded map.
 - `reports/market_trend_map.html` — price·score chips, anchor pin,
   former/returning competitor pins with full price histories.
+- Ghost pins carry probe verdicts: 🟡 likely booked (page still live) vs
+  🔴 removed — daily URL probes, `listing_probes` table, max 10/run
+  (market_agent/ghost_prober.py). Grey = unprobed.
 - Quick numbers from SQLite (read-only, copy the DB out first if
   tooling blocks the state dir):
   `listings` (raw comps per day) ⨝ `competitor_scores` (scores);
