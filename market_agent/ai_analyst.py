@@ -142,15 +142,22 @@ def main():
         out, err = call_zai(digest)
     except Exception as e:  # never fatal to the pipeline
         out, err = None, f"{type(e).__name__}: {str(e)[:200]}"
-    if err:
-        logger.warning(f"AI analysis {err}")
-        return 0
     now = datetime.now()
     path = (PROJECT_ROOT / "reports" /
             f"ai_analysis_{now.strftime('%Y-%m-%d')}_{now.strftime('%H%M')}.txt")
-    path.write_text(f"AI anomaly analysis — run {now.strftime('%Y-%m-%d %H:%M')} "
-                    f"(data: {data_date}, model: {MODEL})\n" + "=" * 60 + "\n"
-                    + out + "\n")
+    header = (f"AI anomaly analysis — run {now.strftime('%Y-%m-%d %H:%M')} "
+              f"(data: {data_date}, model: {MODEL})\n" + "=" * 60 + "\n")
+    if err:
+        # write the outcome even on skip/error — the file is the heartbeat:
+        # no new file per run day ⇒ the step or the workflow didn't run
+        logger.warning(f"AI analysis {err}")
+        path.write_text(header + f"SKIPPED/ERROR: {err}\n\n"
+                        "No model output this run. Likely causes: ZAI_API_KEY secret\n"
+                        "missing or misnamed, key rejected, or model name wrong\n"
+                        "(override via the ZAI_MODEL workflow env).\n")
+        logger.info(f"outcome written to {path.name}")
+        return 0
+    path.write_text(header + out + "\n")
     logger.info(f"AI analysis written to {path.name}")
     return 0
 
