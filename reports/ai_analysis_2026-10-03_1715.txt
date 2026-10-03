@@ -1,0 +1,7 @@
+AI anomaly analysis — run 2026-10-03 17:15 (data: 2026-10-03, model: glm-5.3)
+============================================================
+SKIPPED/ERROR: RateLimitError: Error code: 429 - {'error': {'code': '1113', 'message': 'Insufficient balance or no resource package. Please recharge.'}}
+
+No model output this run. Likely causes: ZAI_API_KEY secret
+missing or misnamed, key rejected, or model name wrong
+(override via the ZAI_MODEL workflow env).
