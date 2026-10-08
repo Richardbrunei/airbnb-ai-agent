@@ -1,0 +1,15 @@
+AI anomaly analysis — run 2026-10-08 22:04 (data: 2026-10-08, model: glm-5.3)
+============================================================
+ANOMALY
+
+Comp-set collapse: 21 → 6 competitors on 2026-10-02 (-71%), far beyond the 30% threshold, with no changelog entry documenting a lens change (the 10-08 changelog is report-pipeline housekeeping). That is a methodology/data-quality suspect, not a market move — the median's subsequent wild swings ($425 → $538.50 → $452.50 → $525; +27%, -16%, +16% DoD) are likely artifacts of a 4-7 comp sample, not real repricing.
+
+Suggested price is thrashing: $290 → $410 (+41%) on 10-06 and $355 → $495 (+39%) today, both far past ±5%. With 34% confidence, these recommendations are noise-amplified.
+
+Probes: 1 delisted (HTTP 410) — one removal, not a ≥5 vanishing event; 39 live suggests the broader set is largely booked/blocked or filtered, consistent with a lens/scrape change rather than genuine exits.
+
+Data quality: new floor of $215.80 is a suspiciously non-round price; worth inspecting that listing for parsing errors.
+
+Likely cause: data-quality/methodology (comp-set shrink + small-sample noise), not a real market shift.
+
+For the anchor's $250 listing (hypothetical): do NOT chase the swinging recommendations; hold or re-baseline after the comp set is verified, since every median and rec shown is computed on an unvalidated ~6-listing set.
