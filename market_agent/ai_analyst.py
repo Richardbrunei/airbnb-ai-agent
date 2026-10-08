@@ -32,7 +32,10 @@ sys.path.insert(0, str(PROJECT_ROOT))
 
 logger = logging.getLogger(__name__)
 
-ZAI_BASE_URL = "https://api.z.ai/api/paas/v4"
+# Coding-plan endpoint (covered by subscription). The open-platform URL
+# (api/paas/v4) requires a separate pay-per-token resource package — using it
+# yields 429 error 1113 "insufficient balance".
+ZAI_BASE_URL = os.environ.get("ZAI_BASE_URL", "https://api.z.ai/api/coding/paas/v4")
 MODEL = os.environ.get("ZAI_MODEL", "glm-5.3")
 
 SYSTEM_PROMPT = """You are the anomaly analyst for an Airbnb competitor-market monitor \

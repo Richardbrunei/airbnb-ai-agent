@@ -51,6 +51,7 @@ jobs:
         env:
           ZAI_API_KEY: ${{ secrets.ZAI_API_KEY }}
           ZAI_MODEL: glm-5.3
+          ZAI_BASE_URL: https://api.z.ai/api/coding/paas/v4
         run: python -m market_agent.ai_analyst
 
       - name: Commit results back
