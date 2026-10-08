@@ -54,6 +54,9 @@ jobs:
           ZAI_BASE_URL: https://api.z.ai/api/coding/paas/v4
         run: python -m market_agent.ai_analyst
 
+      - name: Prune reports older than 1 month
+        run: python reports/prune_old_reports.py
+
       - name: Commit results back
         run: |
           git config user.name "github-actions[bot]"

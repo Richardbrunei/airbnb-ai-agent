@@ -3,6 +3,7 @@
 Methodology, configuration, and pipeline changes that affect how the stored
 data should be read. Newest first. Rendered into the trend report footer.
 
+- 2026-10-08 — Report retention + analyst fixes: (1) `market_report_*` / `ai_analysis_*` txt files older than 31 days are pruned every run (dated by filename — mtimes reset on checkout; git history keeps everything). (2) AI analyst moved to the coding-plan endpoint `api.z.ai/api/coding/paas/v4` (the open-platform URL requires a separate pay-per-token package — 429 error 1113). (3) Empty-response fix: thinking disabled for the call + `reasoning_content` fallback (the coding endpoint returned 200 with blank content).
 - 2026-09-27 — AI analyst: every scrape gets an automated z.ai anomaly read committed as `reports/ai_analysis_<date>_<HHMM>.txt` (NOTHING_UNUSUAL + one-liner when calm; ANOMALY + <200-word analysis when the rubric trips — median ±8% DoD, comp-set ±30% cross-checked vs changelog, discount ±15 pts, rec ±5%, probe verdicts, ≥5 vanished/returned). Needs the ZAI_API_KEY repo secret; without it the step skips harmlessly.
 - 2026-09-27 — Probe classification: HTTP 410 (Gone) now counts as delisted (was "error"). First runner-IP probe batch: 16 live (likely booked/blocked), 1 delisted-by-410, zero 403s.
 - 2026-09-27 — Daily reports: each scrape now keeps its own file (`market_report_<date>_<HHMM>.txt`) — the afternoon run no longer overwrites the morning report. Trend report reads the latest run of each day for recommendations; older date-only files still parse.

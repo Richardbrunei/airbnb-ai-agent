@@ -121,6 +121,16 @@ def build_digest():
     return "\n".join(lines), last
 
 
+def _extract_text(msg):
+    """Model text, falling back to reasoning_content - GLM coding endpoint
+    can return empty content with the answer in the reasoning field when
+    thinking is on."""
+    out = (getattr(msg, "content", None) or "").strip()
+    if not out:
+        out = (getattr(msg, "reasoning_content", None) or "").strip()
+    return out
+
+
 def call_zai(digest):
     """One chat completion via z.ai. Returns (text, None) or (None, error)."""
     key = os.environ.get("ZAI_API_KEY")
@@ -132,9 +142,13 @@ def call_zai(digest):
         model=MODEL,
         temperature=0.2,
         max_tokens=900,
+        extra_body={"thinking": {"type": "disabled"}},
         messages=[{"role": "system", "content": SYSTEM_PROMPT},
                   {"role": "user", "content": digest}])
-    return (r.choices[0].message.content or "").strip(), None
+    out = _extract_text(r.choices[0].message)
+    if not out:
+        return None, "empty model response (content and reasoning_content blank)"
+    return out, None
 
 
 def main():
