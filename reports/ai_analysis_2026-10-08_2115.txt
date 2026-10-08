@@ -1,0 +1,9 @@
+AI anomaly analysis — run 2026-10-08 21:15 (data: 2026-10-08, model: glm-5.3)
+============================================================
+ANOMALY
+
+Median jumped $452.5→$525 (+16% DoD, well past ±8%), discount share fell 50%→29% (-21 pts), and the suggested price leapt $355→$505 (+42%, triple the ±5% trigger). Comp-set count only moved 6→7, so no lens/methodology shift (changelog 10-08 covers only report retention and API plumbing — not a market factor). Delisted probes = 1, under threshold.
+
+Likely cause: data-quality/small-sample noise, not a real market move. The comp set thinned from 21 (10-01) to ~6 after a heavy softening/discount week; with n=6, one listing entering or repricing swings the median by ±$80+. Simultaneously the biggest movers are all price *cuts* (Longhorn -$218, others -$65-79) and a new suspicious floor at $215.8 — the composition of the set changed (2 new, 1 gone), plausibly pushing a high-priced listing into the median slot while the new low tail pulled the range down. Rising "median + falling discounts" alongside widespread cuts is internally inconsistent — classic small-n artifact. Confidence is still low (38%).
+
+For the anchor's $250 listing (hypothetical): don't chase the $505 suggestion. Signals point to continued softening (heavy cuts, 39 likely-booked-but-live). Hold $250 or trim slightly; revisit if n recovers above ~10.
