@@ -1,0 +1,13 @@
+AI anomaly analysis — run 2026-10-09 18:49 (data: 2026-10-09, model: glm-5.3)
+============================================================
+ANOMALY
+
+Multiple rubric trips on 2026-10-09, all compounding:
+
+- **Median reversal:** $525.0 → $420.0 (-20% DoD), breaking the choppy $425–$538 band of the past week.
+- **Discount share:** 29% → 62% (+33 pts, well past the 15-pt threshold), consistent with the median drop — real discounting, not mix alone.
+- **Suggested price:** $495 → $395 (-20% DoD; also $410→$495 was +21% the day before), though confidence rose to 52%.
+- **Churn:** 6 vanished + 7 new in one day — trips the ≥5 rule. Probes say only 2 delisted of 44 checked, so most exits are calendar-closed/likely-booked, not removals; no data-quality signal (no probe errors, healthy scrape of 8 comps, price floor $275 looks sane).
+- Changelog shows only report-retention/analyst fixes — no methodology or lens change. Comp-set 7→8 is not a ±30% shift.
+
+Verdict: a genuine market move — rapid discounting plus heavy turnover (big winners +$84 vs cluster of -$50 to -$79 cuts). With the hypothetical anchor at $250, it already sits far below the $420 median; I'd hold rather than chase the softening, since the floor ($275) is above the anchor and confidence in the $395 suggestion is only 52%.
