@@ -1,0 +1,15 @@
+AI anomaly analysis — run 2026-10-09 21:41 (data: 2026-10-09, model: glm-5.3)
+============================================================
+ANOMALY
+
+Multiple rubric trips on 2026-10-09, following an already volatile week:
+
+- **Median DoD swings**: Oct 5→6 +27.7% ($421.5→$538.5), 6→7 −16%, and small sets (4–8 comps) amplify noise. No changelog-documented lens change after the Sep 19 widening — this looks like genuine market churn plus sampling fragility, not methodology.
+- **Discount share**: 50%→29%→62% in two days (−21pts then +33pts, both past the 15pt threshold). Oct 9's 62% with a falling median ($525→$420) signals an aggressive softening day.
+- **Suggested-price moves**: $355→$495 (+39%) then $495→$385 (−22%) — way past ±5%, though confidence rose to 52%, suggesting the model sees a real (not noisy) signal.
+- **Churn**: 6 gone / 7 new in one day — exceeds the 5-threshold. Probe verdicts: 42 likely-booked, 2 delisted (410s now correctly classified per the Sep 27 changelog) — so the vanished are mostly calendar-closed/booked, not exit.
+- **Data quality**: Oct 8's $215.8 floor looks like a parsing artifact ($215.8 vs typical $285 floor); worth a scrape check.
+
+**Likely cause**: market (event weekend rollover — Oct 6 spike then discounting), compounded by tiny comp-set volatility, with one suspect price floor.
+
+**Anchor at $250 (hypothetical)**: Hold. Competitors discount into the $275–$420 band, but the anchor already sits below the median; chasing Oct 9's 62% discount share would undercut unnecessarily. Revisit if median breaks below $350 for 2+ days.
