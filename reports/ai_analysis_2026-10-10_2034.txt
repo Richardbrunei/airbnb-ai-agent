@@ -1,0 +1,7 @@
+AI anomaly analysis — run 2026-10-10 20:34 (data: 2026-10-10, model: glm-5.3)
+============================================================
+ANOMALY
+
+Median swung violently all week: +27.8% (10-05→06, $421.50→$538.50), -16% (06→07), +16% (07→08), -20% (08→09), settling at $409.50. Discount share jumped +33 pts in one day (10-08→09, 29%→62%). Suggested price moved -22% on 10-09 then +5.2% on 10-10 ($385→$405). Ghost probes: 2 delisted. Comp-set size is stable (4–8), and the changelog shows no lens/methodology change since 09-19, so this is genuine market noise, not data-quality: post-softening demand appears bifurcated — a handful of hosts repricing up hard (Family Haven +$110, Longhorn +$84) while discounters flood in (three drops of $65–79, discount share doubling). With only 6–8 comps, single-listing moves swing the median ±15–20% easily, so most |changes| exceed the 8% trip line but reflect composition churn (3 in / 3 out on 10-09) more than repricing. The two delisted competitors are a minor real supply contraction; 43 likely-booked is healthy demand.
+
+For the (hypothetical) $250 anchor: recent medians sit far above it; hold price or nudge toward the $385–405 suggested band — the discount wave signals competition, not a reason to undercut this far below market.
