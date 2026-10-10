@@ -1,0 +1,9 @@
+AI anomaly analysis — run 2026-10-10 17:51 (data: 2026-10-10, model: glm-5.3)
+============================================================
+ANOMALY
+
+Latest day 2026-10-10 trips several thresholds at once: median +8.2% DoD ($420.0→$454.5), discount share 29%→62%→83% (+54 pts in two days, far past the 15-pt line), and the suggested price jumped +9% ($385→$420 @ 56% conf, ≥5% rule). Ghost probes show 2 delisted (410-verdict), which trips the probe rule independently. Churn (4 gone, 2 new) stays under the ≥5 threshold, and no comp-set step or changelog entry explains the moves — the 10-08 changelog is tooling only — so this is market behavior, not methodology.
+
+Reading: the market is churning hard after the September softening. Discounting has become near-universal (83%) while big movers split both directions (+110/+84 vs −79/−72/−65), with likely-booked competitors sitting at 43 live — a demand pickup mixed with aggressive fill-the-calendar pricing. That tension (high discounts + rising median) suggests the cheap inventory is being snapped up, leaving pricier listings in the median. Rising recommendation confidence (56%) supports genuine signal.
+
+For the anchor's $250 (hypothetical anchor price): hold — it remains well under a $454 median even in a discount-heavy set; no cut warranted, and the +9% suggested move is within model volatility, not a directive to reprice. Watch whether discount share retreats from 83%; two delisted probes warrant a link check but aren't a market signal.
