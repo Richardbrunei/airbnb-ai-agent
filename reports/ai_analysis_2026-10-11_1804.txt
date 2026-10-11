@@ -1,0 +1,13 @@
+AI anomaly analysis — run 2026-10-11 18:04 (data: 2026-10-11, model: glm-5.3, tools: 5 call(s))
+============================================================
+ANOMALY
+
+Two issues verified against the DB:
+
+1. **Comp-set step change (methodology, not market).** `competitor_scores` jumps from 9–10 members (10-04..10-08) to 47–50 (10-09 onward) — a +370% level shift. The changelog documents no lens change after 2026-09-19; the 10-08 and 10-11 entries are pipeline fixes only. This mirrors the known 09-19 10→20 km step and is almost certainly another widening/rescoring change, unlogged. The digest's own comp counts (6→9) disagree with the scores table (45–50), confirming the day stats and the scores table are on different lenses — attribution and floors may be misaligned.
+
+2. **Delisted comp on the current date.** Probe on 2026-10-11: "Comforty house you can trust" (comp-set member, $557 on 10-08) returns HTTP 410 — removed from market. That's the high anchor behind several of the range's top; its exit (plus 2 new entrants) partly explains median churn.
+
+Median swings (+27.7% on 10-06, −16% 10-07, +16% 10-08) and the rec jump $355→$495 (+39%) all exceed thresholds but sit on a tiny 4–8 comp set during the post-softening rebound — noise, mostly.
+
+**For the anchor ($250, hypothetical):** the median ($435) is inflated by the lens change; don't chase it. Hold near $250–$285; recent suggestions ($385–$405) rest on a reshaped comp pool.
