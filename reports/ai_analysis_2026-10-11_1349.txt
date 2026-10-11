@@ -1,0 +1,9 @@
+AI anomaly analysis — run 2026-10-11 13:49 (data: 2026-10-11, model: glm-5.3, tools: 5 call(s))
+============================================================
+ANOMALY
+
+2026-10-11 median jumped +17.2% DoD ($409.50 → $480.00), tripping the ±8% rule. Verified cause: it's a floor effect, not broad repricing. On 10-10 the two cheapest comps ("Home near Lake Ray Hubbard" $186, "Home sweet home" $210) anchored the range at $275; both vanished on 10-11, lifting the observed minimum from $275 to $383. With only 8 competitors, losing the two cheapest mechanically drags the median up ~$70. Individual listing moves are consistent with ongoing high single-listing volatility (Longhorn House 380→464; pool homes cutting $40–$79), not a market-wide surge. Churn was 2 new / 2 gone — below the ≥5 threshold, and comp-set size (6→8 over the week) shows no lens change; nothing in the changelog touches methodology.
+
+Probes: one listing delisted (HTTP 410, "Comforty house you can trust") plus 42 likely-booked/blocked — high latent demand signal.
+
+Verdict: data-quality/membership artifact on top of a genuinely tight, booked-up market; discount share steady at 62%. The anchor's hypothetical $250 price sits far below the $383–$544 observed band — no evidence supporting a cut; if anything, demand signals justify testing above $250. (All figures from the imaginary monitoring DB.)
