@@ -1,0 +1,11 @@
+AI anomaly analysis — run 2026-10-12 23:38 (data: 2026-10-12, model: glm-5.3, tools: 5 call(s))
+============================================================
+ANOMALY
+
+Multiple rubric trips on 2026-10-12, all pointing to churn, not methodology:
+
+1. Comp-set churn: digest reports "5 new, 2 gone" but the DB shows **7 new, 7 gone** comp-set members (9→12, +33%). Gone: Home in Dallas ($385), Central 3BR ($356), Lodge at Blackhawk Lane ($410), 3BR White Rock Lake ($382), Peaceful Stay Near the Pond ($414), Hot Tub/Putting Green ($468), Spectacular 4BR Pool ($544). New: 4BR Arcade Carrollton ($522), Luxury Pool Oasis ($519), Pool Retreat Legacy West ($514), The Alcott House ($600), Hidden Haven ($306), Quiet corner lot ($318), Whimsical B&B ($500). ≥5 vanished/returned in one day → market churn (bookings/hosts rotating), not a lens change (no changelog entry; churn is balanced and organic). The digest's churn counter miscounting is a minor data-quality issue worth fixing.
+2. Probes: **3 delisted** listings — real inventory leaving the market.
+3. Suggested price $380→$475 (+25%, conf 58%) — trips the ≥5% move; median rose 435→468.5 (+7.8%, just under the 8% line), with discount share 67→75% (within 15 pts).
+
+Meaning: high listing turnover with discounting deepening; the sample is small (12) and the new cohort skews premium, inflating the recommendation. For the hypothetical $250 anchor I'd treat the $475 suggestion skeptically — hold near current pricing rather than chase a churn-driven spike.
