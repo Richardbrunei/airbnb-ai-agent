@@ -1,0 +1,11 @@
+AI anomaly analysis — run 2026-10-13 19:52 (data: 2026-10-13, model: glm-5.3, tools: 2 call(s))
+============================================================
+ANOMALY
+
+Median swings breach the ±8% DoD rule repeatedly: 10-07 $538.5→$452.5 (−16%), 10-09 +17% reversal, and today $468.5→$505 (+7.8%, right at threshold). Discounting share exploded 29%→89% in five days, including a +33-pt single-day jump (10-08→09) and another +14 pts today. Suggested price moved $385→$475 (+23%) in three days — well past the ±5% rule — now steadying at $465.
+
+Verified via DB: the churn is comp-set membership churn, not broad price collapse — many listings' prices are flat day-over-day (e.g., $495, $400, $531 unchanged); the median moves are driven by which listings enter/exit the small comp set (0 new, 3 gone 10-12→13) plus a few big repositions (e.g., 1568951569636772599 $539→$572; 1619675499171389046 $544→$496). Probes: 3 delisted (removed from market), 44 likely-booked — consistent with calendar tightness, not methodology (no lens change in changelog; the 10-11 tooling entry is analyst-side only).
+
+Likely cause: market, amplified by small-sample noise (6-12 comps) and rising booking velocity pushing survivors' quoted rates up while discounting deepens on unsold inventory.
+
+For the anchor's hypothetical $250 (imaginary benchmark): demand looks firm — hold $250; no cut warranted despite the 89% discount share, since comp median ($505) sits far above and suggested prices recovered from the $385 trough.
