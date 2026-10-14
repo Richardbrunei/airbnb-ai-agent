@@ -1,0 +1,4 @@
+AI anomaly analysis — run 2026-10-14 18:00 (data: 2026-10-14, model: glm-5.3, tools: 7 call(s))
+============================================================
+NOTHING_UNUSUAL
+2026-10-14 | 13 competitors | median $419 | 54% discounted | comp-set stabilizing, prices firm well above anchor $250
