@@ -1,0 +1,15 @@
+AI anomaly analysis — run 2026-10-14 20:42 (data: 2026-10-14, model: glm-5.3, tools: 3 call(s))
+============================================================
+ANOMALY
+
+Three rubric trips on 2026-10-14, all pointing the same direction:
+
+1. **Median -8.3% DoD** ($457 → $419), just past the ±8% threshold.
+2. **Discount share -29 pts in one day** (83% → 54%) — well over the 15-pt trigger.
+3. **Suggested price -10.8%** ($465 @60% → $415 @54%), over the 5% trigger.
+
+DB check of the 10-13 → 10-14 comp-set members confirms this is genuine price movement, not churn or methodology: only 1 new, 0 gone (small membership churn), and the drop is concentrated in real repricing — Family Haven 572→484 (-$88), Spacious Frisco 4B 496→485, 4BR Carrollton Arcade 495→481, Plano Retreat 505→490 — i.e. the upper tier of the comp set cutting overnight rates, pulling the median down and simultaneously pushing many below their "discounted" detection threshold (hence the discount-share plunge). Also 3 probe verdicts came back **delisted** (HTTP 410), satisfying the probe trigger.
+
+Verdict: market move (hosts dumping weekend rates into a soft post-peak market), not methodology or data-quality. The softening echoes late September.
+
+For the (hypothetical, $250) anchor: competitors' effective prices are falling toward it; suggested comps pricing slipped to ~$415. Holding $250 remains comfortably below median — no cut needed; watch whether another 8%+ down day would close the gap.
