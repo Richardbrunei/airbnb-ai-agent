@@ -1,0 +1,13 @@
+AI anomaly analysis — run 2026-10-15 20:21 (data: 2026-10-15, model: glm-5.3, tools: 4 call(s))
+============================================================
+ANOMALY
+
+**Comp-set size jump (methodology-suspect):** 7→12 on 10-12 (+71%) and 12→16 by 10-15 (+129% over 4 days). No changelog entry covers a lens change after the 09-19 widening, so this isn't a documented methodology shift — yet the size growth is the dominant driver of the stats. The median's day-to-day wobble (+15%, -2%, +8%, -9%, +6%) mostly tracks which listings enter the comp set, not repricing of a stable peer group.
+
+**Floor listing delisted:** "Plano Shaded Getaway" ($245, the 10-14 comp-set floor) returned HTTP 410 on 10-15 — confirmed genuinely removed from market, explaining the floor snapping back to $275. Probe verdicts otherwise healthy: 44 live, only that one delisted today (delisted-by-410 prior instances, 10-09 and 10-11, are also the vanished comps behind earlier count dips).
+
+**Discounting whipsaw:** 83%→54% (−29 pts)→44% — comp-set churn again, not coherent market repricing.
+
+**Cause:** likely data-quality/comp-set-selection drift (scoring change or scrape pool enrichment) rather than a real market move; no changelog documentation, so flag for investigation.
+
+**Anchor ($250, hypothetical):** unchanged fundamentals — suggested price $440 @58% is far above anchor; the 4BR comp median $445 suggests holding at $250 is well under-market, but treat the widening comp set as unverified until the sizing driver is explained.
