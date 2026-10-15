@@ -1,0 +1,7 @@
+AI anomaly analysis — run 2026-10-15 17:46 (data: 2026-10-15, model: glm-5.3)
+============================================================
+ANOMALY
+
+Median jumped +9.3% DoD ($419→$458) with range top extending to $587 (prior max $572), and the suggested price moved +9.6% ($415→$455) — both above the 8%/5% trip lines. Big movers support a genuine upscale shift (Backyard Oasis +$149, Chic 4BR Plano +$127, Longhorn House +$84), and churn was modest (3 out, 3 in — under the 5-listing threshold), so this looks like market repricing, not comp-set churn or methodology (no lens-change changelog entry; comp count rose 7→13 gradually over the week, not a ≥30% step). Two caveats: (1) discounting share swung -29 pts (83%→54%) from 10-13 to 10-14 — exceed the 15-point line and worth a closer look, though it partially reverts the 10-12/10-13 build-up and follows the post-softening-recovery pattern. (2) Ghost probes show 4 delisted — above the "any delisted" trip; these are scrape-pool removals, not necessarily comp-set members.
+
+Likely cause: market — real upward repricing of 4BR inventory plus a delisting cleanup. Implication for the (imaginary) $250 anchor: comps pulling away widens the anchor's discount gap; holding $250 stays deeply competitive, but a test toward ~$270-280 could be justified if the floor firms above $275.
