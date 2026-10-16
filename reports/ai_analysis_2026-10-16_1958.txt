@@ -1,0 +1,11 @@
+AI anomaly analysis — run 2026-10-16 19:58 (data: 2026-10-16, model: glm-5.3, tools: 5 call(s))
+============================================================
+ANOMALY
+
+2026-10-16: comp-set median fell $445.43 → $383.97 (−13.8% DoD, >8% bar), suggested price $440 → $395 (−10.2%, >5% bar), churn 8 gone / 7 new (≥5 rule), 4 probe delists. Discount share 44→53% (+9 pts, below the 15-pt bar).
+
+Verified against the DB: this is a **composition shift, not a market move or methodology change**. The raw competitor_scores pool only shrank 49→44 (~10%), so no lens change. But the top-16 comp set turned over heavily: 8 high-scoring, mostly premium pool listings dropped out — Backyard Oasis ($587), Chic 4BR Plano Pool Retreat ($575), Plano Retreat |Pool|Games ($541), 4BR Home w/ Arcade ($480), Plano Retreat ($465), Family Haven ($458), Luxury Pool Oasis ($447), plus the $285 Interns listing — while 7 cheaper substitutes entered (North Dallas Oasis $255, Your Crayon House $341, Longhorn House $439, Oak Grove $403, etc.), many 3BRs. The two "+$127/$149" moves are those same premium listings leaving/being re-scored, not real repricing.
+
+4 delisted probes corroborate genuine removals; 45 likely-booked suggests a tightening mid-October market.
+
+For the anchor's hypothetical $250 list: hold steady — it remains below the new comp-set floor ($255), and the median drop reflects churn, not softening demand.
