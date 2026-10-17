@@ -1,0 +1,12 @@
+AI anomaly analysis — run 2026-10-17 16:24 (data: 2026-10-17, model: glm-5.3, tools: 2 call(s))
+============================================================
+ANOMALY
+Three rubric items trip on 2026-10-17, two of them explainable by comp-set churn rather than market moves:
+
+1. Probes: 4 listings delisted (removed from market) — 47 likely-booked is fine, but any delisted count warrants watch.
+2. Comp-set churn: 4 gone / 1 new in one day (8->13 -> 12 comps over the week, under the 30% lens-change threshold; no changelog methodology change). Verified against competitor_scores: vanished members include North Dallas Oasis (was the $255 floor), 3BR Fun/Business Getaway ($354), Your Crayon House ($341), Cottonwood Wellness Retreat ($447), and Charming House in Overmead ($412). The $255->$275 floor move is purely North Dallas Oasis leaving — not competitor repricing. The digest's "biggest movers" (Backyard Oasis +149, Chic 4BR +127) are not in the comp-set join, i.e. raw scrape pool churn, not comp-set repricing.
+3. Suggested price +5.1% DoD ($395 -> $415 @ 59% conf) — just over the 5% trigger, direction consistent with median stabilization (+2.5% after the -13.9% drop on 10/16).
+
+Median $393.6, discount share 50% — steady vs 53% prior; the 10/16 dip looks like one bad day, not a slide. Net: market, not data quality.
+
+For the (imaginary) $250 anchor: comp median ~$394 leaves $140+ of headroom; even a cautious read suggests testing upward (e.g. $270-290 range) rather than following the +$20 suggestion exactly.
