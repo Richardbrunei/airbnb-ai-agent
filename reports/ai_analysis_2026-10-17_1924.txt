@@ -1,0 +1,12 @@
+AI anomaly analysis — run 2026-10-17 19:24 (data: 2026-10-17, model: glm-5.3, tools: 7 call(s))
+============================================================
+ANOMALY
+
+Thresholds tripped (multiple, mostly borderline):
+1. **Median DoD +15.9% on 10-16→10-17 is fine, but 10-15→10-16 median fell -13.8% ($445→$384)** — softening continues the post-9/20 downtrend; individual pool-property cuts (-$65 to -$72) look like seasonal pullback, not methodology.
+2. **Comp-set churn 10-16→10-17: 4 gone (~27% of 15)** — right at the 30% threshold. Verified via `competitor_scores`: North Dallas Oasis ($255, was the floor), Your Crayon House ($341), 3BR 2BA Fun/Business ($354), Hidden Cozy Gem ($365), plus others rotating on 10-16. No methodology changelog entry 10-14+; comp-set sizes have been oscillating 38–49 raw / 8–16 displayed all week, so this reads as **normal churn in an already-soft market**, not a lens change.
+3. **Biggest movers:** two pool homes +$127/+149 (weekend/event reprice?), three -$65 to -$72 (continued softening). Consistent with a market where discount share swung 44→53→50 and medians are drifting down from the ~$470 peak on 10-12.
+4. **Probes:** digest reports 4 delisted; DB shows **zero non-live probes on 10-17** (11 live logged). Likely the digest counts cumulative delisted; flag as a minor data-quality inconsistency worth a code check.
+5. Suggested price moves stayed under 5% DoD; no threshold breach.
+
+**Implication for the hypothetical $250 anchor:** market is softening (~$385–$400 median vs $470 five days ago), heavy weekend/event pricing noise. The $250 price is well below the ~$275 comp-set floor — no evidence to raise it; if anything the falling floor suggests holding firm rather than discounting into a soft market.
