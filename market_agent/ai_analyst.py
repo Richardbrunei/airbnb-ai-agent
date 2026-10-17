@@ -131,7 +131,7 @@ def build_digest():
         counts = {}
         for v in probes.values():
             counts[v["status"]] = counts.get(v["status"], 0) + 1
-        lines.append(f"Ghost probes (live=likely booked/blocked, delisted=removed): {counts}")
+        lines.append(f"Ghost probes (cumulative ledger over all vanished listings, latest verdict each — NOT today's flow; live=likely booked/blocked, delisted=removed): {counts}")
 
     try:
         entries = tr.load_changelog()[:5]

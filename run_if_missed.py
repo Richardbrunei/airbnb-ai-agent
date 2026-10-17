@@ -16,6 +16,16 @@ PROJECT_DIR = Path(__file__).parent
 DB_PATH = PROJECT_DIR / "data" / "market.db"
 LOG_FILE = PROJECT_DIR / "logs" / "daily.log"
 
+# 2026-10-17: the pipeline runs on GitHub Actions, which is the SOLE DB/repo
+# writer. A local scrape would write data/market.db and break the ff-only
+# pull scheme. Fail safe instead of ever scraping locally.
+if (PROJECT_DIR / ".github" / "workflows" / "daily-scrape.yml").exists():
+    print("run_if_missed.py retired: Actions owns the pipeline (sole writer). "
+          "To sync: git pull --ff-only origin main. If today's run is "
+          "missing, check the Actions runs page or bump the workflow-file "
+          "comment to trigger one.")
+    sys.exit(0)
+
 
 def already_ran_today() -> bool:
     """Check if a snapshot exists for today's date."""
