@@ -1,0 +1,11 @@
+AI anomaly analysis — run 2026-10-18 16:32 (data: 2026-10-18, model: glm-5.3, tools: 3 call(s))
+============================================================
+ANOMALY
+
+Trigger: 2026-10-15→16 median fell $445.43→$383.97 (−13.8%, threshold 8%) and the suggested price moved $440→$395 (−10.2%, threshold 5%) the same day. Verified against the DB: on 10-16, comp-set pool/entertainment homes re-priced sharply — Luxury Pool Oasis −$72, Great house w/ pool −$72, Hot Tub home −$65, Charming McKinney Retreat −$26.6 — while "Backyard Oasis |Pool+Game Room|" ($587, 21.9% off) exited the comp set, removing a high anchor. Discount share also eased 83%→44%→~50% over the week as hosts let weekend promo rates expire; the biggest "moves" (+149, +127) are discount removals back to base rates, not genuine increases.
+
+Likely cause: market, not methodology. Comp-set changes are 9→16→13, churn ≤3/day (below the 5 and 30% thresholds); no changelog lens change; probe ledger is cumulative (4 delisted cumulative, zero new delistings) per the documented 10-17 fix — not a same-day event. No probe errors or suspicious floors; the $275 floor is stable and real (comp-set members only).
+
+Since 10-16 the market has stabilized (median ~$384–394, suggestion $395→405 @ 60% conf, discount share ~46–50%).
+
+For the anchor (hypothetical $250, 4BR): comp-set median sits far above it, but effective discounted prices cluster $275–$450. The soft drift suggests holding $250 remains safely competitive; no cut needed.
