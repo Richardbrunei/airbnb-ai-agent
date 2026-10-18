@@ -1,0 +1,4 @@
+AI anomaly analysis — run 2026-10-18 19:26 (data: 2026-10-18, model: glm-5.3)
+============================================================
+NOTHING_UNUSUAL
+2026-10-18, 13 competitors, median $383.97, 46% discounted — stabilizing after softening week; churn and price moves within normal volatility.
