@@ -1,0 +1,9 @@
+AI anomaly analysis — run 2026-10-19 21:32 (data: 2026-10-19, model: glm-5.3, tools: 7 call(s))
+============================================================
+ANOMALY
+
+What moved: 2026-10-15→16 saw comp-set churn of 24 new / 29 gone on a "13→15" headline. That's methodology-flavored, not market. However, my direct DB check shows the actual distinct comp-set membership was 45→49→44→38→38→36 across the week — far above the digest's "13" headline counts. Even applying your "restrict to comp-set" caveat, ≥5 competitors vanished in one day (multiple days), tripping the ≥5-churn rule. No changelog line covers a comp-set pipeline change on 10-16, so this reads as an undocumented data-quality/membership drift, not a documented methodology step (unlike the 09-19 lens widening, which is old news). Averaging the actual new/gone cohorts shows no directional price bias (~$402 in, ~$402 out), so the median slide ($445→$384 over 10-16→19) is real softening, amplified by comp-set turnover noise. No reversal signal: suggested price ($440→$390) and discount share both drifted down smoothly.
+
+Likely cause: market softening (median and discount share both easing) + data-quality flag on churn/membership counts — recommend verifying the scoring pipeline's dedup logic and why the digest reports 12-16 while competitor_scores contains 36-49 rows.
+
+Meaning for your hypothetical $250 anchor (imaginary benchmark): with the 4BR comp median at $372 and falling ~2%/day, $250 remains deeply underpriced relative to this comp set — though the comp set's composition itself looks unstable this week, so re-run after churn settles before trusting the median.
