@@ -1,0 +1,16 @@
+AI anomaly analysis — run 2026-10-19 19:19 (data: 2026-10-19, model: glm-5.3)
+============================================================
+ANOMALY
+
+Only one rubric trip today: the suggested price fell $415 → $390 (-6.0%, ≥5% threshold) with confidence dipping 61% → 53%, the lowest in the series.
+
+Everything else is quiet:
+- Median $383.97 → $372.23 (-3.1%), within the ±8% band and consistent with the post-peak softening trend (median drifting down from ~$468 on 10-12).
+- Comp-set size stable at 12; churn of 1 new / 2 gone is well under the ≥5 threshold.
+- Discount share steady at 50% (0-point shift).
+- Floor ($275) and ceiling ($587) both stable; no suspicious price-floor behavior.
+- Ghost probes: the 48-live/4-delisted line is the cumulative ledger per the 10-17 changelog — documented, not a same-day data-quality issue, and no new delistings today.
+
+Likely cause: market, not methodology — the optimizer is tracking the continuing gentle slide in the comp median rather than any lens or data change. The low confidence suggests the model itself sees the signal as weak; big individual swings (-$89, +$127) partly offset.
+
+Implication for the (hypothetical, $250) anchor: competitors' median sits well above the anchor price, and softening is gradual, not a collapse. No urgency to cut $250; holding or trimming toward $235–240 would track the drift if it persists.
