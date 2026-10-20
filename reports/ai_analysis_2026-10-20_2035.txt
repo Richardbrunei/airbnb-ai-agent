@@ -1,0 +1,4 @@
+AI anomaly analysis — run 2026-10-20 20:35 (data: 2026-10-20, model: glm-5.3)
+============================================================
+NOTHING_UNUSUAL
+2026-10-20 | 15 competitors | median $383.97 | 40% discounted | stable soft market, suggested price steady at $390
