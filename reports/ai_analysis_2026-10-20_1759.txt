@@ -1,0 +1,4 @@
+AI anomaly analysis — run 2026-10-20 17:59 (data: 2026-10-20, model: glm-5.3, tools: 6 call(s))
+============================================================
+NOTHING_UNUSUAL
+2026-10-20, 13 competitors, median $359.50, 38% discounted; continued mild softening, below-trip-threshold drift. Verified the one borderline event: 10/15→16 median fell 9.2% (445→384), but a comp-set-membership check shows 10 of 16 listings left and 7 lower-priced ones entered that day — churn-driven, not a market crash; subsequent days (384→372→360, ~3%/day) sit well under the 8% threshold, rec moves ≤4%, and the probe line is the documented cumulative ledger. The anchor's $250 (hypothetical) stays below the floor's neighborhood; no action.
