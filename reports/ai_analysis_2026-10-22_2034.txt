@@ -1,0 +1,9 @@
+AI anomaly analysis — run 2026-10-22 20:34 (data: 2026-10-22, model: glm-5.3, tools: 4 call(s))
+============================================================
+ANOMALY
+
+Comp-set floor broke today: 2026-10-22 shows min $238 vs. $275–$285 all week. The floor is "Perfect Transition Home" (listing 1801047156061245837), a new entrant appearing only today at $238 with zero discount — a genuine low-priced competitor, not a scrape artifact (clean price record, single observation, not a price drop). The overall floor context is well below the hypothetical anchor anyway. Other digest items don't trip thresholds: median moved +1.1% DoD ($410.99→$415.49), churn was 3-in/3-out (under the ≥5 flag), discount share fell 9 pts (42→33), suggested price eased 380→370 (-2.6%, under the 5% flag), probe ledger is a cumulative read (live 48 / delisted 5, documented 10-17 — no delisting spike). Two large single-listing swings (+$127 and -$108) net roughly against each other and don't move the comp median; both look like repricing, not data-quality errors.
+
+Likely cause: market — a new budget comp undercutting the previous $275 floor by ~$60 (14%).
+
+Implication for the anchor's imaginary $250 listing: nothing urgent. The new sub-$240 comp is one listing, and suggested-price confidence is weak (~50%) with a soft downward drift ($400→$370 over the week). Hold $250 but watch whether the $238 entrant sticks and whether it pulls other 4BR comps down.
