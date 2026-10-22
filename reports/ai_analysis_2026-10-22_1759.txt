@@ -1,0 +1,4 @@
+AI anomaly analysis — run 2026-10-22 17:59 (data: 2026-10-22, model: glm-5.3, tools: 5 call(s))
+============================================================
+NOTHING_UNUSUAL
+2026-10-22, 12 competitors, median $415.49 (imaginary market), 33% discounted — new low-price entrant ($238, 4BR comp) joins comp set, overall stable.
