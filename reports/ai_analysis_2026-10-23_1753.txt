@@ -1,0 +1,12 @@
+AI anomaly analysis — run 2026-10-23 17:53 (data: 2026-10-23, model: glm-5.3, tools: 3 call(s))
+============================================================
+ANOMALY
+
+The only rubric trip is the suggested-price move: $370 → $400 on 2026-10-23, a +8.1% day-over-day jump (threshold 5%). Context suggests it's largely algorithmic noise, not a market shift:
+
+- Market stats stayed calm: median $415.49 → $394.99 (−4.9%), range floor healthy ($238 → $264), discount share 33% → 42% (+9 pts, under the 15-pt trigger). The previous six days show steady suggested prices ($415→$370) tracking a mild drift down, so this is a reversal but at low confidence (54%).
+- Comp-set churn (10 new / 10 gone) leaves the competitor count flat at 12 — no methodology/lens change; the 09-19 widening step isn't in play. DB membership churn is normal scrape rotation.
+- Ghost-probe ledger is explicitly cumulative (changelog 2026-10-17): 52 live / 5 delisted is not today's flow; no same-day delisting spike, no probe errors.
+- The big individual price moves (e.g., −$108 pool listings) largely involve churned listings, not the stable comp-set core driving the median.
+
+Likely cause: recommender volatility (confidence at the 50-54% floor), not a genuine demand inflection. Meaning for the anchor's $250 (hypothetical) 4BR: no basis to chase the $400 suggestion; hold pricing near current levels and wait for confirmation, since the market itself was flat-to-slightly-soft.
