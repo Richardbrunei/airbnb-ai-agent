@@ -1,0 +1,11 @@
+AI anomaly analysis — run 2026-10-23 20:27 (data: 2026-10-23, model: glm-5.3, tools: 6 call(s))
+============================================================
+ANOMALY
+
+Trigger: churn of 10 vanished + 10 new comps on 2026-10-22→23 (rubric ≥5), against an otherwise calm week (median $415→$395, -5%; discount share 33→42%, +9 pts — both under thresholds; suggested price drifting −$10/day, ~2.6%/day, under 5%).
+
+Verification: comp-set membership diff for 10-22 vs 10-23 shows 23 churned competitor_scores rows (pool-level), consistent with high listing turnover; the raw scrape pool shows the same 23 IDs absent on 10-23. Critically, probe ledger for 10-20..23 shows only 1 delisted total (10-21) and 14 live verdicts on 10-23 — so the vanished comps are NOT leaving the market; they are almost certainly booked/blocked on those dates. Their calendar holes are then filled by the 10 new entrants, keeping the comp count flat at 12.
+
+Likely cause: market/availability churn (weekend booking surge around 10-23), not methodology (no changelog lens change; no ≥30% comp-set shift) and not data quality (no probe errors, scrape non-empty, price floors ~$238-$264 match observed discounts on "Backyard Oasis" and "Luxury Pool Oasis" cuts).
+
+For the anchor's hypothetical $250 4BR: no repricing warranted — median and floor are stable; the softening week (median −28% from peak, discount share 85→33 per context) already passed. Hold ~$250; the churn reflects demand, not weakness.
