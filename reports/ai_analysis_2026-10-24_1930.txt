@@ -1,0 +1,4 @@
+AI anomaly analysis — run 2026-10-24 19:30 (data: 2026-10-24, model: glm-5.3, tools: 3 call(s))
+============================================================
+NOTHING_UNUSUAL
+2026-10-24, 14 competitors, median $387.485, 50% discounted — mild day-over-day drift (median −1.9%, discount +8 pts, churn 4 new/2 gone), suggested price −6.8% but over two days; comp-set floor and mover prices verified in DB; stable, slightly softening market.
