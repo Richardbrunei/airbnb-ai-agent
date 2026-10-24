@@ -1,0 +1,10 @@
+AI anomaly analysis — run 2026-10-24 16:36 (data: 2026-10-24, model: glm-5.3, tools: 3 call(s))
+============================================================
+ANOMALY
+
+Two soft rubric trips, no data-quality issues:
+
+1. Suggested price jumped $370 → $400 (+8.1%) between the 10-22 and 10-24 runs, despite median moving only +1.5% ($394.985 → $400.985) and no comp-set floor change ($264 both days). Confidence barely moved (50% → 51%), so the recommender is swinging ~30 on near-identical inputs — a model volatility signal, not a market one.
+2. Median DoD +8.2% on 10-21→10-22 ($383.97 → $415.485) — at the threshold, and well inside the post-softening-week rebound range already seen (10-20→10-21 was +7%). Comp-set membership drifted (12↔15, then 12→10, a 16.7% drop — under the 30% methodology trip) with 4 gone/2 new, likely weekend churn/bookings given 53 cumulative "live" probes; no same-day delisted verdicts.
+
+Likely cause: normal weekend booking churn plus a noisy recommender. For the hypothetical $250 anchor (vs ~$401 median): the market's firm floor around $264 and stabilizing median suggest holding at $250 — no basis to chase the $400 suggestion; it's model noise at 51% confidence.
