@@ -1,0 +1,5 @@
+AI anomaly analysis — run 2026-10-25 14:02 (data: 2026-10-25, model: glm-5.3, tools: 2 call(s))
+============================================================
+ANOMALY
+
+Median jumped $387.49→$418.00 (+7.9%, near the 8% trip) with comp-set shrinking 14→11, but day_diff shows the same-set median over 10 constant members was flat (+0.0%, $400.99 both days). The rise is pure composition: 4 members exited ($342 Cozy Frisco, $525 "Nice and beautiful", $391 Longhorn House, $345 "Cozy & Peaceful") and one $480 entered — lower-priced exits lifted the reported median, while actual repricing was trivial (largest move: The Branch Hospitality, −$8). This is a market anomaly only in a churn sense: 4 exits in a day is below the ≥5 threshold, so it's routine volatility, not methodology (no lens change in changelog). However, the suggested price moved $345→$390 (+13.0%, conf only 51→53%), tripping the ≥5% rule while underlying comps barely repriced — the recommender appears to be chasing composition noise from a single day's churn. For the (imaginary) $250 anchor: no repricing support for a move; hold, and treat the $390 suggestion as low-confidence churn artifact.
