@@ -1,0 +1,7 @@
+AI anomaly analysis — run 2026-10-25 17:03 (data: 2026-10-25, model: glm-5.3, tools: 1 call(s))
+============================================================
+ANOMALY
+
+Suggested price jumped $345 → $380 (+10.1% DoD, 2026-10-24 → 10-25), breaching the ≥5% threshold; the digest shows no market move to justify it. day_diff confirms: reported median $387.49 → $390.99 (+0.9%), and the SAME-SET median over 13 constant members is exactly flat ($383.97 both days) — zero net repricing. Membership churn is minimal (entered: $480 "Hot Tub ~ Large Groups" listing; exited: $525 "Nice and beautiful house"), and those swaps only account for the small composition uptick. Discount share rose 50% → 57% (+7 pts, under the 15-pt trigger), moving the other direction from the price suggestion. No probe issues: 0 delisted today (the 5 delisted / 54 live counts are the cumulative ledger, per the 10-17 changelog), churn was 1-for-1, no floor anomalies.
+
+Likely cause: model/data-quality noise in the pricer rather than a market shift — a +10% swing on ~51-54% confidence against a flat same-set median is inconsistent. For the (imaginary) $250 anchor listing, treat the $380 suggestion skeptically; no evidence supports repricing today — a flat median and slightly deeper discounting argue for holding near current level.
