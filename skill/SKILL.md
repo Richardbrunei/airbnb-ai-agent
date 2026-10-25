@@ -78,8 +78,10 @@ over bot commits.
 - `reports/ai_analysis_*.txt` — automated z.ai anomaly read per scrape
   (NOTHING_UNUSUAL + one-liner when calm; ANOMALY + analysis when the
   rubric trips). Since 2026-10-11 the analyst can call read-only tools
-  (db_schema / sql_query / read_file) to verify anomalies; the file
-  header records the tool-call count. Needs the `ZAI_API_KEY` repo secret; check the latest
+  to verify anomalies — day_diff(date) decomposes a median move into
+  composition vs repricing in one call, comp_set(date) lists a day's
+  members (both since 10-25; plus sql_query / db_schema / read_file);
+  the file header records the tool-call count. Needs the `ZAI_API_KEY` repo secret; check the latest
   file first when asked "anything unusual?".
 - Quick numbers from SQLite (read-only, copy the DB out first if
   tooling blocks the state dir):
