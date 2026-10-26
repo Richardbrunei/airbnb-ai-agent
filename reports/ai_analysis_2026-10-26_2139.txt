@@ -1,0 +1,9 @@
+AI anomaly analysis — run 2026-10-26 21:39 (data: 2026-10-26, model: glm-5.3, tools: 4 call(s))
+============================================================
+ANOMALY
+
+Headline market metrics are calm: 15→12 comps (-20%, normal churn vs the 30% threshold), median $398→$386.99 (-2.8%), same-set median $390.99→$386.99 (-1.0% — repricing only, exit of low-priced members like The Branch Hospitality $256 explains the rest). Discount share 60%→50% (-10 pts, under 15). Ghost probes show all recent-day probes returned "live" (http 200); the delisted=5 count is the documented cumulative ledger, not same-day flow. The 5 vanished are ~3 likely-booked-ish at most — under thresholds.
+
+The trip: suggested-price volatility. Recommendations swung $370→$345 (-6.8%), then $345→$430 (+24.6%), now $430→$400 (-7%) — every step ≥5% while median moved ≤5%/day. The +24.6% jump on 10-25 (57% conf) does not track the market: same-set repricing that week was mild, so the recommender appears to over-react to comp-set membership churn (entering $559 arcade listing, exiting low-priced members). This is a model/stability anomaly, not a market move.
+
+For the anchor: market median ~$387 and suggestions $345–430 (all vs the imaginary $250 anchor listing) suggest no repricing action is warranted off this noise; treat single-day recommendation swings at ≤57% confidence as unreliable.
