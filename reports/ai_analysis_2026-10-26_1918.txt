@@ -1,0 +1,11 @@
+AI anomaly analysis — run 2026-10-26 19:18 (data: 2026-10-26, model: glm-5.3, tools: 4 call(s))
+============================================================
+ANOMALY
+
+- Comp-set size fell 15→11 (-27%, just under the 30% lens-change threshold) with 6 exits vs 2 entries in one day — above the ≥5-vanished rubric line. No changelog entry documents a lens/methodology change on 10-26.
+- Median move was modest (-3.5%, $398→$383.97), and day_diff shows the SAME-SET median was flat (±0.0%) — the entire drop is composition, from the exit of pricier pool/large-group listings (Chic Plano Pool Retreat $545, Luxury Pool Oasis $519, Hot Tub large-group $480) plus The Hidden Haven ($305) and The Branch Hospitality ($256).
+- Critically, probes show three of the six "exits" (The Hidden Haven, The Branch Hospitality, Frisco 4BR) returned **http 200 (live)** on 10-26 — they vanished from the comp-set/scrape, not from the market. That points to a data-quality/scrape-capture issue rather than a genuine market event.
+- Biggest listed movers (Backyard Oasis -108, Great house -72) are not in the comp-set movers, so they're raw-pool listings — not driving the comp median.
+- Discount share fell 60→45 (15 pts), borderline; suggested price swung $430→$355 (-17%), above the ±5% rec rule, but confidence is only 51% and the same-set median was flat — the rec is reacting to composition noise.
+
+Implication for the anchor (hypothetical 4BR, listed $250 — imaginary): no real repricing occurred; the "softening" is an artifact of missing listings. Hold $250 and re-run after confirming the dropped listings are recaptured before trusting the $355 suggestion.
