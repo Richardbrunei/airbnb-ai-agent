@@ -1,0 +1,5 @@
+AI anomaly analysis — run 2026-10-27 21:18 (data: 2026-10-27, model: glm-5.3, tools: 1 call(s))
+============================================================
+ANOMALY
+
+Median jumped +10.3% DoD ($386.99 → $427.00, 12→13 comps), tripping the 8% rule — but the SAME-SET median (10 constant members) rose only +1.8% ($413.50 → $421.00). The move is composition, not repricing: three entrants priced high ($535, $418, $600) replaced two cheap exits ($342, $318), lifting the headline median. Churn is 5 total, below the ≥5-vanished bar as a data concern. Discount share 50%→46% and suggested price $400→$415 (+3.75%) are both within thresholds; top mover (Pool Retreat +$77) is a single repricing, not a market move. Ghost-probe ledger (54 live / 5 delisted, cumulative) shows no new delisting. No methodology change in the changelog. Verdict: threshold breach, but a benign membership effect — the market itself was roughly flat, slightly firm. For the (hypothetical, $250-listed) anchor: no repricing pressure; keep holding rather than chasing the headline median, which overstates today's strength.
