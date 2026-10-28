@@ -1,0 +1,9 @@
+AI anomaly analysis — run 2026-10-28 21:39 (data: 2026-10-28, model: glm-5.3, tools: 1 call(s))
+============================================================
+ANOMALY
+
+2026-10-28: comp set 13→10, median $427.00→$366.99 (-14.1% DoD), discount 46%→40%.
+
+Attribution is mostly composition, not repricing. The 4 exits were all upper-tier listings ($427, $525, $535, $559); their removal mechanically dropped the median. The SAME-SET median over 9 constant members fell only $415.00→$383.97 (-7.5%) — real but below the 8% bar, driven largely by The Longhorn House's cut $415→$251 (-$164), plus Legacy West Pool Retreat ($537→$473) and Luxury Pool Oasis ($519→$483). Count fell 23% (<30%), no methodology change documented — so a market softening, not a lens shift. Suggested price moved $415→$410 (-1.2%), below the 5% trigger; ghost ledger is cumulative, no delisted events today.
+
+Implication for the (hypothetical, $250) anchor: the comp floor is now $251, so the anchor sits at the very bottom of the range. With premium exits shrinking the set and same-set sellers cutting 7.5%, wait for confirmation — one -14% day led by exits isn't a repricing wave — but if the same-set median keeps sliding, the anchor's low price is at least well-protected and there may be headroom later, not pressure down.
