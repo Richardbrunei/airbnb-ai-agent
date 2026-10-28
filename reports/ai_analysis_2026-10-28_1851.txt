@@ -1,0 +1,13 @@
+AI anomaly analysis — run 2026-10-28 18:51 (data: 2026-10-28, model: glm-5.3, tools: 4 call(s))
+============================================================
+ANOMALY
+
+2026-10-28: comp set fell 13→8 (-38%) and median $427→$366.99 (-14.1% DoD). Ghost probes confirm all 5 exited members ("4BR Home w/ Arcade...", "Chic 4BR Plano...", "Family Haven...", "Pool Retreat | Near Legacy West", "Nice and beautiful house...") are **live**, i.e., likely booked/blocked — a demand event, not delistings or a methodology/lens change (no changelog entry; the 9-19 lens shift was far earlier and would show as a level jump, not shrinkage).
+
+The median drop is mostly composition: all 5 exits were mid-to-high priced ($427–$559). The same-set median (8 constant members) fell $399.49→$366.99 (-8.1%) — repricing is real but smaller, driven mainly by "The Longhorn House, King bed FREE Wi-Fi" ($415→$251, -164) plus $108 and $72 cuts at "Backyard Oasis" and "Great house with a nice pool and atrium". Discount share moved only 46→50% (within ±15 pts).
+
+Suggested price also fell $415→$375 (-9.6%, ≥5% tripwire) on lower confidence (49%).
+
+Likely cause: market — competitors selling out (5 booked) while remaining hosts undercut late. For the anchor's hypothetical $250 (imaginary) listing: even the new floor ($251) sits near the anchor's price; holding $250 remains defensible amid softening but avoid chasing the one-off $251 outlier.
+
+*(Prices are hypothetical market-monitor data; the anchor's $250 is imaginary.)*
