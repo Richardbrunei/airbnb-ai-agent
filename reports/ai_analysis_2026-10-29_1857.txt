@@ -1,0 +1,7 @@
+AI anomaly analysis — run 2026-10-29 18:57 (data: 2026-10-29, model: glm-5.3, tools: 2 call(s))
+============================================================
+ANOMALY
+
+Median jumped +15.2% ($366.99 → $422.72) and discount share fell 40% → 25% (-15 pts, tripping threshold), but day_diff shows this is almost entirely composition, not repricing: the SAME-SET median over the 5 constant members was flat at $350 (+0.0%). Five members exited (Frisco 4BR $418, Quiet/cozy $318, Luxury Pool Oasis $483, Nguyen $336, Cozy & Peaceful $336) while three pricier ones entered ($559, $451, $525), mechanically lifting the median and cutting the discounted share. Comp-set shrank 10→8 (-20%, below the 30% methodology trigger; churn of 5 vanished is at the flag line but matches the week's wobbly membership, 12–15 → 8, consistent with late-October bookings taking pool homes offline — pool-home price cuts like Pool Retreat -$78, Backyard Oasis -$108 support seasonal softening rather than data-quality issues). Also tripped: suggested price fell $410 → $375 (-8.5%, >5% DoD) on a shrinking comp set and only 50% confidence — low reliability. The ghost-probe ledger (54 live, 5 delisted) is cumulative, not same-day, so no delisting flag today.
+
+For the anchor's hypothetical $250 listing (imaginary comp-monitor scenario): the same-set median is steady at ~$350, so no real repricing signal; don't chase the headline median up — it's churn noise, and the anchor already sits well below the comp median.
