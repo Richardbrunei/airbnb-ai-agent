@@ -1,0 +1,7 @@
+AI anomaly analysis — run 2026-10-29 21:49 (data: 2026-10-29, model: glm-5.3, tools: 1 call(s))
+============================================================
+ANOMALY
+
+Discount share fell 40%→18% (-22 pts, tripping the ≥15-pt rule) while the median rose $366.99→$394.44 (+7.5%, just under the 8% median threshold). Attribution via day_diff: the SAME-SET median (7 constant members) was exactly flat at $350.00 — zero repricing pressure. The entire median jump and the discount-share collapse are composition effects: 4 entrants, all high-priced and undiscounted ($559, $525, $451, $420 — "4BR Home w/ Arcade", "Nice and beautiful house", "Private Pool Home in Allen", "Modern 5BR Plano House"), vs 3 exits ($418, $483, $336). Only genuine repricing among movers was "Pool Retreat | Near Legacy West" $473→$394 (-17%) and "The Longhorn House" $251→$236, continuing the softening tone; the big -108/-101 movers in the digest are churn, not same-set repricing. Churn 4/3 is normal (not ≥5 one-way). Probes: cumulative ledger shows 5 delisted total — no same-day spike; comp-set size +10%, not a methodology change.
+
+Read: this is a lens/composition artifact, not a market move. Anchor's $250 (imaginary anchor price) remains well under the $350 same-set floor — hold pricing; no action needed on the headline median.
