@@ -1,0 +1,12 @@
+AI anomaly analysis — run 2026-10-30 18:36 (data: 2026-10-30, model: glm-5.3, tools: 2 call(s))
+============================================================
+ANOMALY
+
+2026-10-30 trips two rules and one soft signal:
+- Comp-set churn: 8 members vanished, 4 entered (11→7, -36%), exceeding the ≥5-vanished threshold. No changelog entry documents a lens change, so this looks like genuine market turnover (likely bookings/exits), not methodology.
+- Discount share jumped 18%→57% (+39 pts), well past the 15-pt rule.
+- Reported median held (-2.7% to $384) only because composition offset repricing: the same-set median over the 3 constant members rose +22.7% ($384→$471), driven almost entirely by The Longhorn House repricing $236→$471 (+235). With n=3 that same-set median is statistically fragile — treat it as one aggressive hike plus two others, not broad repricing. Yesterday's rise (+7.5% reported) was pure composition; same-set was flat (n=7), consistent with this week's pattern.
+
+Likely cause: market, not methodology or data quality — small comp set, big turnover (several higher-priced homes exited, cheaper entries arrived), and a discount push from remaining members.
+
+Implication for the anchor ($250, hypothetical): comp-set medians are noise-dominated this week; suggested price eased to $385 at ~50% confidence. Anchor is well below the low end of today's range ($336 floor), so there's no pressure to cut — hold steady rather than chase daily composition swings.
