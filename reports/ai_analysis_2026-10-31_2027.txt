@@ -1,0 +1,15 @@
+AI anomaly analysis — run 2026-10-31 20:27 (data: 2026-10-31, model: glm-5.3, tools: 2 call(s))
+============================================================
+ANOMALY
+
+Latest day (2026-10-31): median $383.97 (+0.4% DoD; same-set median flat at $383.97 over 5 constant members), discount share 50%→57% (+7 pts, under the 15-pt tripwire), churn only 2-in/3-out. The market itself was quiet today.
+
+What did trip the rubric:
+1. **Suggested price $410→$365 (-11%, ≥5% threshold)** at just 52% confidence — a repricing signal driven by a shrinking sample, not repricing. No constant member moved much (top mover: The Longhorn House $471→$437).
+2. **Comp-set attrition**: 15→7 members in a week (-53%), above the ±30% flag. This is a gradual fade, not the 09-19-style lens step (no methodology change in the changelog), so it reads as real churn — competitors delisting or getting booked/blocked as holiday-season inventory tightens. One of today's exits ("Cozy Home Near Downtown Dallas") was probe-confirmed delisted; the cumulative ledger shows 56 live / 5 delisted, no probe errors.
+
+Likely cause: market (seasonal supply contraction + softening tail from the late-September discount wave), with the rec-price swing amplified by thin-sample noise at n=7.
+
+Implication for the anchor's $250 listing (imaginary anchor price): median ~$384 holds well above $250, so no pressure to cut; treat today's -11% suggestion as low-confidence noise, not a signal to reprice.
+
+Data quality: clean — no empty scrapes, no suspicious floors (low $235 is a genuine new member), probes all returned verdicts.
