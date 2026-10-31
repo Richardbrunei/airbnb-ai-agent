@@ -1,0 +1,5 @@
+AI anomaly analysis — run 2026-10-31 17:43 (data: 2026-10-31, model: glm-5.3, tools: 2 call(s))
+============================================================
+ANOMALY
+
+Comp set is collapsing and repricing is masking it. Size fell 11→8→5 (−38% on 10-31, past the ±30% trigger; −65% since 10-24) with no methodology change in the changelog — this looks like a market/lens drift, not a documented step. On 10-30 the discount share jumped 18%→50% (+32 pts) while the SAME-SET median actually rose +21.8% ($350.99→$427.49) — constant members pulled prices up (Longhorn House $236→$471) while cheaper listings cycled in, so the reported −3% median is pure composition. On 10-31 the same-set median was flat ($382.49) with 4 more exits (incl. one delisted probe verdict) and only a $235 entrant dragging the floor down. Suggested price swung ±6% twice ($415→$385, $410→$385) on thin, churning data with ~55% confidence. Verdict: data-quality/coverage concern — the sample (n=5, n=4 constant) is too small to trust. For the hypothetical anchor at $250, hold; median moves here are composition artifacts, and it already sits near the comp floor ($235–$437).
