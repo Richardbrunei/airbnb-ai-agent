@@ -1,0 +1,9 @@
+AI anomaly analysis — run 2026-11-01 18:25 (data: 2026-11-01, model: glm-5.3, tools: 2 call(s))
+============================================================
+ANOMALY
+
+Discount share collapsed 57% → 0% on 2026-11-01 (comp count 7→5, median $383.97→$375.70, -2.2%). Same-set median over the 4 constant members was $379.70→$378.35 (-0.4%), so repricing was essentially flat — the discount crash is a composition effect, not a repricing wave. The three exits ("Nice and beautiful house" $525, "Peaceful Carrollton Haven" $393, "The Longhorn House" $437) carried the discounted flags; the one entrant ($318, non-discounted) plus surviving members leave zero discounts in a now-5-member set. Small-n artifact, not a market move.
+
+No other rubric trip: count change -28.6% (<30%, no changelog methodology change on this date); no new delisted or likely-booked verdicts today (ledger 57 live / 5 delisted is cumulative history); suggested price $365→$380 (+4.1%, under 5%). Note 10-30 also saw a +32-pt discount jump and a +21.8% same-set median spike — churn-driven volatility in this thinning comp set.
+
+Implication for the anchor's $250 (hypothetical 4BR): the underlying market is stable near $375–380 median; the anchor remains well below market. No action needed on today's signal; re-check once the comp set stabilizes above ~8 members.
