@@ -1,0 +1,9 @@
+AI anomaly analysis — run 2026-11-01 21:11 (data: 2026-11-01, model: glm-5.3, tools: 2 call(s))
+============================================================
+ANOMALY
+
+What moved: Discount share collapsed 57%→0% (-57 pts) in one day, far past the 15-pt threshold. Comp set also keeps shrinking: 15 (10-25) → 5 today, with 3 more exits 10-31→11-01 (below the ≥5/day rule, but a -67% weekly attrition). Same-set median is stable (-0.4%), so today's -2.2% median dip is mostly composition (exits at $393–$525), not repricing. Red flag: today's max price ($383.97) equals the median — the comp set has lost its entire premium tier ($500+ listings vanished), and range top is set by a single listing. Cumulative ghost ledger (57 live, 5 delisted) is consistent with exits being booked/blocked, not removed. Biggest movers are all pool homes cutting $36–108.
+
+Likely cause: Market, not methodology — no lens/config change in the changelog since 10-25; tools compute from the same view as the digest. The market is thinning out as peak-season pool inventory gets booked or withdrawn for winter, and survivors are cutting pool-home premiums.
+
+Anchor impact: The $250 anchor (hypothetical, 4BR) sits well below today's median $375.70 and even below the floor ($240.80) — a discount position. But with n=5 and zero discounting among survivors, the comp signal is weak and skewed low. Don't chase the $425 suggestion; treat it as noise at 50% confidence. Hold ~$250–$280 and monitor whether exits return; if the set recovers above ~10 members, re-evaluate upward.
