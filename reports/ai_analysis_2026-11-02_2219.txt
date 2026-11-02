@@ -1,0 +1,11 @@
+AI anomaly analysis — run 2026-11-02 22:19 (data: 2026-11-02, model: glm-5.3, tools: 2 call(s))
+============================================================
+ANOMALY
+
+Market itself is calm: reported median $375.70→$383.97 (+2.2%), and the same-set median over 4 constant members moved just +0.4% ($349.50→$350.99) — pure composition effect from 3 entries ($298/$426/$525) and 1 exit ($376 Sweet family house). Discount share whipsawing 57%→0%→29% is churn noise on a 5–7 member set, not repricing.
+
+What trips the rubric: the suggested price jumped $425→$460 (+8.2% DoD, ≥5% threshold) with confidence barely moving (50→55%) — despite a flat same-set median and unchanged intraweek behavior ($365–$425 oscillation all week on median-stable data). The recommendation appears to be reacting to membership churn in a shrinking comp set (12 members on 10-26 → 7 today, −42% in a week via gradual daily churn of 1–3 listings; no single-day ≥30% step, and the changelog documents no lens change, so this is attrition — one confirmed delisting, Peaceful Carrollton Haven [delisted-410]).
+
+Verdict: model-sensitivity anomaly, not a market move. The $460 suggestion is not supported by repricing evidence; constant members are flat around $350–383.
+
+For the (imaginary) $250 anchor: no basis to raise ~8% in a day; hold and wait for the comp set to stabilize before acting on suggestions.
