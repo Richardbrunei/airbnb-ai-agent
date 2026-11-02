@@ -1,0 +1,13 @@
+AI anomaly analysis — run 2026-11-02 23:53 (data: 2026-11-02, model: glm-5.3, tools: 2 call(s))
+============================================================
+ANOMALY
+
+Trigger: discounting share 0% → 29% (+29 pts) in one day (2026-11-01 → 11-02), well past the 15-pt threshold. Secondary watch: comp-set churn with 3 re-entries and 1 exit on a 5→7 member set.
+
+Attribution — composition, not repricing:
+- Same-set median moved only $349.50 → $350.99 (+0.4%) across the 4 constant members; the reported +2.2% median move is entry/exit noise (entered: The Appointed House $298, Nice and beautiful house $525, The Longhorn House $426; exited: Sweet family house $376).
+- The discount shift is a small-denominator artifact: 29% of 7 ≈ 2 discounted members vs 0 of 5 the prior day. One day's 0% is equally fragile. Yesterday's diff showed the same churn in reverse (Longhorn/Nice&beautiful exited 10-31, re-entered today) — these listings are cycling in/out, not the market discounting.
+- No delisted verdicts today (only a historical Peaceful Carrollton Haven on 11-01); cumulative ledger live=56/delisted=6 is background, not flow.
+- Suggested price held at $425 (0% DoD) — no model-side trip.
+
+Market is stable around $350-$384. For the (hypothetical, $250-listed) anchor, nothing here warrants a move; the anchor remains well under the comp median. Recommend a early discount-share re-check tomorrow when n is hopefully larger — flagging today is a threshold-compliance call, not genuine repricing.
