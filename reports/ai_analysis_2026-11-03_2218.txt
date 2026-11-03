@@ -1,0 +1,12 @@
+AI anomaly analysis — run 2026-11-03 22:18 (data: 2026-11-03, model: glm-5.3, tools: 1 call(s))
+============================================================
+ANOMALY
+
+Rubric trips, but all point to composition, not market movement:
+- Median $383.97→$398.00 (+3.7%) — driven entirely by membership churn: $590 "4BR Home w/ Arcade" entered and $525 "Nice and beautiful house" exited; SAME-SET median over the 5 constant members is $383.97→$383.97 (0.0%).
+- Discount share 29%→14% (-15 pts, at threshold) — same churn artifact; the constant members repriced only mildly (largest mover: The Longhorn House $426→$405).
+- Suggested price $425→$470 (+10.6%) — breaches the ±5% rec rule, but the underlying median move was composition-only and confidence is just 54%; the model is over-reacting to a $590 entrant in a 7-member set.
+
+Likely cause: data-quality/methodology sensitivity of a small comp set (5–7 members, one entrant/exit swings stats), not a market shift. No probe anomalies (delisted=6 is a cumulative ledger, unchanged), no empty scrape or price-floor oddity.
+
+Implication for the anchor's $250 (imaginary anchor price): hold — no evidence of repricing among stable competitors; treat the $470 suggestion skeptically until it persists on a constant set.
