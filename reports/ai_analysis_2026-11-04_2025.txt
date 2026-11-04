@@ -1,0 +1,14 @@
+AI anomaly analysis — run 2026-11-04 20:25 (data: 2026-11-04, model: glm-5.3, tools: 1 call(s))
+============================================================
+ANOMALY
+
+Median is flat ($398.00 → $398.00; same-set median $383.97 unchanged over the 5 constant members), and comp-set size is stable at 7 (2 entered: Cozy Spacious Fun Family-Pet-Friendly 4BR $577, Nice and beautiful house $525; 2 exited: 4BR Home w/ Arcade $590, La Vida Dallas $433 — exit/entry prices roughly cancel).
+
+Two rubric trips, both likely data-quality/composition artifacts on a tiny set rather than a market move:
+
+1. Discount share jumped 14% → 43% (+29 pts, threshold 15). With only 7 members that's one or two listings flipping to discounted; the same-set median didn't budge, so it's not broad repricing.
+2. Suggested price fell $470 → $395 (-16%, threshold 5%) on unchanged confidence (54%). With a flat comp median and modest churn, this looks like the recommender reacting to the two low-priced exits/high-priced entries — noise amplified by the small comp set.
+
+Probes are clean (cumulative ledger: 57 live, 6 delisted — no same-day delisting event), no scrape errors, churn within bounds.
+
+Meaning for the anchor's imaginary $250 listing: no evidence of genuine market softening; the comp set still medians ~$384-398, well above $250. Treat today's suggested-price swing as unreliable and hold, rather than cut.
