@@ -1,0 +1,11 @@
+AI anomaly analysis — run 2026-11-04 22:37 (data: 2026-11-04, model: glm-5.3, tools: 1 call(s))
+============================================================
+ANOMALY
+
+Median is calm — reported $398→$400 (+0.5%), same-set (6 constant members) flat at $390.99, so composition (2 entered at $577/$525, 1 exited at $433) explains all movement. Comp count 7→8, far below the 30% lens-change trigger; no changelog methodology change.
+
+The flag: discounting share jumped 14%→50% (+36 pts, trips the ≥15-pt rule) in a single day. With n=8, this is roughly 3 listings flipping to discounted status at once — a real repricing signal, not a data artifact (no probe errors; ghost ledger is cumulative per 10-17 changelog, so 'live': 57 is not today's flow). It lines up with top movers: Backyard Oasis (-108), Private Pool Home Allen (-101), Pool Retreat (-79) — pool-tier comps cutting effective rates while headline median holds.
+
+Suggested price swung $470→$395 (-16%) yesterday, also past the ±5% rule, and has oscillated $365–$470 all week — low-confidence (50–55%) estimates on a small comp set.
+
+Market, not methodology or data-quality. Competitors are defending occupancy with discounts into November. Anchor context (hypothetical 4BR at $250 — illustrative, not a real listing): it already sits well below the comp median, so no urgency to chase the discounting; hold and monitor whether the same-set median follows downward in coming days.
