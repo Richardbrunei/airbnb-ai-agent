@@ -1,0 +1,9 @@
+AI anomaly analysis — run 2026-11-05 20:39 (data: 2026-11-05, model: glm-5.3, tools: 2 call(s))
+============================================================
+ANOMALY
+
+Suggested price jumped $395→$420 (+6.3% day-over-day), tripping the ≥5% threshold. The market shows no matching move: comp-set median $400.00→$387.77 (−3.1%), and the same-set median over 6 constant members fell only −1.3% ($463.50→$457.26) — repricing was mild and downward. Discount share held at 50%, churn was balanced (2 in at $386/$285, 2 out at $398/$306), and all same-day movers were small cuts (−$12 each: Longhorn House, Arcade 4BR, Cozy Spacious). The cumulative ghost ledger (58 live, 6 delisted) shows no new delistings today.
+
+Likely cause: model noise, not market — this recommendation has whipsawed all week ($425→$470→$395→$420) at flat ~54% confidence while the same-set median barely moved. Composition churn (cheaper entrants at $285–$386) appears to be dragging the reported median, but the pricer is amplifying it rather than the market re-rating.
+
+For the anchor's (hypothetical, $250) listing: no basis to raise price. Same-set comps are steady-to-soft around ~$457 (well above the anchor); hold the current price rather than chase a noisy recommendation.
