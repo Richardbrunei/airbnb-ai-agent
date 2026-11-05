@@ -1,0 +1,4 @@
+AI anomaly analysis — run 2026-11-05 22:41 (data: 2026-11-05, model: glm-5.3, tools: 1 call(s))
+============================================================
+NOTHING_UNUSUAL
+2026-11-05, 8 competitors, median $387.77, discount 50%, stable — gentle repricing, modest membership churn.
