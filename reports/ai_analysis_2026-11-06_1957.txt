@@ -1,0 +1,7 @@
+AI anomaly analysis — run 2026-11-06 19:57 (data: 2026-11-06, model: glm-5.3, tools: 1 call(s))
+============================================================
+ANOMALY
+
+Headline median jumped +8.3% ($387.77→$420, n 8→11), but attribution shows it is **pure composition**: the SAME-SET median over the 2 constant members was flat at $454.49 (0.0%) — no repricing among survivors. The rise comes from 9 entrants (mostly $397–$560: Arborhill Retreat $560, Luxury Pool Oasis $536, Pool Retreat $452) replacing 6 cheaper exits ($285–$565). Comp-set size +37.5% in one day clears the ±30% rubric, and the changelog shows no lens/methodology change since 2026-10-25 — this is market-level churn (likely weekend-date rotation), not methodology, but with only 2 constant members the median is statistically fragile either way. Also tripped: churn ≥5 (9 in / 6 out) and one confirmed delisting ("Interns, Medical students, or traveling Nu" — probe returned 410). Suggested price fell $405→$380 (−6.2%) in one day, again churn-driven rather than repricing. Ghost-probe ledger (59 live / 6 delisted) is cumulative, not today's flow — no data-quality flag.
+
+Meaning for the anchor's $250 listing (hypothetical): no real market repricing occurred; the apparent strength is membership rotation. Do not chase the $420 median upward or the $380 suggestion downward — hold and reassess once the comp set stabilizes.
