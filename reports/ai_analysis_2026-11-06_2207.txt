@@ -1,0 +1,7 @@
+AI anomaly analysis — run 2026-11-06 22:07 (data: 2026-11-06, model: glm-5.3, tools: 1 call(s))
+============================================================
+ANOMALY
+
+Comp-set jumped 8→12 (+50%, past the 30% methodology-suspect threshold) with churn of 10 in / 6 out. Median rose $387.77→$420.00 (+8.3%), but the SAME-SET median over the 2 constant members was flat ($454.49, 0.0%) — the entire median move is composition, not repricing. Entering listings skew high ($397–$560, e.g. Luxury Pool Oasis $536, Arborhill Retreat $560) while a low-priced member ($285 "Interns, Medical students…" — probe verdict delisted) exited, mechanically lifting the median. No changelog entry documents a lens change, so this looks like comp-set churn around the ranking/qualification boundary rather than a market move or scraper change. Discount share 50%→42% (-8 pts) is within tolerance; suggested price $405→$380 (-3.7%) is under the 5% trip. Probe ledger is cumulative (per 10-17 changelog) and not a data-quality issue.
+
+Meaning for the anchor (hypothetical 4BR, listed $250 — illustrative): the $420 median is inflated by new high-end entrants; constant comps show no repricing. Stay near $250; the +8.3% headline doesn't justify a raise.
