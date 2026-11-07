@@ -1,0 +1,9 @@
+AI anomaly analysis — run 2026-11-07 18:02 (data: 2026-11-07, model: glm-5.3, tools: 1 call(s))
+============================================================
+ANOMALY
+
+Comp-set count fell 12→8 (-33%), tripping the size-change rule with no corresponding changelog entry — this is not a documented lens change (the 09-19 widening was upward; this is a contraction). Four members exited: Sweet family house ($397), The Arborhill Retreat ($560), Nice and beautiful house ($525), and Modern 5BR Plano House ($420) — consistent with bookings/blocks or delistings, not a methodology tweak. Same-set median over the 8 constant members was $416.00→$416.50 (+0.1%), so the headline median dip to $416.5 (-0.8%) is purely composition; underlying repricing is flat. Discount share moved 42%→50% (+8 pts, under the 15-pt threshold), and the suggested price rose only $380→$390 (+2.6%, sub-5%). Cumulative ghost ledger (59 live / 6 delisted) is a ledger, not today's flow — not an anomaly.
+
+Likely cause: market — real demand pulling listings (several top-priced members gone), not data quality; no probe errors or empty scrapes indicated.
+
+For the anchor (imaginary $250 listing): medians near $416-420 reflect a high-end, shrinking set; steady same-set pricing suggests the anchor could test modest increases, but with 4 members gone overnight, hold near $250-270 and re-check tomorrow.
