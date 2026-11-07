@@ -1,0 +1,7 @@
+AI anomaly analysis — run 2026-11-07 20:52 (data: 2026-11-07, model: glm-5.3, tools: 2 call(s))
+============================================================
+ANOMALY
+
+The trigger day is 2026-11-06, not the latest scrape. Reported median jumped +8.3% ($387.77→$420.00, n 8→12) while the SAME-SET median over constant members was flat ($454.49→$454.49, 0.0%) — the move was pure composition, with 10 entrants ($397–$560) and 6 exits in one day, far exceeding the ≥5 churn threshold. No changelog entry documents a methodology change, so this looks like real market churn or a data-quality lens wobble, not repricing. On 2026-11-07 itself: n 12→10 (−17%, below the 30% flag), median −0.8%, same-set +0.1%, discount share 42%→50% (+8 pts, under 15) — calm. Also notable: the suggested price swung $470→$395 (−16%) on 11-03→11-04, tripping the ≥5% rule off a short-window model, and one 11-06 exit ("Interns, Medical students…", $285) carries a delisted probe verdict; the ledger is cumulative, so it's context, not same-day flow.
+
+Meaning for the anchor's $250 (imaginary) listing: comp-set median ~$416 reflects an upward-churning pool, not repricing strength; the suggested price (~$385 @ 58% conf) is whipsawing with membership. Treat the level as a level shift; hold steady rather than chase composition noise.
