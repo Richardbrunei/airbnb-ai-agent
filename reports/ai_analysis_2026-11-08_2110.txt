@@ -1,0 +1,4 @@
+AI anomaly analysis — run 2026-11-08 21:10 (data: 2026-11-08, model: glm-5.3, tools: 4 call(s))
+============================================================
+NOTHING_UNUSUAL
+2026-11-08, 11 competitors, median $420.0, 55% discounted — stable market, mild repricing, healthy occupancy signals (prices hypothetical vs anchor's $250).
