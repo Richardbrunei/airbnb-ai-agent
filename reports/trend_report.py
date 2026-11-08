@@ -222,6 +222,10 @@ def latest_daily_report(day):
     """Latest daily-report file for one date: time-suffixed (HHMM) files
     from same-day scrapes beat the legacy date-only filename."""
     cands = list(REPORTS_DIR.glob(f"market_report_{day}.txt"))
+    # since 2026-11-08: reports live in text_reports/<date>/ day folders
+    sub = REPORTS_DIR / "text_reports" / day
+    if sub.is_dir():
+        cands += list(sub.glob(f"market_report_{day}*.txt"))
     cands += [f for f in REPORTS_DIR.glob(f"market_report_{day}_????.txt")
               if re.search(r"_\d{4}\.txt$", f.name)]
     if not cands:

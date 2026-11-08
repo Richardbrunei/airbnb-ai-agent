@@ -75,7 +75,7 @@ over bot commits.
 - Ghost pins carry probe verdicts: 🟡 likely booked (page still live) vs
   🔴 removed — daily URL probes, `listing_probes` table, max 10/run
   (market_agent/ghost_prober.py). Grey = unprobed.
-- `reports/ai_analysis_*.txt` — automated z.ai anomaly read per scrape
+- `reports/text_reports/<date>/ai_analysis_*.txt` — automated z.ai anomaly read per scrape
   (NOTHING_UNUSUAL + one-liner when calm; ANOMALY + analysis when the
   rubric trips). Since 2026-10-11 the analyst can call read-only tools
   to verify anomalies — day_diff(date) decomposes a median move into

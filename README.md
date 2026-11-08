@@ -31,7 +31,7 @@ airbnb-ai-agent/
 ├── reports/                        # Reports
 │   ├── daily_report.py             # Daily report generator
 │   ├── trend_report.py             # Multi-day trend report + map generator
-│   ├── market_report_*.txt         # Generated daily reports
+│   ├── text_reports/<date>/        # Daily folders: market_report_*.txt + ai_analysis_*.txt
 │   └── market_trend_*.html         # Generated trend report + interactive map
 │
 ├── data/                           # Data storage
@@ -447,7 +447,7 @@ pytest
 
 5. **Storage** — Listings and scores go to SQLite (`data/` module). A CSV snapshot is also kept in `data/market_history.csv`.
 
-6. **Reporting** — A human-readable report is generated per scrape in `reports/market_report_YYYY-MM-DD_HHMM.txt` (the trend report reads the latest run of each day).
+6. **Reporting** — A human-readable report is generated per scrape in `reports/text_reports/<date>/market_report_YYYY-MM-DD_HHMM.txt` — one folder per day holding that day's report and AI analysis (the trend report reads the latest run of each day).
 
 ## Finding Competitors for a Specific Property
 
@@ -462,7 +462,7 @@ pytest
    python main.py
    ```
 
-3. Check `reports/market_report_*.txt` for the analysis.
+3. Check `reports/text_reports/<date>/market_report_*.txt` for the analysis.
 
 ## Adding a New Search Area
 
@@ -501,8 +501,8 @@ The pipeline runs on GitHub Actions' always-awake runners — no server needed, 
 
 - Scrapes **2×/day** (8:17 AM + 12:17 PM CDT — GitHub cron is UTC, and runs can be delayed during peak hours; data still lands daily)
 - Probes vanished competitors (max 10/run): classifies 🟡 likely booked (page still live) vs 🔴 removed (delisted) — verdicts stored in `listing_probes`, rendered on the map and churn note
-- Writes an AI anomaly analysis via the z.ai API to `reports/ai_analysis_<date>_<HHMM>.txt` — needs the `ZAI_API_KEY` repo secret (no key ⇒ the step logs a skip). The model verifies anomalies with read-only tools — purpose-built `day_diff(date)` (one-call composition-vs-repricing decomposition) and `comp_set(date)`, plus `sql_query` / `db_schema` / `read_file` for long-tail questions; the step falls back to digest-only if the endpoint rejects tools
-- Prunes `market_report_*` / `ai_analysis_*` txt files older than 31 days (dated by filename; history stays in git)
+- Writes an AI anomaly analysis via the z.ai API to `reports/text_reports/<date>/ai_analysis_<date>_<HHMM>.txt` — needs the `ZAI_API_KEY` repo secret (no key ⇒ the step logs a skip). The model verifies anomalies with read-only tools — purpose-built `day_diff(date)` (one-call composition-vs-repricing decomposition) and `comp_set(date)`, plus `sql_query` / `db_schema` / `read_file` for long-tail questions; the step falls back to digest-only if the endpoint rejects tools
+- Prunes day folders in `reports/text_reports/` older than 31 days (folder name is the date; history stays in git)
 - Runs the full pipeline, then regenerates the trend report + map
 - Commits results back to `main` as `github-actions[bot]` (`data/market.db`, `reports/`, `logs/`)
 - Queued via `concurrency` so runs never overlap; runner pinned to `ubuntu-24.04` (deliberate — no surprise OS migrations)
@@ -598,7 +598,7 @@ cp skill/SKILL.md ~/.openclaw/workspace/skills/airbnb-market-monitor/
 
 ## Output
 
-### Market Report (`reports/market_report_YYYY-MM-DD_HHMM.txt`)
+### Market Report (`reports/text_reports/<date>/market_report_YYYY-MM-DD_HHMM.txt`)
 
 Human-readable summary including:
 - Number of competitors found

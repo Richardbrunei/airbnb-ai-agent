@@ -367,7 +367,7 @@ def call_zai(digest):
     Returns (text, None, tool_calls) or (None, error, tool_calls)."""
     key = os.environ.get("ZAI_API_KEY")
     if not key:
-        return None, "skipped: no ZAI_API_KEY"
+        return None, "skipped: no ZAI_API_KEY", 0
     from openai import OpenAI
     client = OpenAI(api_key=key, base_url=ZAI_BASE_URL, timeout=90)
     base_messages = [{"role": "system", "content": SYSTEM_PROMPT},
@@ -428,8 +428,11 @@ def main():
     except Exception as e:  # never fatal to the pipeline
         out, err = None, f"{type(e).__name__}: {str(e)[:200]}"
     now = datetime.now()
-    path = (PROJECT_ROOT / "reports" /
-            f"ai_analysis_{now.strftime('%Y-%m-%d')}_{now.strftime('%H%M')}.txt")
+    # since 2026-11-08: reports live in text_reports/<date>/ day folders
+    day_dir = PROJECT_ROOT / "reports" / "text_reports" / now.strftime("%Y-%m-%d")
+    day_dir.mkdir(parents=True, exist_ok=True)
+    name = "ai_analysis_" + now.strftime("%Y-%m-%d") + "_" + now.strftime("%H%M") + ".txt"
+    path = day_dir / name
     tools_note = f", tools: {ntools} call(s)" if ntools else ""
     header = (f"AI anomaly analysis — run {now.strftime('%Y-%m-%d %H:%M')} "
               f"(data: {data_date}, model: {MODEL}{tools_note})\n" + "=" * 60 + "\n")

@@ -111,7 +111,10 @@ class DailyReportGenerator:
         # Save to file — one file per scrape (since 2026-09-27): the
         # afternoon run no longer overwrites the morning report
         filename = f"market_report_{date_str}_{datetime.now().strftime('%H%M')}.txt"
-        filepath = self.output_dir / filename
+        # since 2026-11-08: one folder per day under text_reports/
+        day_dir = self.output_dir / "text_reports" / date_str
+        day_dir.mkdir(parents=True, exist_ok=True)
+        filepath = day_dir / filename
         filepath.write_text(report)
         logger.info(f"Report saved to {filepath}")
 
