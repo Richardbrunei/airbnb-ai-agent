@@ -332,8 +332,18 @@ def tool_day_diff(date=None, anchor=None):
     cur, old = _day_prices(hist, date), _day_prices(hist, prev)
     stay = set(cur) & set(old)
     entered, exited = set(cur) - set(old), set(old) - set(cur)
-    sm = {x["date"]: x for x in day_stats}
-    a, b = sm[prev], sm[date]
+    sm = {x["date"]: x for x in day_stats if x["count"]}
+    b = sm.get(date)
+    if not b:
+        return f"error: no comp-set members for {anchor} on {date}"
+    a = sm.get(prev)
+    if not a:
+        # zero-baseline day (e.g. a newly added anchor's first scrape)
+        return (f"first observation for anchor {anchor} on {date}: "
+                f"n={b['count']} median=${b['median']} "
+                f"range=${b['min']}-${b['max']} "
+                f"disc={b['disc_pct']:.0f}% (no previous scrape with "
+                f"members for this anchor)")
     lines = [f"comp-set diff {prev} -> {date} [{anchor}]:",
              (f"  reported: n {a['count']}->{b['count']} | median "
               f"${a['median']}>${b['median']} "
