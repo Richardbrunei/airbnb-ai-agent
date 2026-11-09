@@ -19,7 +19,10 @@ another OpenClaw install"). Verify it exists and is current:
 
 ## 2. Configure the tracked property
 
-Edit `config/areas.json` → `search_areas[0]`:
+Edit `config/areas.json` → `search_areas[0]` (primary anchor; since
+2026-11-08 extra entries with a `property_profile` are scored too —
+currently the mirror "South Dallas House", imaginary, watched since
+2026-11-08):
 
 - `property_profile`: lat/lng, bedrooms, price, property_type.
   Real property → omit `"hypothetical"` (report shows neutral anchor
@@ -99,5 +102,8 @@ median and discount-share are the trustworthy signals.
   the context).
 - Changing the anchor property → reset `data/market.db` per README
   "Tracking Your Own Property" (stored scores are anchor-relative).
+  Adding a NEW anchor needs no reset — its rows simply start that day
+  (competitor_scores.anchor; pre-2026-11-08 rows backfill to the
+  primary). Never remove the primary anchor without a DB reset.
 - Local analysis or report regeneration → scratch clone with venv, not
   the production clone.

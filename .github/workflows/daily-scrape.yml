@@ -4,7 +4,7 @@ name: Daily Airbnb scrape
 # All times UTC. 13:17 = 8:17 AM CDT (primary), 17:17 = 12:17 PM CDT
 # (intraday refresh + missed-run safety — same-day re-stores replace, so
 # double runs are idempotent by design).
-# rev 2026-10-25: analyst comp-set tools (day_diff/comp_set) — comment
+# rev 2026-11-08: second anchor (South Dallas House) + per-anchor scoring — comment
 # bump doubles as the push-trigger for the end-to-end test (paths filter:
 # workflow file only).
 on:

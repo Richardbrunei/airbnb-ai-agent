@@ -16,3 +16,5 @@ data/*.db
 .vscode/
 .idea/
 *.swp
+data/market.db-wal
+data/market.db-shm

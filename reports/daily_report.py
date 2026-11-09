@@ -67,6 +67,8 @@ class DailyReportGenerator:
             lines.append("")
             lines.append("💡 Pricing Recommendation")
             for rec in recommendations:
+                if getattr(rec, "label", ""):
+                    lines.append(f"  ▸ {rec.label}")
                 if rec.current_price > 0:
                     delta_pct = (
                         (rec.suggested_price - rec.current_price)

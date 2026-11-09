@@ -45,11 +45,13 @@ async def run_market_monitoring():
     analysis = analyzer.analyze(listings)
     logger.info("Price analysis complete")
 
-    # 4. Score competitors (if property profile is configured)
-    scored, profile = _score_competitors(listings)
-    if scored:
-        storage.store_scores(scored)
-        logger.info(f"Stored {len(scored)} competitor scores")
+    # 4. Score competitors against every configured anchor profile
+    #    (since 2026-11-08: multiple imaginary anchors are supported)
+    anchors_scored = _score_competitors(listings)
+    for name, _profile, scored in anchors_scored:
+        if scored:
+            storage.store_scores(scored, anchor=name)
+            logger.info(f"Stored {len(scored)} competitor scores [{name}]")
 
     # 5. Probe vanished competitors: booked vs removed (never fatal)
     try:
@@ -61,12 +63,16 @@ async def run_market_monitoring():
     except Exception as e:
         logger.warning(f"Ghost probe step skipped: {e}")
 
-    # 6. Pricing recommendation from the 20 closest comps
-    if profile and scored:
-        rec = analyzer.recommend(profile, scored)
-        if rec:
-            analysis["recommendations"] = [rec]
-            logger.info("Pricing recommendation generated")
+    # 6. Pricing recommendation per anchor from its 20 closest comps
+    analysis["recommendations"] = []
+    for name, profile, scored in anchors_scored:
+        if profile and scored:
+            rec = analyzer.recommend(profile, scored)
+            if rec:
+                rec.label = name
+                rec.reasoning = f"[{name}] " + rec.reasoning
+                analysis["recommendations"].append(rec)
+                logger.info(f"Pricing recommendation generated [{name}]")
 
     # 7. Generate report (also stores snapshot)
     report = reporter.generate(analysis)
@@ -96,22 +102,37 @@ async def main():
     # guest_bot = await run_guest_agent()
 
 
-def _score_competitors(listings: list) -> tuple[list, PropertyProfile | None]:
-    """Score competitors if a property profile is configured in areas.json.
+def _score_competitors(listings: list) -> list:
+    """Score competitors against every anchor profile in areas.json.
 
-    Returns (scored_listings, profile); both empty/None if unconfigured.
+    Since 2026-11-08 the config can carry multiple (hypothetical) anchor
+    properties. Returns [(area_name, profile, scored_listings), ...];
+    empty when no property profile is configured.
     """
-    profile = _load_profile()
-    if profile is None:
-        return [], None
-
     config = _load_areas_config()
     if config is None:
-        return [], None
+        return []
 
-    max_dist = config["search_areas"][0].get("max_competitor_distance_km", 20.0)
-    scorer = CompetitorScorer(profile, max_distance_km=max_dist)
-    return scorer.score_all(listings), profile
+    results = []
+    for area in config["search_areas"]:
+        profile_data = area.get("property_profile", {})
+        if not profile_data:
+            continue
+        profile = PropertyProfile(
+            lat=profile_data.get("lat", 0),
+            lng=profile_data.get("lng", 0),
+            bedrooms=profile_data.get("bedrooms", 0),
+            price=profile_data.get("price", 0),
+            property_type=profile_data.get("property_type", ""),
+            rating=profile_data.get("rating"),
+            is_guest_favorite=profile_data.get("is_guest_favorite", False),
+            is_superhost=profile_data.get("is_superhost", False),
+        )
+        max_dist = area.get("max_competitor_distance_km", 20.0)
+        scorer = CompetitorScorer(profile, max_distance_km=max_dist)
+        results.append((area.get("name", "anchor"), profile,
+                        scorer.score_all(listings)))
+    return results
 
 
 def _load_areas_config() -> dict | None:
@@ -127,28 +148,6 @@ def _load_areas_config() -> dict | None:
     if not config.get("search_areas"):
         return None
     return config
-
-
-def _load_profile() -> PropertyProfile | None:
-    """Load the first search area's property profile from areas.json."""
-    config = _load_areas_config()
-    if config is None:
-        return None
-
-    profile_data = config["search_areas"][0].get("property_profile", {})
-    if not profile_data:
-        return None
-
-    return PropertyProfile(
-        lat=profile_data.get("lat", 0),
-        lng=profile_data.get("lng", 0),
-        bedrooms=profile_data.get("bedrooms", 0),
-        price=profile_data.get("price", 0),
-        property_type=profile_data.get("property_type", ""),
-        rating=profile_data.get("rating"),
-        is_guest_favorite=profile_data.get("is_guest_favorite", False),
-        is_superhost=profile_data.get("is_superhost", False),
-    )
 
 
 if __name__ == "__main__":

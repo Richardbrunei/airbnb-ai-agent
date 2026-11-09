@@ -29,6 +29,36 @@
         "hypothetical": true
       },
       "max_competitor_distance_km": 20
+    },
+    {
+      "name": "South Dallas House",
+      "location": "Dallas, TX 75236",
+      "radius_km": 20,
+      "scan_around_property": true,
+      "target_price_min": 100,
+      "target_price_max": 600,
+      "competitor_filters": {
+        "min_bedrooms": 3,
+        "max_bedrooms": 5,
+        "property_types": [
+          "Entire home",
+          "Home",
+          "House",
+          "Townhouse"
+        ],
+        "neighborhoods": [],
+        "target_price_min": 150,
+        "target_price_max": 600
+      },
+      "property_profile": {
+        "lat": 32.5585,
+        "lng": -96.8466,
+        "bedrooms": 4,
+        "price": 250,
+        "property_type": "Home",
+        "hypothetical": true
+      },
+      "max_competitor_distance_km": 20
     }
   ]
 }

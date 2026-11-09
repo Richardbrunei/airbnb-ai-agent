@@ -2,7 +2,7 @@
 
 AI-powered automation platform for Airbnb property management — competitor price monitoring, scoring, and guest communication.
 
-> **Current deployment note:** this repo's live configuration tracks a **hypothetical 4BR home at UT Dallas** (listed $250) — a placeholder profile, not a real property. All scores and price recommendations are anchored to it. The production pipeline runs on **GitHub Actions** (see [Automation](#automation)); the local clone is a read-only consumer.
+> **Current deployment note:** this repo's live configuration tracks **two hypothetical 4BR homes** — UT Dallas House and, since 2026-11-08, its mirror South Dallas House on the other side of the city (both listed $250, both placeholder profiles, not real properties). Scores and price recommendations are computed per anchor. The production pipeline runs on **GitHub Actions** (see [Automation](#automation)); the local clone is a read-only consumer.
 
 ## Project Structure
 
@@ -71,7 +71,7 @@ cp .env.example .env
 
 ## Tracking Your Own Property
 
-The repo ships with a **hypothetical placeholder anchor** — a fictional 4BR at UT Dallas (`"hypothetical": true` in `property_profile`) — so everything works out of the box with no real property attached. To track a real one:
+The repo ships with **two hypothetical placeholder anchors** — a fictional 4BR at UT Dallas plus its mirror on the south side of the city (`"hypothetical": true` in each `property_profile`; the second entry appeared 2026-11-08) — so everything works out of the box with no real property attached. **Multiple anchors are supported:** every `search_areas` entry with a `property_profile` gets its own scrape coverage, comp set, competitor scores (an `anchor` column in `competitor_scores`; rows before 2026-11-08 backfill to the first anchor), and its own labeled price recommendation. To track a real one:
 
 **1. Get your property's details.** If it's listed on Airbnb, the fastest route prints everything you need:
 
@@ -79,7 +79,7 @@ The repo ships with a **hypothetical placeholder anchor** — a fictional 4BR at
 python search.py --url "https://www.airbnb.com/rooms/YOUR_LISTING_ID"
 ```
 
-**2. Replace the profile** in `config/areas.json` → `search_areas[0].property_profile`:
+**2. Replace the profile** in `config/areas.json` → `search_areas[0].property_profile` (the first entry is the *primary* anchor whose long history the trend report charts; each extra entry is scored separately and gets its own recommendation + report card):
 
 ```json
 "property_profile": {

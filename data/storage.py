@@ -148,7 +148,8 @@ CREATE TABLE IF NOT EXISTS competitor_scores (
     bedrooms        INTEGER,
     neighborhood    TEXT,
     lat             REAL,
-    lng             REAL
+    lng             REAL,
+    anchor          TEXT
 );
 
 CREATE INDEX IF NOT EXISTS idx_scores_date ON competitor_scores(scrape_date);
@@ -185,6 +186,16 @@ def init_db(db_path: Optional[Path] = None) -> None:
     try:
         conn.executescript(SCHEMA)
         conn.executescript(PROBE_SCHEMA)
+        # 2026-11-08 multi-anchor migration: competitor_scores gains an
+        # anchor column; all pre-existing rows belong to the primary anchor.
+        cols = [r[1] for r in conn.execute(
+            "PRAGMA table_info(competitor_scores)")]
+        if "anchor" not in cols:
+            conn.execute(
+                "ALTER TABLE competitor_scores ADD COLUMN anchor TEXT")
+        conn.execute(
+            "UPDATE competitor_scores SET anchor = ? WHERE anchor IS NULL",
+            (PRIMARY_ANCHOR,))
         conn.commit()
         logger.info(f"Database initialized at {db_path or DB_PATH}")
     finally:
@@ -456,10 +467,16 @@ def get_snapshots(
 # ── Competitor Scores ─────────────────────────────────────────────────────────
 
 
+# All competitor_scores rows before 2026-11-08 were scored against the
+# first anchor only; init_db backfills them with this name.
+PRIMARY_ANCHOR = "UT Dallas House"
+
+
 def store_scores(
     scored_listings: list,
     scrape_date: Optional[str] = None,
     db_path: Optional[Path] = None,
+    anchor: str = PRIMARY_ANCHOR,
 ) -> int:
     """
     Store competitor scoring results.
@@ -479,16 +496,17 @@ def store_scores(
         for sl in scored_listings:
             l = sl.listing
             conn.execute(
-                "DELETE FROM competitor_scores WHERE scrape_date = ? AND listing_id = ?",
-                (date_str, l.listing_id),
+                "DELETE FROM competitor_scores "
+                "WHERE scrape_date = ? AND listing_id = ? AND anchor = ?",
+                (date_str, l.listing_id, anchor),
             )
             conn.execute(
                 """
                 INSERT INTO competitor_scores (
                     scrape_date, listing_id, title, total_score,
                     location_score, bedroom_score, price_score, type_score,
-                    price, bedrooms, neighborhood, lat, lng
-                ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)
+                    price, bedrooms, neighborhood, lat, lng, anchor
+                ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)
                 """,
                 (
                     date_str,
@@ -504,6 +522,7 @@ def store_scores(
                     l.neighborhood,
                     l.lat,
                     l.lng,
+                    anchor,
                 ),
             )
             inserted += 1

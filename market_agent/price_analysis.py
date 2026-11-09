@@ -44,6 +44,7 @@ class PricingRecommendation:
     suggested_price: float
     reasoning: str
     confidence: float = 0.0
+    label: str = ""          # anchor name this rec belongs to (multi-anchor since 2026-11-08)
 
 
 class PriceAnalyzer:

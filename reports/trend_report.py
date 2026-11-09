@@ -55,8 +55,29 @@ TIER_COLORS = {  # price chip colors, legend in map
 # scorers (0.59-0.67) are weak matches and are ignored. Tune here.
 MIN_TOTAL_SCORE = 0.70
 
+# Name of the original anchor: every competitor_scores row before
+# 2026-11-08 was scored against it (storage.init_db backfills the label).
+PRIMARY_ANCHOR = "UT Dallas House"
 
-def day_rows(db, day):
+
+def load_anchors() -> list:
+    """Configured anchor properties: [{name, where, profile}], first =
+    primary. Since 2026-11-08 areas.json can carry several (hypothetical)
+    anchors; the primary owns the long continuous history."""
+    try:
+        cfg = json.loads((PROJECT_ROOT / "config" / "areas.json").read_text())
+        out = []
+        for a in cfg.get("search_areas", []):
+            if a.get("property_profile"):
+                out.append({"name": a.get("name", "anchor"),
+                            "where": a.get("location", ""),
+                            "profile": a["property_profile"]})
+        return out
+    except Exception:
+        return []
+
+
+def day_rows(db, day, anchor=None):
     """Strong competitors for one date, combined across the whole day.
 
     Two scrapes can land on the same scrape_date (morning + midday since
@@ -69,8 +90,9 @@ def day_rows(db, day):
         "SELECT l.*, c.total_score AS comp_score, l.id AS _lrow, c.id AS _crow "
         "FROM listings l JOIN competitor_scores c "
         "ON c.scrape_date = l.scrape_date AND c.listing_id = l.listing_id "
-        "WHERE l.scrape_date=? AND c.total_score >= ?",
-        (day, MIN_TOTAL_SCORE)).fetchall()
+        "WHERE l.scrape_date=? AND c.total_score >= ?"
+        + (" AND (c.anchor = ? OR c.anchor IS NULL)" if anchor else ""),
+        (day, MIN_TOTAL_SCORE) + ((anchor,) if anchor else ())).fetchall()
     best = {}
     for r in rows:
         k = r["listing_id"]
@@ -160,17 +182,32 @@ def trend_info(day_stats):
     return t
 
 
-def load_data():
+def load_data(anchor=None):
     """Load strong competitors only: rows present in BOTH listings and
     competitor_scores for the same date AND with total_score >=
-    MIN_TOTAL_SCORE (weak matches are ignored per Richard's call)."""
-    db = sqlite3.connect(DB_PATH)
+    MIN_TOTAL_SCORE (weak matches are ignored per Richard's call).
+
+    anchor=None returns ALL rows (pre-2026-11-08 semantics). Passing an
+    anchor name restricts the view to that anchor's comp set; on a DB
+    that predates the anchor column the filter is ignored (every row
+    belongs to the primary anchor)."""
+    # mode=ro: this view must never write — local clones stay pure
+    # mirrors of the Actions-written DB (a read-write handle would WAL-
+    # checkpoint into the file on close and drift the git state)
+    db = sqlite3.connect(f"file:{DB_PATH}?mode=ro", uri=True)
     db.row_factory = sqlite3.Row
+    try:
+        has_anchor = any(r[1] == "anchor" for r in db.execute(
+            "PRAGMA table_info(competitor_scores)"))
+    except sqlite3.OperationalError:
+        has_anchor = False
+    if not has_anchor:
+        anchor = None
     days = [r[0] for r in db.execute(
         "SELECT DISTINCT scrape_date FROM listings ORDER BY scrape_date")]
     day_stats = []
     for d in days:
-        rows = day_rows(db, d)
+        rows = day_rows(db, d, anchor)
         prices = [r["price"] for r in rows if r["price"] is not None]
         # discounted = active price cut (discount_pct > 0). original_price is
         # populated on EVERY row (equals price when undiscounted) — never use
@@ -192,7 +229,7 @@ def load_data():
     hist = defaultdict(dict)   # listing_id -> {date: row}
     meta = {}
     for d in days:
-        rows = day_rows(db, d)
+        rows = day_rows(db, d, anchor)
         for r in rows:
             hist[r["listing_id"]][d] = r
             m = meta.setdefault(r["listing_id"], {
@@ -240,19 +277,41 @@ def latest_daily_report(day):
 
 def parse_recs(days):
     """Pull recommendation history from daily report .txt files.
-    Every scrape keeps its own file (since 2026-09-27); per day the
-    latest run's recommendation wins."""
+
+    Since 2026-11-08 reports carry one labeled recommendation per anchor
+    (daily_report prints a per-rec anchor line); unlabeled reports from
+    before that date count for the primary anchor only. Per day the
+    latest run's file wins.
+
+    Returns {date: {anchor_name: {"suggested": int, "conf": int|None}}}."""
+    anchors = [a["name"] for a in load_anchors()] or [PRIMARY_ANCHOR]
     recs = {}
     for d in days:
         f = latest_daily_report(d)
         if f is None:
             continue
-        txt = f.read_text(errors="replace")
-        m = re.search(r"Current \$\d+ → Suggested \$(\d+)", txt)
-        c = re.search(r"Confidence:\s*(\d+)%", txt)
-        if m:
-            recs[d] = {"suggested": int(m.group(1)),
-                       "conf": int(c.group(1)) if c else None}
+        label = None
+        day = {}
+        for ln in f.read_text(errors="replace").splitlines():
+            s = ln.strip()
+            if s.startswith("▸ "):
+                label = s[2:].strip()
+            elif "→ Suggested $" in s and s.startswith("Current "):
+                try:
+                    amt = int(round(float(
+                        s.split("Suggested $")[1].split()[0].strip(",.;)%"))))
+                except (ValueError, IndexError):
+                    continue
+                day[label or anchors[0]] = {"suggested": amt, "conf": None}
+            elif s.startswith("Confidence: ") and day:
+                key = label or anchors[0]
+                if key in day and day[key]["conf"] is None:
+                    try:
+                        day[key]["conf"] = int(s.split()[1].strip("%"))
+                    except (ValueError, IndexError):
+                        pass
+        if day:
+            recs[d] = day
     return recs
 
 
@@ -283,7 +342,47 @@ def load_profile() -> dict:
                 "property_type": "Home", "hypothetical": True}
 
 
-def build_map(days, hist, meta, day_stats, probes=None):
+def _second_anchor_section() -> str:
+    """Compact summary card for anchors beyond the primary one (since
+    2026-11-08). Returns '' when only the primary anchor is configured."""
+    extras = load_anchors()[1:]
+    if not extras:
+        return ""
+    parts = []
+    for a in extras:
+        name = a["name"]
+        prof = a["profile"]
+        days2, stats2, _h, _m, _p = load_data(anchor=name)
+        stats2 = [s for s in stats2 if s["count"]]
+        recs2 = parse_recs(days2)
+        if stats2:
+            rows = "".join(
+                f"<tr><td>{s['date']}</td><td>{s['count']}</td>"
+                f"<td>{fmt_d(s['median'])}</td><td>{s['disc_pct']:.0f}%</td>"
+                f"<td>{fmt_d(recs2.get(s['date'], {}).get(name, {}).get('suggested'))}</td></tr>"
+                for s in stats2[-14:])
+            table = ("<table style='border-collapse:collapse;font-size:12px'>"
+                     "<tr style='color:#666'><th>date</th><th>n</th>"
+                     "<th>median</th><th>disc</th><th>suggested</th></tr>"
+                     + rows + "</table>")
+        else:
+            table = ("<div style='font-size:12px;color:#666'>First "
+                     "south-side scrape pending — rows appear after the "
+                     "next pipeline run.</div>")
+        parts.append(
+            f"<div style='background:#f3e5f5;border:1px solid #ce93d8;"
+            f"border-radius:10px;padding:10px 14px;font-size:13px;"
+            f"color:#4a148c;margin-bottom:20px'>"
+            f"<b>🏡 Second anchor — {name} (imaginary "
+            f"{prof.get('bedrooms', '?')}BR, listed "
+            f"{fmt_d(prof.get('price'))}):</b> since 2026-11-08 the monitor "
+            f"also tracks this mirror placeholder on the other side of the "
+            f"city, with its own comp set and price recommendation. "
+            f"{table}</div>")
+    return "".join(parts)
+
+
+def build_map(days, hist, meta, day_stats, probes=None, anchors2=None):
     last = days[-1]
     feats = []
     for lid, h in hist.items():
@@ -375,6 +474,29 @@ def build_map(days, hist, meta, day_stats, probes=None):
                   f'<div style="font-size:11px;color:#999;margin-top:4px">{prof["lat"]}, {prof["lng"]}</div></div>'),
     }
 
+    # Additional (secondary) anchor pins since 2026-11-08 — purple 🏡,
+    # one per extra configured anchor; their stats live in the report card
+    for a in (anchors2 or []):
+        a["icon"] = (
+            f'<div style="transform:translate(-50%,-100%);white-space:nowrap;'
+            f'font:700 11px -apple-system,sans-serif;color:#fff;background:#6a1b9a;'
+            f'padding:3px 9px;border-radius:12px;border:2px solid #fff;'
+            f'box-shadow:0 2px 6px rgba(0,0,0,.5)">🏡 '
+            f'{fmt_d(a.get("price"))} anchor</div>')
+        a["popup"] = (
+            f'<div style="font-family:-apple-system,sans-serif;min-width:210px">'
+            f'<div style="font-weight:700;margin-bottom:2px">🏡 '
+            f'{a.get("name", "Second anchor")} (imaginary)</div>'
+            f'<div style="color:#666;font-size:12px;margin-bottom:6px">'
+            f'{a.get("bedrooms", "?")} BR · {a.get("where", "second area")} · '
+            f'listed {fmt_d(a.get("price"))}</div>'
+            f'<div style="font-size:12px;line-height:1.6;border-top:1px solid #eee;padding-top:6px">'
+            f'<b>This property does not exist.</b> Second placeholder profile, '
+            f'scored separately since 2026-11-08; its stats are in the report '
+            f'("Second anchor" card).</div>'
+            f'<div style="font-size:11px;color:#999;margin-top:4px">'
+            f'{a.get("lat")}, {a.get("lng")}</div></div>')
+
     g_n = sum(1 for f in feats if not f["active"])
     g_live = sum(1 for f in feats if not f["active"]
                  and (probes or {}).get(f["lid"], {}).get("status") == "live")
@@ -396,6 +518,7 @@ def build_map(days, hist, meta, day_stats, probes=None):
     html = MAP_TEMPLATE.replace("__CENTER__", json.dumps(center))
     html = html.replace("__DATA__", json.dumps(feats))
     html = html.replace("__ANCHOR__", json.dumps(anchor))
+    html = html.replace("__ANCHORS2__", json.dumps(anchors2 or []))
     html = html.replace("__STATS__", stats_card)
     html = html.replace("__GENERATED__", str(date.today()))
     MAP_OUT.write_text(html)
@@ -435,7 +558,7 @@ MAP_TEMPLATE = """<!DOCTYPE html>
   <span class="sw" style="background:transparent;border:2px dashed #f9a825"></span>likely booked (page live)<br>
   <span class="sw" style="background:transparent;border:2px dashed #c62828"></span>removed (delisted)<br>
   <span class="sw" style="background:transparent;border:2px dashed #757575"></span>former competitor (unprobed)<br>
-  <span style="margin-right:6px">🏠</span><b>$250 anchor</b> (imaginary)
+  <span style="margin-right:6px">🏠</span><b>$250 anchors</b> (imaginary; 🏡 = second anchor, other side of the city)
   <div style="border-top:1px solid #eee;margin-top:6px;padding-top:6px;color:#777">
     score = .35·location + .30·bedrooms +<br>.30·type + .05·price (similarity to anchor)</div>
 </div>
@@ -444,6 +567,7 @@ MAP_TEMPLATE = """<!DOCTYPE html>
 const center = __CENTER__;
 const feats = __DATA__;
 const anchor = __ANCHOR__;
+const anchors2 = __ANCHORS2__;
 const map = L.map('map').setView(center, 12);
 L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
   maxZoom: 19,
@@ -458,7 +582,11 @@ for (const f of ghosts)
    .addTo(map).bindPopup(f.popup);
 L.marker([anchor.lat, anchor.lng], {icon: L.divIcon({html: anchor.icon, className: '', iconSize: null}), zIndexOffset: 1000})
  .addTo(map).bindPopup(anchor.popup);
-if (active.length) map.fitBounds(active.concat([anchor]).map(f => [f.lat, f.lng]), {padding:[60,60]});
+for (const a of anchors2)
+  L.marker([a.lat, a.lng], {icon: L.divIcon({html: a.icon, className: '', iconSize: null}), zIndexOffset: 1000})
+   .addTo(map).bindPopup(a.popup);
+const allPts = active.concat([anchor], anchors2);
+if (allPts.length) map.fitBounds(allPts.map(f => [f.lat, f.lng]), {padding:[60,60]});
 </script>
 </body>
 </html>
@@ -612,6 +740,8 @@ def build_report(days, day_stats, hist, meta, recs, probes=None):
                   f'are relative to the configured property — a {prof.get("bedrooms", "?")}BR '
                   f'{prof.get("property_type", "home")} at {prof.get("lat")}, {prof.get("lng")}, '
                   f'listed {fmt_d(prof.get("price"))}.</div>')
+    # since 2026-11-08: second-anchor summary card sits right under the banner
+    banner = _second_anchor_section() + banner
     # reasoning bullets from the latest daily report (if present)
     bullets_html = "<li>—</li>"
     latest_txt = latest_daily_report(last)
@@ -825,11 +955,19 @@ REPORT_TEMPLATE = """<!DOCTYPE html>
 def main():
     if not DB_PATH.exists():
         sys.exit(f"No database at {DB_PATH}")
-    days, day_stats, hist, meta, probes = load_data()
+    days, day_stats, hist, meta, probes = load_data(anchor=PRIMARY_ANCHOR)
     if not days:
         sys.exit("No snapshots in database")
-    recs = parse_recs(days)
-    build_map(days, hist, meta, day_stats, probes)
+    recs_all = parse_recs(days)
+    # primary-anchor view keeps the report's long history continuous
+    recs = {d: v[PRIMARY_ANCHOR] for d, v in recs_all.items()
+            if PRIMARY_ANCHOR in v}
+    anchors2 = [{"name": a["name"],
+                 "where": a.get("where", ""),
+                 **{k: a["profile"].get(k)
+                    for k in ("lat", "lng", "bedrooms", "price")}}
+                for a in load_anchors()[1:]]
+    build_map(days, hist, meta, day_stats, probes, anchors2)
     build_report(days, day_stats, hist, meta, recs, probes)
     print(f"OK: {MAP_OUT.name} + {REPORT_OUT.name}  "
           f"({len(days)} days, {len(hist)} competitors, {len(recs)} recs)")
