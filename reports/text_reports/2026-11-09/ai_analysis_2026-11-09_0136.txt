@@ -1,0 +1,11 @@
+AI anomaly analysis — run 2026-11-09 01:36 (data: 2026-11-09, model: glm-5.3, tools: 3 call(s))
+============================================================
+ANOMALY
+
+All mild, but two items meet flag thresholds:
+
+1. **UT Dallas House (11-09):** comp set 11→8 (-27%), median $420.00→$422.83 (+0.7%). SAME-SET median is flat ($422.83→$422.83, n=8) — the uptick is pure composition, driven by exits of three *lower-priced* members ($426, $351, $261). No repricing wave. One exited member, "Cozy Home Near Downtown Dallas", probed **delisted (410)** — a genuine market exit, the only delisting today. Discount share 55→62% (+7 pts, under threshold). Suggested price steady at $385 (±0%). Market cause (exits), not methodology; no action needed on the $250 listing.
+
+2. **South Dallas House (11-09):** 0→9 competitors — this is the documented 11-08 second-anchor rollout (first real comp set), a level shift, not a market move. Median $332, 33% discounted, suggestion $315 @ 45% conf. Note a data-quality wrinkle: `day_diff` for this anchor crashes (float−None) because yesterday has no median — tooling should handle a zero-baseline day, though it can't day_diff-prior anyway.
+
+**Takeaway:** the UT Dallas set is stable-to-tightening; its $250 listing remains far below the $385 suggestion. South Dallas's $315 suggestion similarly implies headroom, but confidence is low (45%) on a one-day-old set.
