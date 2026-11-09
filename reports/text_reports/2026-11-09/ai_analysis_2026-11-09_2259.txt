@@ -1,0 +1,7 @@
+AI anomaly analysis — run 2026-11-09 22:59 (data: 2026-11-09, model: glm-5.3, tools: 1 call(s))
+============================================================
+NOTHING_UNUSUAL
+
+UT Dallas House | 2026-11-09 | 12 competitors | median $417.00 | discount share 50% | Stable; small churn, mild same-set softening.
+
+South Dallas House | 2026-11-09 | 9 competitors | median $332.00 | discount share 33% | First populated comp set; baseline per changelog.
