@@ -1,0 +1,7 @@
+AI anomaly analysis — run 2026-11-10 00:42 (data: 2026-11-10, model: glm-5.3, tools: 5 call(s))
+============================================================
+ANOMALY
+
+UT Dallas House (hypothetical, listed $250): comp set 12→5 (-58%) overnight, 7 exited with zero entrants. SAME-SET median $420→$420 (0.0%) — no repricing at all; the only mover fell $507→$483. Probe ledger: all 10 vanished members across both anchors probed 2026-11-10 returned "live" (likely booked/blocked), zero delisted, zero errors. So this is a demand-driven purge — competitors got booked — not a methodology/lens change (no changelog entry since 11-08) and not a data-quality issue. The suggested price collapsed $390→$325 (-17%, conf only 51%) — an artifact of a 5-member sample, not real repricing; I would not act on it. The $250 listing looks cheap vs a flat $420 median; hold price.
+
+South Dallas House (hypothetical, listed $250): 9→6 members, discount share 33%→0 (≥15pt drop), SAME-SET median flat at $335, movers ≤$14. Same booked-out story (3 exited, all live probes). Suggested price $375→$330 (-12%, conf 44%) is likewise low-signal. Hold $250; revisit both anchors if the comp sets stay this thin, as recommendations will be noisy until membership rebuilds.
