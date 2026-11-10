@@ -1,0 +1,7 @@
+AI anomaly analysis — run 2026-11-10 22:22 (data: 2026-11-10, model: glm-5.3, tools: 5 call(s))
+============================================================
+ANOMALY
+
+**UT Dallas House (hypothetical, listed $250):** comp set collapsed 12 → 5 (−58%), with 7 members gone overnight. day_diff confirms: same-set median for the 5 constant members is flat ($420 → $420, 0.0%), so this is pure composition/availability, not repricing. Probes of the vanished comp-set members (2026-11-10) show **8 "live" verdicts** — i.e., likely booked/blocked, not delisted. No changelog entry today, so this looks like a genuine demand signal (mass same-day bookings blocking availability), not a methodology change. The market apparently absorbed the $385–$420 tier over the weekend. Note several of the day's biggest price moves (pool homes −$72 to −$101) sit in the exited group. Implication for the $250 listing: strong weekend demand at well above your price — you're leaving money on the table; even with only 5 visible comps, median $420 and a shrinking set argue for raising toward the suggested $390+.
+
+**South Dallas House (hypothetical, listed $250):** stable — 9 → 8 competitors (1 gone), median $332 → $335, discount share 33% → 25%. Nothing unusual.
