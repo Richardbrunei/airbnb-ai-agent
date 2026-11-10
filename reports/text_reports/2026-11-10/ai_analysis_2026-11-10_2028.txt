@@ -1,0 +1,7 @@
+AI anomaly analysis — run 2026-11-10 20:28 (data: 2026-11-10, model: glm-5.3, tools: 5 call(s))
+============================================================
+ANOMALY
+
+**UT Dallas House, 2026-11-10 (comp set, hypothetical $250 anchor):** competitor count fell 12→5 (−58%), yet the median held at ~$420 because the SAME-SET median over the 5 constant members is exactly flat (+0.0%) — this is pure composition change, not repricing. Crucially, I probed the vanished members: 5 of the 7 exited listings ("Charming House in Overmead", "Nguyen vacation home", "Quiet, cozy, safe…", "Nice and beautiful…", "Enjoy a Peaceful Stay Near the Pond") all returned **live / http 200** — they are not delisted, just absent from the comp-set/scrape results despite live pages. Ghost ledger (62 live / 6 delisted) shows no delisting spike. No changelog entry explains today's shrinkage, so this looks like a data-quality/pipeline issue (blocked calendars dropping availability, or a partial scrape) rather than a market move. Discount share 50→40% and suggested price $390→$400 (+2.6%, conf fell to 49%) are within thresholds; the mover Luxury Pool Oasis −$24 (−4.7%) is notable but sub-threshold. **Recommendation:** treat today's stats as unreliable — don't reprice off a half-empty comp set; hold the $250 listing until tomorrow's scrape confirms whether these members return.
+
+**South Dallas House:** 9→8 competitors (−11%), median $332→$335, discount 33→25% — all normal.
