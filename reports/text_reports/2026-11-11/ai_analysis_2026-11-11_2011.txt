@@ -1,0 +1,9 @@
+AI anomaly analysis — run 2026-11-11 20:11 (data: 2026-11-10, model: glm-5.3, tools: 5 call(s))
+============================================================
+ANOMALY
+
+**What moved:** UT Dallas comp set collapsed 12→5 (−58%, 7 vanished, threshold: ≥30%/≥5). Same-set median flat ($420→$420); the 7 exits ($318–$577) didn't push the reported median. South Dallas: 9→8, same-set median flat ($335), quiet. No delisted or booked probe verdicts, no ≥8% median move, discount share down 10/8 pts (under threshold), suggested price −5% on 11-06 but stable since.
+
+**Likely cause — data quality, not market:** all 7 vanished UT Dallas members probed **live (http 200)** today — not booked, not delisted. They dropped out of the comp set while still on-market, pointing to scoring/lens instability (e.g., scrape gaps or threshold flapping) rather than demand. The 2026-11-10 changelog covers only map/reporting changes — no methodology shift documented — so this is an unexplained comp-set churn event worth investigating. Note the churn list also shows "Cozy Family Home," mirroring the South Dallas exit title — worth checking for comp-set bleed between anchors.
+
+**Meaning for the (hypothetical) $250 anchors:** no repricing pressure — both same-set medians are flat, so hold $250 for both. But treat today's UT Dallas stats ($420 median, n=5) as low-confidence until the comp-set membership is explained.
