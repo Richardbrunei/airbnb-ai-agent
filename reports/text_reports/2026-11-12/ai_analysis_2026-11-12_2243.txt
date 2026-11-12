@@ -1,0 +1,11 @@
+AI anomaly analysis — run 2026-11-12 22:43 (data: 2026-11-10, model: glm-5.3, tools: 5 call(s))
+============================================================
+ANOMALY
+
+**UT Dallas House (2026-11-10):** comp set collapsed 12→5 (-58%, 7 vanished, 0 new) — well past the 5-vanished and 30%-size thresholds. The changelog's 2026-11-10 entry is only a map/reporting change, not a lens change, so this is not a documented methodology shift. However, the median barely moved ($417→$420, +0.7%) and the SAME-SET median over the 5 constant members is exactly flat ($420→$420) — the remaining members repriced zero, and the only mover fell modestly ($507→$483). Same-day probes show 10 live, 0 delisted, 0 errors, so the 7 departures look like same-day bookings/blocks rather than delistings or a data-quality failure (the 62 live / 6 delisted line is the cumulative ledger, not today's flow).
+
+**Likely cause:** genuine demand-side tightening — a mass-booking event right after the Nov 6–9 weekend surge — not methodology or data quality.
+
+**Implication:** availability is drying up while surviving prices hold firm. For the hypothetical $250 UT Dallas listing, holding or nudging up is defensible; the mass disappearance reduces price signal reliability, so wait for tomorrow's scrape before acting.
+
+**South Dallas House (2026-11-10):** benign — 9→8, same-set median flat at $335, discount share 33→25. NOTHING_UNUSUAL beyond the note above; its $250 (hypothetical) listing looks similarly underpriced but stable.
