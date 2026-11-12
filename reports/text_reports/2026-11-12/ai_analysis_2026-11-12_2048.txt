@@ -1,0 +1,7 @@
+AI anomaly analysis — run 2026-11-12 20:48 (data: 2026-11-10, model: glm-5.3, tools: 5 call(s))
+============================================================
+ANOMALY
+
+**UT Dallas House, 2026-11-10:** comp set collapsed 12 → 5 (−58%, well past the 30% churn threshold) with 0 new, 7 gone. day_diff shows the SAME-SET median flat at $420 (+0.0%) over the 5 constant members — so the steady reported median is pure survivorship, not repricing; the only real mover was Luxury Pool Oasis $507→$483 (−4.7%). Probes: 4 of 7 exited members (Charming House in Overmead, Nguyen vacation home, Nice and beautiful house wonderful area, Enjoy a Peaceful Stay Near the Pond) returned `live http 200` — they left the comp set while still on-market, pointing to a scoring/availability-driven drop-out (likely booked/blocked nights), not delisting; 3 others have no probe record at all. The 2026-11-10 changelog only changes map/report display, not comp-set methodology, so this is a data-quality/coverage signal, not a documented lens change. Discount share 50→40% (−10 pt, under threshold); suggested price $390 (+1.3%) fine. Median $420 still implies the hypothetical $250 listing stays well under market — but with n=5, today's median carries little weight; watch whether the exits are transient bookings and the set refills.
+
+**South Dallas House, 2026-11-10:** normal — 8 comps, median $335, 25% discounted, one exit, no probe issues. Its $250 listing remains ~24% below a small-sample median.
