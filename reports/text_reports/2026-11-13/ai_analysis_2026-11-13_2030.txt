@@ -1,0 +1,12 @@
+AI anomaly analysis — run 2026-11-13 20:30 (data: 2026-11-10, model: glm-5.3, tools: 5 call(s))
+============================================================
+ANOMALY
+
+**UT Dallas House (hypothetical, listed $250):**
+- Comp set collapsed 12→5 (−58%) on 2026-11-10. The 11-10 changelog covers only map/report rendering — no documented lens change, so this is not explained as methodology.
+- The 7 exited members (4BR Home w/ Arcade $577, Oak Grove Retreat $426, Peaceful Stay $414, Overmead $406, Nguyen $384, Quiet cozy corner lot $318, Nice and beautiful house $525) were ghost-probed same-day: **all 7 returned "live" (http 200)** — i.e., not delisted, but likely booked/blocked and dropped from search. That's ≥3 likely-booked in one day, plus ≥5 vanishings — both trigger thresholds.
+- Same-set median is flat ($420→$420, 0.0%): zero repricing among survivors. This is a booking/churn event, not a price move; digest "biggest movers" (−101, −93, −72) mostly reflect listings leaving the set, not cuts.
+- **Data quality:** `listing_probes` contains rows dated 2026-11-11 through 2026-11-13 — future dates relative to the latest scrape (2026-11-10). Suspect a clock/backfill issue; worth checking the probe scheduler.
+- Implication: median $420 now rests on n=5 (fragile). Strong weekend booking demand with stable prices supports holding $250 or testing modestly higher; wait for the set to refill before trusting suggested prices (last: $390 @ 57%).
+
+**South Dallas House (hypothetical, listed $250):** benign — 9→8 (Cozy Family Home exited), same-set median flat $335, discount share 33%→25%. No action needed on $250.
