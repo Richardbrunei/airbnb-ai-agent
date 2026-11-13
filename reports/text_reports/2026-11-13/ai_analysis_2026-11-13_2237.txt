@@ -1,0 +1,11 @@
+AI anomaly analysis — run 2026-11-13 22:37 (data: 2026-11-10, model: glm-5.3, tools: 7 call(s))
+============================================================
+ANOMALY
+
+**What moved (UT Dallas House, hypothetical $250):** comp-set size fell 12→5 (−58%, threshold 30%), with 7 members vanishing in one day (threshold 5). The reported median barely moved ($417→$420, +0.7%) — but that's coincidence: day_diff shows the SAME-SET median (5 constant members) was flat at $420.00, meaning the stable median is a composition artifact, not repricing stability. Exited members were mostly mid-priced ($318–$577), skewing the surviving set.
+
+**Cause: methodology/data-quality, not market.** Every one of the 7 exited listings was probe-checked on 2026-11-10 and returned **live, http 200, with unchanged prices** — none delisted, none booked. They didn't leave the market; they left the comp set. Cross-checking `competitor_scores`: the scored pool doubled 40→87 on 11-09 (no changelog entry documents a lens change; the 11-08 anchor change doesn't explain it), and per-anchor rows both jumped to 87 on 11-09 then 78 on 11-10. Something changed in scoring/selection on 11-09 and comp-set membership is unstable as a result — the drop to 5 looks like a selection bug, not a documented lens widening.
+
+**South Dallas House:** n 9→8, median $332→$335, discount 33%→25% — all within normal volatility; no flag. (History correctly starts 11-08/09.)
+
+**Meaning for the anchors:** with the primary comp set unreliable today, the $390 @ 57% suggestion shouldn't drive price changes; the anchor's $250 listing remains well below the ~$420 median either way. Recommend investigating the 11-09 scoring change and re-running the comp-set build before acting on today's numbers.
