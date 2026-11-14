@@ -1,0 +1,9 @@
+AI anomaly analysis — run 2026-11-14 18:44 (data: 2026-11-10, model: glm-5.3, tools: 4 call(s))
+============================================================
+ANOMALY
+
+**What moved:** UT Dallas comp set collapsed 12→5 (-58%), 7 gone, 0 new — exceeds the ≥5-vanished and ≥30%-size thresholds. But same-set median was flat ($420→$420, +0.0%) and discount share only 50→40%; churn, not repricing, drove any aggregate change. A $101 drop ("Private Pool Home in Allen") also appears in top movers, though it's not in today's 5-member set — check whether that drop pushed it out of the tier or is stale history.
+
+**Likely cause:** Data quality, not market. Probes on the 7 vanished listings (2026-11-09/10) returned all "live" (13 live, 0 delisted, 0 errors) — they exist on Airbnb but vanished from the comp set in one day, suggesting a scoring/filtering glitch or scrape gap rather than genuine delistings or mass bookings. No changelog entry documents a methodology change on 11-10 (the 11-10 changelog is only a map/visualization tweak).
+
+**Impact on $250 listing (hypothetical):** No repricing signal — same-set prices are stable around $420 and suggested price has been steady ~$385-390. Recommend holding at $250 but flagging the scrape for re-run to confirm whether the 7 "live" vanished listings reappear before treating this as a real comp-set shift.
