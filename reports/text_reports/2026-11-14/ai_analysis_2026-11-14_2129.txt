@@ -1,0 +1,7 @@
+AI anomaly analysis — run 2026-11-14 21:29 (data: 2026-11-10, model: glm-5.3, tools: 6 call(s))
+============================================================
+ANOMALY
+
+**UT Dallas House (hypothetical, listed $250):** comp set collapsed 12→5 (-58%) on 2026-11-10, exceeding both the ≥30% size-change and ≥5-vanished thresholds. Verified it is composition, not market: SAME-SET median for the 5 constant members is flat ($420→$420, 0.0%); reported median +0.7% ($417→$420) is purely survivorship. Probe checks on the 7 exited members show 4 probed today as **live** (Overmead, Nguyen vacation home, Nice and beautiful house, Peaceful Stay Near Pond) — i.e., likely booked/blocked, not delisted; the other 3 (Quiet corner lot, Oak Grove Retreat, 4BR Arcade/Foosball — which had jumped +$32 yesterday) have no probe records yet. No changelog entry explains a lens change today, so this looks like a genuine demand/availability squeeze, not methodology. Note the market is already thin: with n=5 the median is fragile and the $390 suggested price (vs prior day $385, +1.3%) is stable. Hold $250 — well below even the surviving floor ($260.8); the shrinkage signals strong booking demand in the anchor's tier.
+
+**South Dallas House (hypothetical, listed $250):** normal day — n 9→8 (one exit, "Cozy Family Home"), same-set median flat $335, discount share 33→25%. Nothing unusual. Listed $250 sits below the $205–$535 range's median; hold.
