@@ -1,0 +1,9 @@
+AI anomaly analysis — run 2026-11-15 19:22 (data: 2026-11-10, model: glm-5.3, tools: 4 call(s))
+============================================================
+ANOMALY
+
+**UT Dallas House (hypothetical, listed $250), 2026-11-10:** comp set collapsed 12→5 (-58%, ≥30% threshold; ≥5 vanished in a day). No methodology/lens change in the changelog — the 11-10 entry only redraws the map; nothing altered scoring. day_diff shows the median $417→$420 is **composition-free**: the SAME-SET median over the 5 constant members is exactly $420 (+0.0%), so zero repricing. All 7 exited members probe **live** (not delisted) — i.e., ≥3 likely-booked/blocked — consistent with a demand-driven booking wave around Nov 10 weekend, not delistings or a scraper fault. Note the largest "mover" in the digest ($577 4BR Arcade home, -101) is actually an exited member's stale two-observation diff; the only real surviving mover is Luxury Pool Oasis ($507→$483, -4.7%).
+
+**Implication:** competitors are getting booked out, not cutting prices; suggested price has been drifting up ($385→$390). Holding the $250 listing price (well below the $420 median) looks increasingly conservative — no downside pressure from this move.
+
+**South Dallas House, 2026-11-10:** 8 competitors, median $335, 25% discounted, one benign exit (-$14 mover), no flagged movement.
