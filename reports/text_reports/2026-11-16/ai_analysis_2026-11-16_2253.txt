@@ -1,0 +1,7 @@
+AI anomaly analysis — run 2026-11-16 22:53 (data: 2026-11-10, model: glm-5.3, tools: 7 call(s))
+============================================================
+ANOMALY
+
+UT Dallas House (hypothetical, listed $250), 2026-11-10: comp set collapsed 12→5 (−58%, 7 vanished) — well past the 30%/5-member thresholds. Composition, not repricing: same-set median was flat ($420→$420, 0.0%) and the reported median only drifted $417→$420 (+0.7%); discount share fell 50→40 (−10 pts, under the 15-pt bar). Probes on the 7 exited members show 4 probed "live" (http 200) — consistent with being booked/blocked and dropping out of search results, not delisting; the cumulative ghost ledger (61 live / 6 delisted) shows no delisting spike. Two large cuts among survivors (Private Pool Home −$101, Backyard Oasis −$93) look like weekend-optimizer softening within an already-softening set, but same-set median held. Read: demand is thinning the comp set, not repricing it. With the same-set median at $420 and sellers already discounting ~50%, the $250 listing stays well below market — no price action needed; if suggested price keeps sliding (currently $385–390, ~1–2%/day moves, under the 5% flag), revisit next scrape.
+
+South Dallas House (hypothetical, listed $250), 2026-11-10: n=8, median $335, 25% discounted; only mild churn (1 exit, small cuts like Cozy Desoto −$14). Normal day — but note the set only went live 11-09 after the 11-08 second-anchor deployment.
