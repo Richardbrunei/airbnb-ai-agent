@@ -1,0 +1,7 @@
+AI anomaly analysis — run 2026-11-17 23:51 (data: 2026-11-10, model: glm-5.3, tools: 6 call(s))
+============================================================
+ANOMALY
+
+**UT Dallas House (hypothetical, $250):** comp set fell 12→5 (−58%) overnight — 7 members exited, no new entrants. The reported median held at ~$417→$420 and the SAME-SET median over the 5 constant members is exactly flat ($420→$420), so this is pure composition change, zero repricing. I probed all 7 exits (e.g., $577 4BR Arcade/Foosball Carrollton, $525 Nice and beautiful house, $426 Oak Grove Retreat): every one returned **live/http 200** — they vanished from search because they're booked/blocked, not delisted. Discount share eased 50→40%. This is a genuine demand signal: half the comp set sold out in a day while surviving members held prices (largest mover only −$24, "Luxury Pool Oasis"). A same-day wipeout of >50% of competitors strongly supports holding or nudging the $250 price up toward the ~$385–390 suggested level; scarcity is the anchor's friend. (Second-anchor map/stats change in the 2026-11-10 changelog is cosmetic only — per-anchor series are unaffected.)
+
+**South Dallas House (hypothetical, $250):** n 9→8, same-set median flat at $335, disc 33→25%, one exit ("Cozy Family Home", $332). Mildly consistent with the same softening supply; no separate anomaly. Keep $250.
