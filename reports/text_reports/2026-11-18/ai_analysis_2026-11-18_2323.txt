@@ -1,0 +1,11 @@
+AI anomaly analysis — run 2026-11-18 23:23 (data: 2026-11-18, model: glm-5.3, tools: 2 call(s))
+============================================================
+ANOMALY (UT Dallas House anchor; hypothetical listing, $250)
+
+**What moved (2026-11-10 → 2026-11-18):** comp set 5→16 (+220%), median $420→$391.8 (-6.7%), discount share 40%→56% (+16pts), suggested price $390→$365 (-6.4%, ≥5% threshold). Same-set median over the 4 constant members fell $429→$381.9 (**-11.0%**) — genuine repricing, not composition. Twelve entrants vs 1 exit (≥5 churn threshold).
+
+**Likely cause:** mixed. The -11% same-set drop plus large cuts (Pool Retreat -62, Sweet family house -32, and several -60..-100 movers) is a real softening move consistent with November post-event demand fading. But the 5-competitor base on 11-10 looks like a partial/short scrape, inflating the size jump — note there are no scrapes 11-11..11-17 and the changelog documents no lens change for this window (last one was 09-19). No probe errors, delisting count low (6 cumulative, ledger not flow).
+
+**Implication for the $250 (imaginary) listing:** competitors are repricing down; the suggested price fell to $365. UT Dallas is still ~$140 above the comp median, so hold or trim modestly — no panic cut is warranted yet, but the direction is down. Watch whether the expanded 16-member set persists next scrape to confirm the 11-10 shortfall was a data artifact.
+
+South Dallas House: n=9, median $341, disc 33%, same-set +6.0% — stable, no action.
