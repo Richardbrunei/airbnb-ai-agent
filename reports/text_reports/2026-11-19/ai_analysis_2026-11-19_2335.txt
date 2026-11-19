@@ -1,0 +1,5 @@
+AI anomaly analysis — run 2026-11-19 23:35 (data: 2026-11-19, model: glm-5.3, tools: 2 call(s))
+============================================================
+NOTHING_UNUSUAL
+UT Dallas House (hypothetical, listed $250), 2026-11-19: 13 comps, median $383.97, 46% discounted — mild repricing-led drift, suggested price easing within tolerance.
+South Dallas House (hypothetical, listed $250), 2026-11-19: 8 comps, median $340.00, 38% discounted — essentially flat same-set, calm market.
