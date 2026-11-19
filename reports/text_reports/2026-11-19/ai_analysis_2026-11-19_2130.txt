@@ -1,0 +1,9 @@
+AI anomaly analysis — run 2026-11-19 21:30 (data: 2026-11-19, model: glm-5.3, tools: 2 call(s))
+============================================================
+ANOMALY
+
+**South Dallas House, 2026-11-19: discount share 33%→17% (−16 pts, crosses the ≥15-pt threshold).** Verification shows this is composition, not repricing: the SAME-SET median over the 6 constant members was exactly flat ($340→$340), and the only mover was Cozy Desoto Home −$8 (−2%). The three exited members ($438 Cozy Guesthouse in Lancaster!, $341 The Reese Retreat, $349 Jardin Secreto) skewed high-priced; with n=6, one member's discount status flipping = 16.7 pts, so this is small-sample noise plus churn (3 exits, under the 5-vanished line), not a market shift. No probe verdicts shown for these exits in today's flow; the ledger line is cumulative (documented, per changelog) — not an anomaly.
+
+**UT Dallas House: clean.** Median $391.8→$390.5 (−0.3%); same-set median −2.0% (repricing); 4 exits, 0 new (churn, under threshold); biggest movers ±$68 (~+25% on a single $271 listing, a low base); discount 56%→50%; suggested price steady at $365.
+
+**Meaning:** Both markets are stable-to-soft; suggested prices ($365 primary, $335 south, both ~53% confidence) remain well above the anchors' hypothetical $250 list — no action prompted by the discount-share artifact beyond noting south-set n is too small for stable shares. (Both anchors are hypothetical; figures are monitoring data, not advice.)
