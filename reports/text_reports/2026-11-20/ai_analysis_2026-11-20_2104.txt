@@ -1,0 +1,9 @@
+AI anomaly analysis — run 2026-11-20 21:04 (data: 2026-11-20, model: glm-5.3, tools: 7 call(s))
+============================================================
+ANOMALY
+
+**UT Dallas House (2026-11-20): comp-set collapse — 13 of 13 gone, n 13→1 (−92%).** Reported median jumped $383.97→$563.00 (+46.6%) and discount share 46%→100% because the set now contains only one member ("The Longhorn House", $563). Critically, today's ghost probes show 10 of those "exited" comps (Sweet family house, Boho Bungalow, Luxury Pool Oasis, etc.) as **live** — they vanished from the comp set, not the market. This is a scoring/composition break, not repricing or a market move. No documented changelog covers it (latest methodology note is 2026-11-10, map-only). Consequence: today's suggested price $470 @55% (vs $355 @51% yesterday, +32% — far past the 5% flag) is computed on a sample of one and must not be trusted; the $250 anchor (hypothetical) recommendation should be held until the comp-set bug is fixed and the scrape re-run.
+
+**South Dallas House: genuine, moderate market move.** n stable at 8; median $340→$370.41 (+8.9%), same-set constant members +10.4% ($386→$426) — real repricing plus balanced churn (4 in / 4 out), led by Cozy Desoto Home +$80. Suggested price jumped to $490 @49% (+46%, past 5% flag) with falling confidence; treat directionally, not literally — the market drifted up but the anchor's $250 hypothetical listing already sits well below the ~$340–370 median.
+
+**Priority action:** fix/re-run the UT Dallas comp-set scoring; disregard its 11-20 stats and suggestion.
