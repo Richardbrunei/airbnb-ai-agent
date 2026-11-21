@@ -53,24 +53,39 @@ airbnb-ai-agent/
 
 ## Setup
 
+**1. Fork the repo** (unless you are the owner): on GitHub, open `Richardbrunei/airbnb-ai-agent` → **Fork**. The fork inherits the full history, including the existing `data/market.db` demo data — keep the demo anchors and the pipeline simply continues, or switch to your own property (next section) and reset the DB.
+
+**2. GitHub-side, on your fork:**
+- **Actions tab → enable workflows** — scheduled runs stay disabled on forks until you click this.
+- **Settings → Secrets and variables → Actions** → new secret `ZAI_API_KEY` = your z.ai key (coding-plan endpoint, model `glm-5.3`). Without it, every scrape still runs but the AI analysis step writes SKIPPED.
+- Schedule: two runs/day (about 7:17 and 11:17 AM US Central in winter; edit the `cron` lines in `.github/workflows/daily-scrape.yml`).
+
+**3. Local clone** (read-only consumer — Actions is the only data writer):
+
 ```bash
-# 1. Clone & enter
-cd coding/airbnb-ai-agent
+git clone git@github.com:<your-username>/airbnb-ai-agent.git ~/airbnb-ai-agent
+cd ~/airbnb-ai-agent
 
-# 2. Virtual environment
-python -m venv venv
-source venv/bin/activate
+# optional: track the original for future improvements
+git remote add upstream git@github.com:Richardbrunei/airbnb-ai-agent.git
 
-# 3. Install dependencies
-pip install -r requirements.txt
+# Virtual environment (bare: bootstrap pip first)
+python3 -m venv venv
+./venv/bin/python3 -m ensurepip
+./venv/bin/python3 -m pip install -r requirements.txt
 
-# 4. Configure environment
-cp .env.example .env
-# Edit .env with your API keys (OpenAI, Telegram, email — optional depending on features used)
+# Optional legacy integrations (OpenAI, Telegram, email)
+cp .env.example .env  # edit with your keys if you use them
 
-# 5. Configure your search area & property profile
-# Edit config/areas.json (see Configuration below)
+# Configure your search area & property profile
+# Edit config/areas.json (see Configuration below / Tracking Your Own Property)
+
+# Consumer sync: keep the mirror current, never write
+crontab -e   # add:
+# */20 * * * * cd ~/airbnb-ai-agent && git pull -q --ff-only origin main >> /tmp/airbnb-pull.log 2>&1
 ```
+
+**4. Verify:** bump the `# rev <date>` comment in `.github/workflows/daily-scrape.yml`, push, watch the Actions run, then `git pull` — a new dated folder under `reports/text_reports/` with a non-SKIPPED `ai_analysis` file means you are live. See [USER_MANUAL.md](USER_MANUAL.md) for reading the output, or hand [docs/agent-setup-prompt.md](docs/agent-setup-prompt.md) to an AI agent to do all of the above for you.
 
 ## Tracking Your Own Property
 
