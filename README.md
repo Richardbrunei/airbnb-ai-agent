@@ -53,7 +53,11 @@ airbnb-ai-agent/
 
 ## Setup
 
-**1. Fork the repo** (unless you are the owner): on GitHub, open `Richardbrunei/airbnb-ai-agent` → **Fork**. The fork inherits the full history, including the existing `data/market.db` demo data — keep the demo anchors and the pipeline simply continues, or switch to your own property (next section) and reset the DB.
+**1. Fork the repo** (unless you are the owner): on GitHub, open `Richardbrunei/airbnb-ai-agent` → **Fork**:
+
+![Fork button location](docs/img/fork-button.png)
+
+The fork inherits the full history, including the existing `data/market.db` demo data — keep the demo anchors and the pipeline simply continues, or switch to your own property (next section) and reset the DB.
 
 **2. GitHub-side, on your fork:**
 - **Actions tab → enable workflows** — scheduled runs stay disabled on forks until you click this.

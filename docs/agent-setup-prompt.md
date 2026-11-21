@@ -28,7 +28,8 @@ runs an AI anomaly analysis — all committed back to git automatically.
 ## 1. After forking: GitHub side
 
 1. **Fork:** on GitHub, open `Richardbrunei/airbnb-ai-agent` and click
-   **Fork** (top-right). Your copy lands at
+   **Fork** (top-right — see docs/img/fork-button.png for the exact
+   location). Your copy lands at
    `github.com/<your-username>/airbnb-ai-agent` with the full history —
    including the existing `data/market.db` (months of Dallas demo data
    anchored to the two imaginary properties). That is fine either way:
