@@ -25,22 +25,33 @@ runs an AI anomaly analysis — all committed back to git automatically.
   `https://api.z.ai/api/coding/paas/v4`, model `glm-5.3`). The
   open-platform endpoint bills separately — do not switch base URLs.
 
-## 1. GitHub side (fork settings)
+## 1. After forking: GitHub side
 
-1. On the fork: **Actions tab > enable workflows** (schedules are
-   disabled on forks by default).
-2. **Settings > Secrets and variables > Actions > New repository
+1. **Fork:** on GitHub, open `Richardbrunei/airbnb-ai-agent` and click
+   **Fork** (top-right). Your copy lands at
+   `github.com/<your-username>/airbnb-ai-agent` with the full history —
+   including the existing `data/market.db` (months of Dallas demo data
+   anchored to the two imaginary properties). That is fine either way:
+   keep the demo anchors and the pipeline simply continues, or set your
+   own anchor (§3) and reset the DB per README.md.
+2. On the fork: **Actions tab > enable workflows** — scheduled workflows
+   stay disabled on forks until you do this.
+3. **Settings > Secrets and variables > Actions > New repository
    secret:** name `ZAI_API_KEY`, value = your z.ai key. Secrets never
    copy from the original repo.
-3. Schedule: two runs per day (about 7:17 and 11:17 AM US Central in
+4. Schedule: two runs per day (about 7:17 and 11:17 AM US Central in
    winter; edit the `cron` lines in
    `.github/workflows/daily-scrape.yml` to change).
 
 ## 2. Local setup
 
 ```bash
-git clone git@github.com:<your-username>/airbnb-ai-agent.git `/airbnb-ai-agent
-cd `/airbnb-ai-agent
+git clone git@github.com:<your-username>/airbnb-ai-agent.git ~/airbnb-ai-agent
+cd ~/airbnb-ai-agent
+
+# optional: keep a link to the original for future improvements
+git remote add upstream git@github.com:Richardbrunei/airbnb-ai-agent.git
+# to adopt them later: git fetch upstream && git merge upstream/main
 
 python3 -m venv venv                # bare venv: bootstrap pip first
 ./venv/bin/python3 -m ensurepip
@@ -50,7 +61,7 @@ python3 -m venv venv                # bare venv: bootstrap pip first
 
 # consumer sync job — this clone NEVER writes data, it only pulls
 crontab -e   # add:
-*/20 * * * * cd `/airbnb-ai-agent && git pull -q --ff-only origin main >> /tmp/airbnb-pull.log 2>&1
+*/20 * * * * cd ~/airbnb-ai-agent && git pull -q --ff-only origin main >> /tmp/airbnb-pull.log 2>&1
 ```
 
 ## 3. Pick your anchor property(ies)
