@@ -1,0 +1,13 @@
+AI anomaly analysis — run 2026-11-21 22:20 (data: 2026-11-21, model: glm-5.3, tools: 6 call(s))
+============================================================
+ANOMALY
+
+**(All anchors hypothetical; prices are from the simulated market.)**
+
+**UT Dallas House:** Comp-set size whipsawed 13→3→4 (−77% then +33%), far past the 30% threshold. But the SAME-SET median on 11-21 was flat ($370→$370, constant members) — the reported −12.3% median drop and discount-share swing (67→50) are **composition artifacts of a collapsed sample (n=3)**, not repricing. 11-19→20 saw 11 members vanish (including 4BR comparables like Cozy Spacious Fun Family-Pet-Friendly 4BR, Chic 4BR Plano Pool Retreat) — consistent with likely-booked/holiday removals, not delistings (today's probes: 18 live, 0 delisted). Volatile medians on n≤4 undermine trust in the model: suggested price jumped $355→$465→$485 (+37% in two days) on thin evidence. Treat recent suggestions as low-confidence; keep $250 listed until the comp set refills.
+
+**South Dallas House:** Mild median pullback $370.4→$354 (−4.4%, below thresholds), n stable at 8-9, movers small. No anomaly. Suggested $510 (+7% d/d, near-threshold) is fine to monitor but driven by the same holiday-booking surge.
+
+**Downtown Dallas House:** First scrape ever (changelog documents the 11-21 third-anchor addition — methodology, not a market move). Baseline n=11, median $386, 36% discounted; the $300 listing looks underpriced per the $335 suggestion.
+
+**Data quality:** 2 probe errors historically; today's 18/18 live, no scrape failures.
