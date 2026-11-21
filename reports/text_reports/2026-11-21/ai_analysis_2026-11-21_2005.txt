@@ -1,0 +1,9 @@
+AI anomaly analysis — run 2026-11-21 20:05 (data: 2026-11-21, model: glm-5.3, tools: 4 call(s))
+============================================================
+ANOMALY
+
+**What moved:** UT Dallas comp set collapsed 13→3 competitors on 2026-11-20 (–77%, well past the 30% threshold) and stayed at 3 on 11-21; median jumped $383.97→$422 (+9.9%) on a 2-member same-set, discount share rose 46%→67% (+21 pts). Suggested price swung $355→$465→$470 (+32% in 2 days), and South Dallas suggested $335→$475→$490 despite a placid median ($340→$370→$354).
+
+**Cause: methodology/data-quality, not market.** The raw scrape is healthy — 36 (11-20) and 33 (11-21) listings in `market_snapshots` with normal stats — so the pipeline scraped fine; the failure is in comp-set selection/scoring, dropping ~10 eligible comps (e.g. exited "Cozy Spacious Fun Family-Pet-Friendly 4BR", "Chic 4BR Plano Pool Retreat", "Modern 3BR Retreat | Near UTD"). No changelog entry after 2026-11-10 explains a lens change. The $422 median and 67% discount share are artifacts of a 3-member set; South Dallas (9 comps, stable) shows the market itself is calm, yet its suggested price also leapt — pointing at the recommender too.
+
+**Implication:** Do not act on the $465–$470 suggestion for the hypothetical $250 UT Dallas House; the 11-18/19 signal (~$355–$365) was based on a real comp set. Recommend investigating the 11-20 scoring change and treating both anchors' recent suggestions as untrusted until the comp set recovers to 10+.
