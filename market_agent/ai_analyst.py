@@ -45,9 +45,9 @@ ZAI_BASE_URL = os.environ.get("ZAI_BASE_URL", "https://api.z.ai/api/coding/paas/
 MODEL = os.environ.get("ZAI_MODEL", "glm-5.3")
 
 SYSTEM_PROMPT = """You are the anomaly analyst for an Airbnb competitor-market monitor \
-built around hypothetical 4BR "anchor" properties: UT Dallas House \
-(listed $250) and, since 2026-11-08, its mirror South Dallas House \
-(listed $250) on the other side of the city. Both are imaginary — \
+built around hypothetical "anchor" properties: UT Dallas House and its \
+mirror South Dallas House (both 4BR, listed $250) plus Downtown Dallas \
+House (2BR, listed $300, since 2026-11-21). All are imaginary — \
 disclose this whenever you quote prices or recommendations.
 
 You receive a digest of the latest scrape. Flag ANY of:
@@ -96,13 +96,13 @@ Respond in exactly one of two formats:
    summary.
 2. First line ANOMALY, then a tight analysis under 200 words: what moved with
    the numbers, likely cause (market vs methodology vs data-quality), and what
-   it means for that anchor's $250 listing price."""
+   it means for that anchor's listed price."""
 
 
 def build_digest():
     """Compact, model-readable digest of the latest scrape (read-only).
 
-    One section per configured anchor (since 2026-11-08 there are two);
+    One section per configured anchor (currently three);
     probes and changelog are anchor-agnostic and appear once.
     """
     from reports import trend_report as tr
@@ -118,7 +118,7 @@ def build_digest():
         last = days[-1] if last is None else max(last, days[-1])
         prev = days[-2] if len(days) > 1 else None
         prof = anc.get("profile", {})
-        tag = "primary" if idx == 0 else "watched since 2026-11-08"
+        tag = "primary" if idx == 0 else "additional"
         lines.append(f"=== Anchor {idx + 1}: {name} ({tag}, hypothetical "
                      f"{prof.get('bedrooms', '?')}BR, listed "
                      f"${prof.get('price', 0):.0f}) ===")

@@ -2,7 +2,7 @@
 
 AI-powered automation platform for Airbnb property management — competitor price monitoring, scoring, and guest communication.
 
-> **Current deployment note:** this repo's live configuration tracks **two hypothetical 4BR homes** — UT Dallas House and, since 2026-11-08, its mirror South Dallas House on the other side of the city (both listed $250, both placeholder profiles, not real properties). Scores and price recommendations are computed per anchor. The production pipeline runs on **GitHub Actions** (see [Automation](#automation)); the local clone is a read-only consumer.
+> **Current deployment note:** this repo's live configuration tracks **three hypothetical homes** — UT Dallas House and, since 2026-11-08, its mirror South Dallas House (both 4BR, listed $250), plus, since 2026-11-21, Downtown Dallas House (2BR, listed $300) — all placeholder profiles, not real properties. Scores and price recommendations are computed per anchor. The production pipeline runs on **GitHub Actions** (see [Automation](#automation)); the local clone is a read-only consumer.
 
 
 > **Docs:** [User manual](USER_MANUAL.md) — what the daily artifacts mean and the two-minute daily check. Setting up on another device? `docs/agent-setup-prompt.md` is a paste-ready prompt for that machine's AI agent.
@@ -101,7 +101,7 @@ crontab -e   # add:
 
 ## Tracking Your Own Property
 
-The repo ships with **two hypothetical placeholder anchors** — a fictional 4BR at UT Dallas plus its mirror on the south side of the city (`"hypothetical": true` in each `property_profile`; the second entry appeared 2026-11-08) — so everything works out of the box with no real property attached. **Multiple anchors are supported:** every `search_areas` entry with a `property_profile` gets its own scrape coverage, comp set, competitor scores (an `anchor` column in `competitor_scores`; rows before 2026-11-08 backfill to the first anchor), and its own labeled price recommendation. To track a real one:
+The repo ships with **three hypothetical placeholder anchors** — a fictional 4BR at UT Dallas, its mirror on the south side of the city, and a 2BR downtown (since 2026-11-21; `"hypothetical": true` in each `property_profile`) — so everything works out of the box with no real property attached. **Multiple anchors are supported:** every `search_areas` entry with a `property_profile` gets its own scrape coverage, comp set, competitor scores (an `anchor` column in `competitor_scores`; rows before 2026-11-08 backfill to the first anchor), and its own labeled price recommendation. To track a real one:
 
 **1. Get your property's details.** If it's listed on Airbnb, the fastest route prints everything you need:
 

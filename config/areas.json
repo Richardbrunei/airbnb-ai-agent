@@ -59,6 +59,38 @@
         "hypothetical": true
       },
       "max_competitor_distance_km": 20
+    },
+    {
+      "name": "Downtown Dallas House",
+      "location": "Dallas, TX 75202",
+      "radius_km": 10,
+      "scan_around_property": true,
+      "target_price_min": 100,
+      "target_price_max": 600,
+      "competitor_filters": {
+        "min_bedrooms": 1,
+        "max_bedrooms": 3,
+        "property_types": [
+          "Entire home",
+          "Home",
+          "House",
+          "Townhouse",
+          "Condominium",
+          "Apartment"
+        ],
+        "neighborhoods": [],
+        "target_price_min": 150,
+        "target_price_max": 600
+      },
+      "property_profile": {
+        "lat": 32.7767,
+        "lng": -96.797,
+        "bedrooms": 2,
+        "price": 300,
+        "property_type": "Home",
+        "hypothetical": true
+      },
+      "max_competitor_distance_km": 10
     }
   ]
 }

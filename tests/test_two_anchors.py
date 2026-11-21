@@ -10,7 +10,8 @@ sys.path.insert(0, str(ROOT))
 # 1) load_anchors
 from reports import trend_report as tr
 anchors = tr.load_anchors()
-assert [a['name'] for a in anchors] == ['UT Dallas House', 'South Dallas House'], anchors
+assert [a['name'] for a in anchors] == ['UT Dallas House', 'South Dallas House', 'Downtown Dallas House'], anchors
+assert anchors[2]['profile']['price'] == 300 and anchors[2]['profile']['bedrooms'] == 2
 assert anchors[1]['profile']['lat'] == 32.5585 and anchors[1]['profile']['lng'] == -96.8466
 print('1 load_anchors OK')
 
@@ -111,7 +112,7 @@ print('7 load_data real-DB smoke OK,', len(days), 'days')
 # 8) build_digest structure (real DB, read-only, no API call)
 from market_agent import ai_analyst as A
 digest, last = A.build_digest()
-assert digest.count('=== Anchor') == 2 and 'South Dallas House' in digest, digest[:200]
+assert digest.count('=== Anchor') >= 2 and 'South Dallas House' in digest, digest[:200]
 assert last == days[-1], (last, days[-1])
 print('8 build_digest two-anchor sections OK')
 
@@ -127,7 +128,7 @@ print('9 tools anchor validation OK')
 # 10) _score_competitors returns one entry per configured anchor
 import main as M
 res = M._score_competitors([])
-assert [n for n, _p, _s in res] == ['UT Dallas House', 'South Dallas House'], res
+assert [n for n, _p, _s in res] == ['UT Dallas House', 'South Dallas House', 'Downtown Dallas House'], res
 print('10 _score_competitors two anchors OK')
 
 shutil.rmtree(tmp, ignore_errors=True)

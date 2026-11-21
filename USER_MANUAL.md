@@ -4,9 +4,10 @@ Everything you need to read the monitor's output and run the daily check.
 Setup instructions live in README.md; for installing on a new device see
 docs/agent-setup-prompt.md.
 
-> **Default configuration note:** this repo tracks two **hypothetical** 4BR
-> homes — UT Dallas House and South Dallas House, both "listed" at $250, on
-> opposite sides of Dallas. They are placeholders. Every number in the
+> **Default configuration note:** this repo tracks three **hypothetical**
+> homes — UT Dallas House and South Dallas House (both 4BR, "listed" at
+> $250, on opposite sides of Dallas) plus Downtown Dallas House (2BR,
+> $300, since 2026-11-21). They are placeholders. Every number in the
 > artifacts is illustrative until you configure a real anchor (§9), and any
 > quoted figures should carry the imaginary-anchors disclosure.
 
@@ -109,8 +110,9 @@ Open `reports/market_trend_map.html` in a browser.
 
 - **Colored pills = live competitors**, by nightly price: green up to
   $300, blue $301-400, orange $401-500, red over $500.
-- **White border = primary anchor's comps; purple border = second
-  anchor's** (default config: north vs south Dallas).
+- **White border = primary anchor's comps; every additional anchor's
+  comps get their own border color** (south = purple, downtown = teal;
+  matches each anchor's stats-card heading).
 - **Click a pin** for title, match score, and full observed price
   history.
 - **Dashed pins = ghosts** (former competitors): amber = likely just

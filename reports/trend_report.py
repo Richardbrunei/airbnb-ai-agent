@@ -58,6 +58,11 @@ MIN_TOTAL_SCORE = 0.70
 # Name of the original anchor: every competitor_scores row before
 # 2026-11-08 was scored against it (storage.init_db backfills the label).
 PRIMARY_ANCHOR = "UT Dallas House"
+# Per-anchor accent for every anchor beyond the primary (map pin borders,
+# anchor pills, stats-card headings). First extra keeps the historical
+# purple; later extras cycle the palette so three comp sets read apart.
+EXTRA_ANCHOR_STYLES = [("#6a1b9a", "purple"), ("#00695c", "teal"),
+                       ("#e65100", "orange"), ("#4527a0", "indigo")]
 
 
 def load_anchors() -> list:
@@ -367,17 +372,17 @@ def _second_anchor_section() -> str:
                      + rows + "</table>")
         else:
             table = ("<div style='font-size:12px;color:#666'>First "
-                     "south-side scrape pending — rows appear after the "
+                     "scrape pending — rows appear after the "
                      "next pipeline run.</div>")
         parts.append(
             f"<div style='background:#f3e5f5;border:1px solid #ce93d8;"
             f"border-radius:10px;padding:10px 14px;font-size:13px;"
             f"color:#4a148c;margin-bottom:20px'>"
-            f"<b>🏡 Second anchor — {name} (imaginary "
+            f"<b>🏡 Also tracking — {name} (imaginary "
             f"{prof.get('bedrooms', '?')}BR, listed "
-            f"{fmt_d(prof.get('price'))}):</b> since 2026-11-08 the monitor "
-            f"also tracks this mirror placeholder on the other side of the "
-            f"city, with its own comp set and price recommendation. "
+            f"{fmt_d(prof.get('price'))}):</b> the monitor "
+            f"also tracks this placeholder, with its own comp set and "
+            f"price recommendation. "
             f"{table}</div>")
     return "".join(parts)
 
@@ -450,7 +455,8 @@ def build_map(days, hist, meta, day_stats, probes=None, anchors2=None):
 
     # Secondary-anchor comp sets (since 2026-11-10): same price-tier pins
     # but with a purple border, so both comp sets read apart on one map
-    for a in (anchors2 or []):
+    for _i, a in enumerate(anchors2 or []):
+        col, cname = EXTRA_ANCHOR_STYLES[_i % len(EXTRA_ANCHOR_STYLES)]
         s_days = a.get("days") or []
         s_hist = a.get("hist") or {}
         s_meta = a.get("meta") or {}
@@ -476,12 +482,12 @@ def build_map(days, hist, meta, day_stats, probes=None, anchors2=None):
                     status, sc = "New competitor since " + seen[0][5:], "#1565c0"
                 icon_html = (f'<div style="transform:translate(-50%,-100%);white-space:nowrap;'
                              f'font:700 11px -apple-system,sans-serif;color:#fff;background:{color};'
-                             f'padding:2px 7px;border-radius:12px;border:2px solid #6a1b9a;'
+                             f'padding:2px 7px;border-radius:12px;border:2px solid {col};'
                              f'box-shadow:0 1px 4px rgba(0,0,0,.4)">{fmt_d(cur)}'
                              f'<span style="opacity:.85;font-weight:600"> · {score:.2f}</span></div>')
             else:
                 icon_html = (f'<div style="transform:translate(-50%,-100%);width:12px;height:12px;'
-                             f'border-radius:50%;background:transparent;border:2px dashed #6a1b9a;'
+                             f'border-radius:50%;background:transparent;border:2px dashed {col};'
                              f'box-shadow:0 1px 3px rgba(0,0,0,.3)"></div>')
                 status, sc = "Former — last seen " + last_seen[5:], "#757575"
             popup = f"""
@@ -490,7 +496,7 @@ def build_map(days, hist, meta, day_stats, probes=None, anchors2=None):
           <div style="color:#666;font-size:12px;margin-bottom:6px">
             {str(m['bedrooms'] or '?')} BR · {m['neighborhood'] or '—'}
             {(' · ★ ' + str(m['rating'])) if m['rating'] else ''}
-            · <b style="color:#6a1b9a">{a.get('name', 'second anchor')} comp set</b></div>
+            · <b style="color:{col}">{a.get('name', 'extra anchor')} comp set</b></div>
           <div style="font-size:12px;margin:4px 0">
             <span style="background:{sc}22;color:{sc};font-weight:700;
                   padding:1px 8px;border-radius:10px;font-size:11px">{status}</span>
@@ -532,10 +538,11 @@ def build_map(days, hist, meta, day_stats, probes=None, anchors2=None):
 
     # Additional (secondary) anchor pins since 2026-11-08 — purple 🏡,
     # one per extra configured anchor; their stats live in the report card
-    for a in (anchors2 or []):
+    for _i, a in enumerate(anchors2 or []):
+        col, cname = EXTRA_ANCHOR_STYLES[_i % len(EXTRA_ANCHOR_STYLES)]
         a["icon"] = (
             f'<div style="transform:translate(-50%,-100%);white-space:nowrap;'
-            f'font:700 11px -apple-system,sans-serif;color:#fff;background:#6a1b9a;'
+            f'font:700 11px -apple-system,sans-serif;color:#fff;background:{col};'
             f'padding:3px 9px;border-radius:12px;border:2px solid #fff;'
             f'box-shadow:0 2px 6px rgba(0,0,0,.5)">🏡 '
             f'{fmt_d(a.get("price"))} anchor</div>')
@@ -546,7 +553,7 @@ def build_map(days, hist, meta, day_stats, probes=None, anchors2=None):
         a["popup"] = (
             f'<div style="font-family:-apple-system,sans-serif;min-width:210px">'
             f'<div style="font-weight:700;margin-bottom:2px">🏡 '
-            f'{a.get("name", "Second anchor")} (imaginary)</div>'
+            f'{a.get("name", "Extra anchor")} (imaginary)</div>'
             f'<div style="color:#666;font-size:12px;margin-bottom:6px">'
             f'{a.get("bedrooms", "?")} BR · {a.get("where", "second area")} · '
             f'listed {fmt_d(a.get("price"))}</div>'
@@ -554,8 +561,8 @@ def build_map(days, hist, meta, day_stats, probes=None, anchors2=None):
             f'<b>{live}</b>'
             + (f' · suggested {fmt_d(rec)}' if rec else "")
             + '. <b>This property does not exist.</b> Second placeholder profile, '
-              'scored separately since 2026-11-08; its competitors are the '
-              'purple-bordered pins.'
+              'scored separately; its competitors are the '
+              f'{cname}-bordered pins.'
             + f'</div>'
             f'<div style="font-size:11px;color:#999;margin-top:4px">'
             f'{a.get("lat")}, {a.get("lng")}</div></div>')
@@ -577,13 +584,14 @@ def build_map(days, hist, meta, day_stats, probes=None, anchors2=None):
         {map_trend}
         <div>{g_n} former competitors (dropped){f' · 🟡 {g_live} likely booked · 🔴 {g_rm} removed' if (g_live or g_rm) else ''}</div>
       </div>"""
-    for a in (anchors2 or []):
+    for _i, a in enumerate(anchors2 or []):
+        col, cname = EXTRA_ANCHOR_STYLES[_i % len(EXTRA_ANCHOR_STYLES)]
         sd = [s for s in (a.get("day_stats") or []) if s["count"]]
         if not sd:
             stats_card += (f'<div style="font-size:12px;line-height:1.8;'
                            f'border-top:1px solid #eee;margin-top:6px;padding-top:6px">'
-                           f'<div style="font-weight:700;color:#6a1b9a">🏡 '
-                           f'{a.get("name", "Second anchor")}</div>'
+                           f'<div style="font-weight:700;color:{col}">🏡 '
+                           f'{a.get("name", "Extra anchor")}</div>'
                            f'<div>first scrape pending</div></div>')
             continue
         t2 = trend_info(sd)
@@ -594,17 +602,17 @@ def build_map(days, hist, meta, day_stats, probes=None, anchors2=None):
                      and not f["active"])
         stats_card += (f'<div style="font-size:12px;line-height:1.8;'
                        f'border-top:1px solid #eee;margin-top:6px;padding-top:6px">'
-                       f'<div style="font-weight:700;color:#6a1b9a">🏡 '
-                       f'{a.get("name", "Second anchor")}</div>'
+                       f'<div style="font-weight:700;color:{col}">🏡 '
+                       f'{a.get("name", "Extra anchor")}</div>'
                        f'<div><b style="font-size:18px">{sd[-1]["count"]}</b> active '
                        f'· median <b>{fmt_d(sd[-1]["median"])}</b></div>{tr2}'
                        + (f'<div>suggested <b>{fmt_d(rec)}</b></div>' if rec else "")
                        + f'<div>former: {former}</div></div>')
+    n_anchors = 1 + len(anchors2 or [])
     stats_card += (f'<div style="font-size:12px;line-height:1.8;'
                    f'border-top:1px solid #eee;margin-top:6px;padding-top:6px;'
-                   f'color:#7a5c00">⚠ both anchors are imaginary '
-                   f'<span style="white-space:nowrap">{prof["bedrooms"]}BR '
-                   f'placeholders</span></div>')
+                   f'color:#7a5c00">⚠ all {n_anchors} anchors are imaginary '
+                   f'<span style="white-space:nowrap">placeholders</span></div>')
 
     html = MAP_TEMPLATE.replace("__CENTER__", json.dumps(center))
     html = html.replace("__DATA__", json.dumps(feats))
@@ -649,11 +657,11 @@ MAP_TEMPLATE = """<!DOCTYPE html>
   <span class="sw" style="background:#1565c0"></span>$301–400<br>
   <span class="sw" style="background:#ef6c00"></span>$401–500<br>
   <span class="sw" style="background:#c62828"></span>&gt; $500<br>
-  <span class="sw" style="background:#fff;border:2px solid #6a1b9a"></span>South Dallas comp set (purple border)<br>
+  <span class="sw" style="background:#fff;border:2px solid #6a1b9a"></span>extra-anchor comp sets (border color = that anchor, matches stats card)<br>
   <span class="sw" style="background:transparent;border:2px dashed #f9a825"></span>likely booked (page live)<br>
   <span class="sw" style="background:transparent;border:2px dashed #c62828"></span>removed (delisted)<br>
   <span class="sw" style="background:transparent;border:2px dashed #757575"></span>former competitor (unprobed)<br>
-  <span style="margin-right:6px">🏠</span><b>$250 anchors</b> (imaginary; 🏡 = second anchor, other side of the city)
+  <span style="margin-right:6px">🏠</span><b>anchor homes</b> (imaginary; 🏡 = additional anchors)
   <div style="border-top:1px solid #eee;margin-top:6px;padding-top:6px;color:#777">
     score = .35·location + .30·bedrooms +<br>.30·type + .05·price (similarity to anchor)</div>
 </div>

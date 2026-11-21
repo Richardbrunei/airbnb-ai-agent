@@ -21,8 +21,8 @@ another OpenClaw install"). Verify it exists and is current:
 
 Edit `config/areas.json` → `search_areas[0]` (primary anchor; since
 2026-11-08 extra entries with a `property_profile` are scored too —
-currently the mirror "South Dallas House", imaginary, watched since
-2026-11-08):
+currently the mirror "South Dallas House" and "Downtown Dallas House"
+(2BR, $300), all imaginary):
 
 - `property_profile`: lat/lng, bedrooms, price, property_type.
   Real property → omit `"hypothetical"` (report shows neutral anchor

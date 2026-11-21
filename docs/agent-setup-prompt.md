@@ -32,7 +32,7 @@ runs an AI anomaly analysis — all committed back to git automatically.
    location). Your copy lands at
    `github.com/<your-username>/airbnb-ai-agent` with the full history —
    including the existing `data/market.db` (months of Dallas demo data
-   anchored to the two imaginary properties). That is fine either way:
+   anchored to the imaginary demo anchors). That is fine either way:
    keep the demo anchors and the pipeline simply continues, or set your
    own anchor (§3) and reset the DB per README.md.
 2. On the fork: **Actions tab > enable workflows** — scheduled workflows
@@ -70,9 +70,10 @@ crontab -e   # add:
 
 ## 3. Pick your anchor property(ies)
 
-Out of the box the config tracks TWO IMAGINARY 4BR homes in Dallas
-(listed $250 each) — a demo setup. If you keep them, always disclose
-they are hypothetical when quoting numbers.
+Out of the box the config tracks THREE IMAGINARY homes in Dallas (two
+4BR at $250 on opposite sides of the city, plus a 2BR at $300
+downtown) — a demo setup. If you keep them, always disclose they are
+hypothetical when quoting numbers.
 
 To watch your own area: edit `config/areas.json` (search_areas):
 
