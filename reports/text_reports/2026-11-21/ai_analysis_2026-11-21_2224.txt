@@ -1,0 +1,9 @@
+AI anomaly analysis — run 2026-11-21 22:24 (data: 2026-11-21, model: glm-5.3, tools: 3 call(s))
+============================================================
+ANOMALY
+
+UT Dallas House (hypothetical, listed $250) — 2026-11-21: 4 comps, median $370, 50% discounted. The -12.3% median drop ($422→$370) is composition, not repricing: the SAME-SET median was flat ($370→$370). A $563 comp (Longhorn House) exited and a $294 comp entered, dragging the reported median down. Note Monday 11-20 saw the opposite: 11 comps exited at once (13→3, -77% comp-set size), with the median jumping +9.9%; same-set repricing was only +7.7%. That churn level (≥5 vanished in a day) plus tiny comp sets (n=2-4 all week) makes every median print noise-dominated — likely weekend-weekday scrape-pattern effects or booking churn rather than a market move. Suggested price also jumped +31% in two days ($355→$475), overshooting the weak-signal comp data; treat it as unstable, not a signal to raise the $250 list.
+
+South Dallas House — 2026-11-21: 9 comps, median $354, 33% discounted. Reported -4.4% median move is fully compositional (same-set flat at $370.41; one $340 entrant). No anomaly; stable.
+
+Downtown Dallas House — 17 comps appearing on first scrape is the documented changelog addition (methodology, not market). All anchors hypothetical.
