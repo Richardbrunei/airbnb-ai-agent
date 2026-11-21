@@ -61,7 +61,15 @@ The fork inherits the full history, including the existing `data/market.db` demo
 
 **2. GitHub-side, on your fork:**
 - **Actions tab → enable workflows** — scheduled runs stay disabled on forks until you click this.
+
+  ![Actions tab](docs/img/actions-tab.png)
 - **Settings → Secrets and variables → Actions** → new secret `ZAI_API_KEY` = your z.ai key (coding-plan endpoint, model `glm-5.3`). Without it, every scrape still runs but the AI analysis step writes SKIPPED.
+
+  ![Settings tab](docs/img/settings-tab.png)
+
+  ![Settings sidebar: Actions](docs/img/settings-actions-menu.png)
+
+  ![New repository secret button](docs/img/new-secret-button.png)
 - Schedule: two runs/day (about 7:17 and 11:17 AM US Central in winter; edit the `cron` lines in `.github/workflows/daily-scrape.yml`).
 
 **3. Local clone** (read-only consumer — Actions is the only data writer):

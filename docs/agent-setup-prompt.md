@@ -36,10 +36,13 @@ runs an AI anomaly analysis — all committed back to git automatically.
    keep the demo anchors and the pipeline simply continues, or set your
    own anchor (§3) and reset the DB per README.md.
 2. On the fork: **Actions tab > enable workflows** — scheduled workflows
-   stay disabled on forks until you do this.
+   stay disabled on forks until you do this (screenshot:
+   docs/img/actions-tab.png).
 3. **Settings > Secrets and variables > Actions > New repository
    secret:** name `ZAI_API_KEY`, value = your z.ai key. Secrets never
-   copy from the original repo.
+   copy from the original repo — skip this and every analysis will say
+   SKIPPED (click-path screenshots: docs/img/settings-tab.png,
+   docs/img/settings-actions-menu.png, docs/img/new-secret-button.png).
 4. Schedule: two runs per day (about 7:17 and 11:17 AM US Central in
    winter; edit the `cron` lines in
    `.github/workflows/daily-scrape.yml` to change).
