@@ -5,7 +5,7 @@ AI-powered automation platform for Airbnb property management — competitor pri
 > **Current deployment note:** this repo's live configuration tracks **three hypothetical homes** — UT Dallas House and, since 2026-11-08, its mirror South Dallas House (both 4BR, listed $250), plus, since 2026-11-21, Downtown Dallas House (2BR, listed $300) — all placeholder profiles, not real properties. Scores and price recommendations are computed per anchor. The production pipeline runs on **GitHub Actions** (see [Automation](#automation)); the local clone is a read-only consumer.
 
 
-> **Docs:** [User manual](USER_MANUAL.md) — what the daily artifacts mean and the two-minute daily check. Setting up on another device? `docs/agent-setup-prompt.md` is a paste-ready prompt for that machine's AI agent.
+> **Docs:** [User manual](USER_MANUAL.md) — what the daily artifacts mean and the two-minute daily check. Setting up on another device? `docs/agent-setup-prompt.md` is a paste-ready prompt for that machine's AI agent. Just want to download it and run locally, no scheduled reports? `docs/agent-setup-prompt-ondemand.md` covers that.
 
 ## Project Structure
 

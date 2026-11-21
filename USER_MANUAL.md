@@ -200,5 +200,6 @@ it never pushes data, never scrapes, never edits `data/market.db`.
 
 - README.md — technical setup, configuration reference, automation
 - CHANGELOG.md — dated record of methodology/config changes
-- docs/agent-setup-prompt.md — paste-ready prompt for a new device
+- docs/agent-setup-prompt.md — paste-ready prompt for a new device (full pipeline)
+- docs/agent-setup-prompt-ondemand.md — paste-ready prompt for local, on-demand use (no scheduling)
 - skill/SKILL.md — operating notes for AI assistants
