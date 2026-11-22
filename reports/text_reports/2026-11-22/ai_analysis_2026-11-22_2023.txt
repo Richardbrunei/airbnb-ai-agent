@@ -1,0 +1,9 @@
+AI anomaly analysis — run 2026-11-22 20:23 (data: 2026-11-22, model: glm-5.3, tools: 2 call(s))
+============================================================
+ANOMALY
+
+**South Dallas House — suggested price collapsed with no market move.** Suggested fell $475 → $335 (−29%) at only 40% confidence (vs 51–53% prior days), yet the comp set was perfectly static on 2026-11-22: n=9 unchanged, median flat at $354, discount share flat 33%, zero churn, and the only mover changes were small cuts (−$25, −$24). Nothing in the market justifies a −$140 recommendation swing. Likely a model/data-quality issue (confidence also dropped), not repricing. Recommendation: ignore the $335 suggestion; the market supports holding near the recent $330–$355 band; the anchor's $250 listing remains well below market.
+
+**UT Dallas House — suggestion swinging on a 3-member set.** Suggested $475 → $430 (−9.5%) on n=3. Day_diff shows the median rise 370→385 was genuine repricing (same-set median +4.3%), with one entry at $385 and two exits — but the set has shrunk 16→13→3→4→3 since 11-18, so the engine's $430–475 range is low-confidence noise. Hold $250; watch for set-size recovery.
+
+Downtown (17 comps, median +1%, disc +6pts) and the delisted ghost ledger (6, cumulative) are within tolerance. All anchors hypothetical.
