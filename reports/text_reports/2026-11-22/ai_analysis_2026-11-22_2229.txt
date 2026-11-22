@@ -1,0 +1,3 @@
+AI anomaly analysis — run 2026-11-22 22:29 (data: 2026-11-22, model: glm-5.3)
+============================================================
+I need to verify the UT Dallas comp-set collapse and suggested-price jump before flagging. Note: all properties/prices below are hypothetical monitoring fixtures.
