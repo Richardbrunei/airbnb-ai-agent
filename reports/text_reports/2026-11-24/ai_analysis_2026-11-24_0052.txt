@@ -1,0 +1,6 @@
+AI anomaly analysis — run 2026-11-24 00:52 (data: 2026-11-24, model: glm-5.3, tools: 3 call(s))
+============================================================
+NOTHING_UNUSUAL
+UT Dallas House | 2026-11-24 | 3 competitors | median $454.0 | 67% discounted | Median jump is one-member composition, repricing flat
+South Dallas House | 2026-11-24 | 9 competitors | median $354.0 | 33% discounted | Fully stable; same set, zero repricing
+Downtown Dallas House | 2026-11-24 | 16 competitors | median $379.5 | 50% discounted | Mild normal churn-driven dip in a young comp set
