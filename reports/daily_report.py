@@ -48,6 +48,19 @@ class DailyReportGenerator:
             f"  Std Dev:      ${stats.stdev_price:.0f}",
         ]
 
+        # 2026-11-24: a zero-listing scrape is a failure, not a market
+        # crash — make it loud so the daily check (and any reader) can
+        # tell the difference (11-11..11-17 all read 0 silently).
+        if stats.count == 0:
+            lines += [
+                "",
+                "⚠ SCRAPE RETURNED 0 LISTINGS — this report is a placeholder.",
+                "  Airbnb returned no results this run (blocked runner IP or",
+                "  search failure); nothing was stored, so the numbers above",
+                "  are zeros, not a market crash. Check the Actions log. The",
+                "  ai_analysis header shows the data date it actually used.",
+            ]
+
         if stats.avg_rating:
             lines.append(f"  Avg Rating:   {stats.avg_rating:.1f} ⭐")
 
