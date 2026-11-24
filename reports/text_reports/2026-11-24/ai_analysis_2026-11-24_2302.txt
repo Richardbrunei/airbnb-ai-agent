@@ -1,0 +1,11 @@
+AI anomaly analysis — run 2026-11-24 23:02 (data: 2026-11-24, model: glm-5.3, tools: 6 call(s))
+============================================================
+ANOMALY
+
+**UT Dallas House (4BR, listed $250):** Median jumped $385.0 → $473.5 (+23.0%), breaching the 8% threshold — but the SAME-SET median of constant members actually fell $386 → $370 (-4.1%). The move is pure composition: a tiny comp set (3→4) admitted "New! Chic Richardson Retreat w/ Patio" at $575 and "Nice and beautiful house wonderful area" at $525 while $385 "Cozy & Peaceful- Close to CITY" exited. This is market-composition noise amplified by a minuscule set, not a repricing surge. Discount share 67%→50% (-17 pts) crosses the 15-point threshold but is just 1 of 3 listings changing state — same fragility.
+
+**South Dallas House (4BR, listed $250):** Stable: n=9, median +4.2% (all repricing, "Quaint home" +$69), discount share 33%→22% (-11 pts, below threshold). No action.
+
+**Downtown Dallas House (2BR, listed $300):** Same-set median flat ($398). Reported -3.1% is churn (3 in / 3 out, including a $157 low outlier entering). Discount share 44%→56% (+12 pts) with most movers cutting $25–34 — mild softening, below threshold. Probes today: 8 live, zero delisted/errors; the 6 delisted in the ledger are cumulative history, not today's flow.
+
+**Implication:** Suggested prices moved <5% and n's per-set repricing actually slipped -4.1% — no basis for raising the $250 listed price; the median spike is a small-n artifact.
