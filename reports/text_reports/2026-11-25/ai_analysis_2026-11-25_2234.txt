@@ -1,0 +1,11 @@
+AI anomaly analysis — run 2026-11-25 22:34 (data: 2026-11-25, model: glm-5.3, tools: 5 call(s))
+============================================================
+ANOMALY
+
+Downtown Dallas House (hypothetical 2BR, listed $300): comp set 18→16, median $392→$371 (-5.4%), and the SAME-SET median confirms this is pure repricing, not composition. Two members exited (HIstoric Dallas Bungalow $456; Cozy 3B/2B Near FairPark $258) — the cheaper exit alone would push the median up, yet it still fell. Three constant members cut hard: 4-Story Smarthome -53 ($408→$355), Hit the Hay -38 ($386→$348), Indigo Townhouse -33 ($461→$428). Discount share rose 56%→62%, consistent with softening demand. Suggested price moved $370→$330 (-10.8%, ≥5% flag) — a real market signal, not methodology: 12 probes, all live, no delistings today, so the 2 exits look like bookings/blocks, not removals. Anchors' 20km scans also carry the 11-21 documented third-anchor overlap, but churn there is 0-1/day, well under thresholds.
+
+UT Dallas House (hypothetical 4BR, listed $250): stable — median $473.5→$469, same-set -1.0% (Sweet Family House -9), 0 churn, 50% discounted. Only note: suggested price fell $430→$405 (-5.8%, just over the 5% flag), but market data shows no supporting move.
+
+South Dallas House (hypothetical 4BR, listed $250): quiet — 1 exit, median +$8.9, no flags.
+
+Meaning: downtown comps are genuinely cutting prices — $250-$300 anchors should hold, but reassess if downtown softness spreads to the suburbs.
