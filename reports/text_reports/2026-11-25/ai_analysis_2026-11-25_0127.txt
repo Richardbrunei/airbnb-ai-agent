@@ -1,0 +1,12 @@
+AI anomaly analysis — run 2026-11-25 01:27 (data: 2026-11-25, model: glm-5.3, tools: 3 call(s))
+============================================================
+ANOMALY
+All prices are hypothetical competitor-scrape data for imaginary anchor properties — not real listings.
+
+1) UT Dallas House (n=2, median $550, +16.2% DoD): the reported median jump is pure composition, not repricing. day_diff shows the SAME-SET median of the 2 constant members flat at $550 (+0.0%); the $422 and $318 members dropped out, dragging the median up. With n=4→2 the median is statistically meaningless — treat it as noise, not a market move. No action on the $250 listed price suggested by this.
+
+2) Downtown Dallas House (n=14, median $381.50): suggested price fell 8.1% DoD ($370→$340), above the 5% threshold, though confidence is low (44–45%). The same-set median fell only 2.7%, driven mainly by one mover (-$53); 4 members exited ($320/$522/$456/$258). The suggestion looks more like model volatility on a thinning set than a real market signal; with the anchor listed at $300, no change warranted.
+
+3) South Dallas House (n=7, median $369.00, flat): same-set median 0.0%; discount share fell 8 pts (22→14), below the 15-pt threshold. Nothing actionable.
+
+No comp-set size change ≥30% on any anchor, and the probe ledger's 6 delisted entries are cumulative, not today's flow. Net: one composition artifact and one low-confidence suggestion swing — no genuine market repricing events.
