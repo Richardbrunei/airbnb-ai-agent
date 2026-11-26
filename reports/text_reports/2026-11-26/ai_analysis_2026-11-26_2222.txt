@@ -1,0 +1,13 @@
+AI anomaly analysis — run 2026-11-26 22:22 (data: 2026-11-26, model: glm-5.3, tools: 3 call(s))
+============================================================
+ANOMALY
+
+Suggested-price moves breached the 5% threshold on both 4BR anchors — nothing in the comp-set data justifies them:
+
+- **UT Dallas House**: suggested price $430 → $405 → $375 (−7.0%, then −7.4% more). Yet the market is calm: 0 churn, median $469 → $454 (−3.2%, all repricing: "Sweet family house" −$30), discount share flat at 50%.
+- **South Dallas House**: suggested $450 → $365 (−18.9% in one day, confidence fell 53% → 42%). Market was literally frozen: same 8 comps, flat median $377.91, no movers.
+- **Downtown Dallas House**: no flag. Median −5.4% ($371 → $351), same-set −6.1% — real repricing (Indigo −$40, Topaz −$33, Smarthome −$27), 2 in/1 out churn. Suggested $330 → $315 (−4.5%), under threshold. Continues the documented softening pattern, consistent with rising discount share (44% → 59% over 11-22→11-26), though no single day crossed 15 points.
+
+Likely cause: recommendation-engine instability (wobbling confidence), not a market move — same-set comps for UT/South show minimal repricing and zero membership churn. The downtown declines are genuine market softening, expected post-lens-shift and in line with late-November volatility.
+
+All figures are hypothetical/imaginary properties; listed prices ($250 / $300) are illustrative only.
