@@ -1,0 +1,6 @@
+AI anomaly analysis — run 2026-11-26 01:00 (data: 2026-11-26, model: glm-5.3, tools: 7 call(s))
+============================================================
+NOTHING_UNUSUAL
+UT Dallas House, 2026-11-26, 4 competitors, $469.0, 50% discounted, flat day, fully stable.
+South Dallas House, 2026-11-26, 7 competitors, $369.0, 29% discounted, one cheap exit, stable.
+Downtown Dallas House, 2026-11-26, 13 competitors, $398.0, 69% discounted, cheap exits lifted median slightly.
