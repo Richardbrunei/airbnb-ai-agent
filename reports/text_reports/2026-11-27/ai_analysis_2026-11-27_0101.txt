@@ -1,0 +1,13 @@
+AI anomaly analysis — run 2026-11-27 01:01 (data: 2026-11-27, model: glm-5.3, tools: 6 call(s))
+============================================================
+ANOMALY
+
+2026-11-27 (hypothetical anchors; all prices simulated market data):
+
+**Comp-set membership surged, not the market.** UT Dallas House: 4→11 competitors (+175%, 11 entered/4 gone, incl. one confirmed delisted, "Nice and beautiful house wonderful area"); South Dallas House: 8→19 (+137%, 11 entered/0 gone); Downtown Dallas House: 17→38 (+124%, 31 entered/10 gone). No changelog entry documents a lens change for 11-27, and the 09-19 lens widening precedent doesn't cover this — this looks like an undocumented methodology/coverage change or a scrape returning far more results than prior days (possibly recovery of partial scrapes; note the 11-11–11-17 zero-scrape history).
+
+**Medians: composition, not repricing.** UT -10.7% ($454→$405.6) with n=4 carryovers; South -10.0% ($377.9→$340) but same-set median only -3.8%; Downtown -0.3% headline, same-set actually +5.6% (n=7). The median "drop" is membership churn, not sellers cutting.
+
+**Other flags:** one delisted listing probed today (delisted-410); suggested-price moves ≥5%: South -6.8% ($365→$340), Downtown +9.5% ($315→$345); no probe errors, discount-share shifts <15pts.
+
+**Implication:** do NOT read the medians as softening. UT's $250 listed price recommendation path ($375→$385, ~55% conf) is low-confidence either way given a possible coverage artifact. Recommend verifying scrape completeness before acting on the Downtown +9.5% suggested-price jump.
