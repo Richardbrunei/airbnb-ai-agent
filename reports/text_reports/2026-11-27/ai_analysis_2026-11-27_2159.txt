@@ -1,0 +1,11 @@
+AI anomaly analysis — run 2026-11-27 21:59 (data: 2026-11-27, model: glm-5.3, tools: 4 call(s))
+============================================================
+ANOMALY
+
+All three comp sets jumped simultaneously on 2026-11-27 with no documented lens change: UT 4→17 (+325%), South 8→19 (+138%), Downtown 17→51 (+200%), churn 16/11/44 entrants. The 2026-09-19 radius widening is the only comparable level shift and it's long past; no changelog line covers today. This pattern strongly suggests an undocumented methodology/pipeline change (e.g., scrape or comp-scoring filter relaxed) rather than a market event — a market can't quintuple the downtown supply overnight.
+
+Composition dominates the medians: UT median −14.5% to $388 but the same-set median rests on just 1 constant member ($383→$322.60, −15.8% — statistically meaningless); South −10.0% to $340 with same-set −3.8% (n=8, mild real repricing: Cozy Desoto −$98, Quaint home −$72); Downtown +4.0% with same-set +4.8%. Discount-share drop of −20 pts (59%→39%) Downtown and −15 pts (50%→35%) UT also reflect the new entrant mix, not sudden market tightening.
+
+Probes: one UT comp-set exit was a 410-delisted listing ("Nice and beautiful house wonderful area") — a single removal, not a flood; the ledger (89 live/7 delisted) is cumulative and benign.
+
+Suggested prices swung: UT/South fell to $375/$340, Downtown +19% to $375. Recommendation: treat 2026-11-27 comps as an unreliable lens; keep hypothetical listed prices ($250/$250/$300) unchanged until the set stabilizes or the change is documented, and cross-check tomorrow's churn.
