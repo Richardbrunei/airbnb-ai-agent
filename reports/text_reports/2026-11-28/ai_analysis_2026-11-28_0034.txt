@@ -1,0 +1,9 @@
+AI anomaly analysis — run 2026-11-28 00:34 (data: 2026-11-28, model: glm-5.3, tools: 7 call(s))
+============================================================
+ANOMALY
+
+**What moved:** On 2026-11-27 the comp-set size jumped simultaneously across all three independent lenses — UT Dallas 4→17, South Dallas 8→19, Downtown 17→51 (+325%, +138%, +200%). UT Dallas's reported median fell -14.5% ($454→$388) on that day; but `day_diff` shows the same-set effect: only 1 constant member survived the lens change, and the drop is ~pure composition — 16 low-priced listings entered ($253–$577) while three higher-priced ones exited. Same-set median on 11-28 is flat ($389.45→$391.50, +0.5%). South Dallas and Downtown medians moved modestly (-5%/-3%).
+
+**Likely cause: methodology, not market.** A synchronized multi-anchor membership explosion of this size is the signature of a lens/scoring-parameter change, but unlike the documented 2026-09-19 10→20 km widening, there is NO changelog entry covering 2026-11-27 — this one is undocumented and should be verified against the 2026-11-27 run's config/scoring diff before trusting any post-jump trend comparisons. Secondary data-quality note: 2 probe records carry `status='error'`, and one exited UT Dallas member was confirmed delisted (HTTP 410) on 11-27.
+
+**Implication for pricing:** The 11-27 median drop is an artifact of new entrants, not repricing; pre/post-11-27 levels aren't comparable. Latest suggested prices (UT $385 @58%, South $340 @48%, Downtown $365 @59%) sit within post-jump market medians ($340–$392). Hold the hypothetical $250/$250/$300 listings unchanged pending confirmation of whether the 11-27 comp-set expansion was a config change; if it's confirmed methodology, recalibrate against the new, wider lens.
