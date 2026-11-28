@@ -131,5 +131,22 @@ res = M._score_competitors([])
 assert [n for n, _p, _s in res] == ['UT Dallas House', 'South Dallas House', 'Downtown Dallas House'], res
 print('10 _score_competitors two anchors OK')
 
+# 11) zero-listing scrape retry: retry once, then give up for the schedule
+import asyncio
+class FlakyScraper:
+    def __init__(self, results):
+        self.results = list(results); self.calls = 0
+    async def search_competitors(self):
+        self.calls += 1
+        return self.results.pop(0)
+_s = FlakyScraper([[], [{'id': 'x'}]])
+_out = asyncio.run(M.scrape_with_retry(_s, delay_s=0))
+assert _out == [{'id': 'x'}] and _s.calls == 2, (_out, _s.calls)
+print('11a empty-scrape retry recovers OK')
+_s2 = FlakyScraper([[], []])
+_out2 = asyncio.run(M.scrape_with_retry(_s2, delay_s=0))
+assert _out2 == [] and _s2.calls == 2, (_out2, _s2.calls)
+print('11b repeated empties give up (await next scheduled run) OK')
+
 shutil.rmtree(tmp, ignore_errors=True)
 print('ALL TWO-ANCHOR TESTS PASS')

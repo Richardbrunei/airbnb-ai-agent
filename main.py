@@ -22,6 +22,35 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
+async def scrape_with_retry(scraper, retries: int = 1, delay_s: float = 30.0):
+    """Scrape competitors, retrying once when a scrape comes back empty.
+
+    2026-11-11..17: a week of scheduled scrapes returned 0 listings
+    (likely runner-IP blocking) and the pipeline reported it silently.
+    An empty result now triggers one polite retry; if the retry is also
+    empty the run finishes normally — the daily report carries the
+    zero-listing placeholder warning — and the next scheduled run
+    retries the market.
+    """
+    listings = await scraper.search_competitors()
+    attempt = 1
+    while not listings and attempt <= retries:
+        logger.warning(
+            f"Scrape returned 0 listings (attempt {attempt}) — "
+            f"retrying in {delay_s:.0f}s"
+        )
+        await asyncio.sleep(delay_s)
+        listings = await scraper.search_competitors()
+        attempt += 1
+    if not listings:
+        logger.warning(
+            "Scrape returned 0 listings after retry — giving up; "
+            "finishing this run with the zero-listing warning and "
+            "waiting for the next scheduled scrape"
+        )
+    return listings
+
+
 async def run_market_monitoring():
     """Run the daily market monitoring pipeline."""
     logger.info("Starting market monitoring...")
@@ -33,8 +62,10 @@ async def run_market_monitoring():
     analyzer = PriceAnalyzer()
     reporter = DailyReportGenerator()
 
-    # 1. Scrape competitor listings
-    listings = await scraper.search_competitors()
+    # 1. Scrape competitor listings (one auto-retry on an empty result —
+    #    see scrape_with_retry; repeated empties finish the run and wait
+    #    for the next scheduled scrape)
+    listings = await scrape_with_retry(scraper)
     logger.info(f"Found {len(listings)} competitor listings")
 
     # 2. Store raw listings in database

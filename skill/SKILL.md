@@ -50,6 +50,9 @@ production clone** — local DB writes break the sole-writer architecture.
 CDT), regenerates the trend report, and bot-commits results to `main`.
 No secrets or API keys — the built-in GITHUB_TOKEN does everything.
 On forks: Actions tab → enable "Daily Airbnb scrape".
+Empty scrapes auto-retry once (30 s) since 2026-11-28; a second empty
+result finishes the run with the ⚠ zero-listing warning in the report and
+waits for the next scheduled run (11-11..17 saw a silent zero-scrape week).
 
 Check health without credentials (public repos):
 

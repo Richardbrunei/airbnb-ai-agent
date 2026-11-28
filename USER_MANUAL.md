@@ -176,6 +176,7 @@ by the `anchor` column.
 | Symptom | Likely cause | Fix |
 |---|---|---|
 | No folder for today | Scheduled run failed (often Airbnb blocking the runner IP) | Read the Actions log; transient blocks self-heal next run |
+| Report says "⚠ SCRAPE RETURNED 0 LISTINGS" | Scrape came back empty twice (the pipeline auto-retries once, 30 s apart) | Transient — the next scheduled run picks it up; repeats for days → check the Actions log |
 | Analysis says SKIPPED / no ZAI_API_KEY | Secret missing or wrong | Repo Settings > Secrets > Actions > set ZAI_API_KEY |
 | git pull refuses (local changes) | Something wrote to the mirror (should not happen) | git status, discard tracked-file changes, re-pull |
 | Push rejected | Bot committed between fetch and push | git fetch, rebase onto origin/main, push again |
